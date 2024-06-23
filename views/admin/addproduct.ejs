@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Responsive bootstrap 4 admin template">
+  <meta name="author" content="Coderthemes">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet">
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet">
+</head>
+<body>
+  <div id="wrapper">
+    <% include('header') %>
+    <% include('sidebar') %>
+    <div class="content-page">
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center align-items-center">
+            <div class="col-12 col-lg-8">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">Product information</h5>
+                  <% if (addProductMsg && addProductMsg.length > 0) { %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                      <strong><%= addProductMsg[0] %></strong>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  <% } %>
+                </div>
+                <div class="card-body">
+                  <form action="/admin/products/addProduct" enctype="multipart/form-data" method="POST" id="product-form">
+                    <div class="mb-3">
+                      <label class="form-label" for="ecommerce-product-name">Name</label>
+                      <input type="text" class="form-control" id="name" placeholder="Product title" name="Name" aria-label="Product title" required>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col">
+                        <label class="form-label" for="brand">Brand</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="selectedBrand" name="Brand" readonly required>
+                          <input type="hidden" class="form-control" id="selectedBrandId" name="BrandId" readonly required>
+                          <div class="input-group-append">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Select Brand
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <% if (brandsData) { %>
+                                <% Object.keys(brandsData).forEach(key => { %>
+                                  <button class="dropdown-item" type="button" onclick="selectBrand('<%= brandsData[key]._id %>', '<%= brandsData[key].Name %>')">
+                                    <%= brandsData[key].Name %>
+                                  </button>
+                                <% }) %>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <label class="form-label" for="category">Category</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="selectedCategory" name="Category" readonly required>
+                          <input type="hidden" class="form-control" id="selectedCategoryId" name="CategoryId" readonly required>
+                          <div class="input-group-append">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Select Category
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <% if (categoriesData) { %>
+                                <% Object.keys(categoriesData).forEach(key => { %>
+                                  <button class="dropdown-item" type="button" onclick="selectCategory('<%= categoriesData[key]._id %>', '<%= categoriesData[key].Name %>')">
+                                    <%= categoriesData[key].Name %>
+                                  </button>
+                                <% }) %>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="form-label">Description</label>
+                      <textarea class="form-control h-200" rows="1" name="Description" placeholder="Enter description" required></textarea>
+                    </div>
+                    <div class="card mb-4 mt-4">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 card-title">Versions</h5>
+                        <button type="button" class="btn btn-secondary" onclick="addVersion()">Add Version</button>
+                      </div>
+                      <div class="card-body" id="versions-container">
+                        <!-- Versions will be dynamically added here -->
+                      </div>
+                    </div>
+                    <div class="card mb-4">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 card-title">Images</h5>
+                      </div>
+                      <div class="card-body">
+                        <div class="mb-3">
+                          <input type="file" name="Image" class="form-control" id="image-upload" accept="image/png" multiple required>
+                        </div>
+                        <div id="selected-images-preview" class="d-flex flex-wrap"></div>
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-success">Add Product</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rightbar-overlay"></div>
+  </div>
+  <script>
+    let versionCount = 0;
+
+    function selectColor(colorId, colorName, index) {
+      document.getElementById(`selectedColor${index}`).value = colorName;
+      document.getElementById(`selectedColorId${index}`).value = colorId;
+    }
+
+    function selectSize(sizeId, sizeName, index) {
+      document.getElementById(`selectedSize${index}`).value = sizeName;
+      document.getElementById(`selectedSizeId${index}`).value = sizeId;
+    }
+
+    function selectCategory(categoryId, categoryName) {
+      document.getElementById("selectedCategory").value = categoryName;
+      document.getElementById("selectedCategoryId").value = categoryId;
+    }
+
+    function selectBrand(brandId, brandName) {
+      document.getElementById("selectedBrand").value = brandName;
+      document.getElementById("selectedBrandId").value = brandId;
+    }
+
+    function changeQuantity(action, index) {
+      const quantityInput = document.getElementById(`quantity${index}`);
+      let currentValue = parseInt(quantityInput.value);
+      if (action === 'minus' && currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+      } else if (action === 'plus') {
+        quantityInput.value = currentValue + 1;
+      }
+    }
+
+    function addVersion() {
+      const versionsContainer = document.getElementById("versions-container");
+      const newVersion = document.createElement("div");
+      newVersion.classList.add("version-item", "mb-3", "p-3", "border", "rounded");
+      newVersion.id = `version${versionCount}`;
+      newVersion.innerHTML = `
+        <div class="row mb-2">
+          <div class="col d-flex justify-content-between align-items-center">
+            <span class="font-weight-bold">Version</span>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeVersion(${versionCount})">Delete</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label class="form-label" for="color">Color</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="selectedColor${versionCount}" name="Versions[${versionCount}].ColorName" readonly required>
+              <input type="hidden" class="form-control" id="selectedColorId${versionCount}" name="Versions[${versionCount}].Color" readonly required>
+              <div class="input-group-append">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select Color
+                </button>
+                <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
+                  <div class="row">
+                    <% colorsData.forEach(color => { %>
+                      <div class="col-sm-4">
+                        <button class="dropdown-item" type="button" onclick="selectColor('<%= color._id %>', '<%= color.Name %>', ${versionCount})">
+                          <%= color.Name %>
+                        </button>
+                      </div>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label" for="size">Size (UK)</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="selectedSize${versionCount}" name="Versions[${versionCount}].SizeName" readonly required>
+              <input type="hidden" class="form-control" id="selectedSizeId${versionCount}" name="Versions[${versionCount}].Size" readonly required>
+              <div class="input-group-append">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select Size
+                </button>
+                <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
+                  <div class="row">
+                    <% sizesData.forEach(size => { %>
+                      <div class="col-sm-4">
+                        <button class="dropdown-item" type="button" onclick="selectSize('<%= size._id %>', '<%= size.Name %>', ${versionCount})">
+                          <%= size.Name %>
+                        </button>
+                      </div>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label class="form-label" for="quantity">Quantity</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('minus', ${versionCount})">-</button>
+              </div>
+              <input type="number" class="form-control" value="1" id="quantity${versionCount}" name="Versions[${versionCount}].Quantity" aria-label="Quantity" required>
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('plus', ${versionCount})">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label" for="Price">Price</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus', ${versionCount})">-</button>
+              </div>
+              <input type="number" class="form-control" value="1" id="price${versionCount}" name="Versions[${versionCount}].Price" aria-label="Price" required>
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus', ${versionCount})">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      versionsContainer.appendChild(newVersion);
+      versionCount++;
+    }
+
+    function removeVersion(index) {
+      const versionToRemove = document.getElementById(`version${index}`);
+      versionToRemove.remove();
+    }
+
+    document.getElementById("image-upload").addEventListener("change", function(event) {
+      const files = event.target.files;
+      const selectedImagesPreview = document.getElementById("selected-images-preview");
+      selectedImagesPreview.innerHTML = ""; // Clear previous previews
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith("image/")) {
+          const imgContainer = document.createElement("div");
+          imgContainer.classList.add("rounded", "bg-light", "p-2", "m-1", "d-flex", "align-items-center");
+          const img = document.createElement("img");
+          img.classList.add("img-fluid");
+          img.src = URL.createObjectURL(files[i]);
+          img.style.width = "100px";
+          img.style.height = "100px";
+          imgContainer.appendChild(img);
+          selectedImagesPreview.appendChild(imgContainer);
+        }
+      }
+    });
+
+    function collectVersionsData() {
+      const versions = [];
+
+      // Assuming you have a way to dynamically add versions on the client side
+      const versionContainers = document.querySelectorAll('.version-container');
+
+      versionContainers.forEach(container => {
+        const colorName = container.querySelector('.version-color-name').value;
+        const colorId = container.querySelector('.version-color').value;
+        const sizeName = container.querySelector('.version-size-name').value;
+        const sizeId = container.querySelector('.version-size').value;
+        const quantity = container.querySelector('.version-quantity').value;
+        const price = container.querySelector('.version-price').value;
+
+        versions.push({
+          ColorName: colorName,
+          Color: colorId,
+          SizeName: sizeName,
+          Size: sizeId,
+          Quantity: quantity,
+          Price: price
+        });
+      });
+
+      return versions;
+    }
+
+    // Function to handle form submission
+    document.getElementById('product-form').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const versions = collectVersionsData();
+
+      // Append versions directly to formData
+      versions.forEach((version, index) => {
+        formData.append(`Versions[${index}].ColorName`, version.ColorName);
+        formData.append(`Versions[${index}].Color`, version.Color);
+        formData.append(`Versions[${index}].SizeName`, version.SizeName);
+        formData.append(`Versions[${index}].Size`, version.Size);
+        formData.append(`Versions[${index}].Quantity`, version.Quantity);
+        formData.append(`Versions[${index}].Price`, version.Price);
+      });
+
+      try {
+        const response = await fetch('/admin/products/addProduct', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          window.location.href = '/admin/products';
+        } else {
+          console.log('Something went wrong');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+  <script src="/assets/js/vendor.min.js"></script>
+  <script src="/assets/js/app.min.js"></script>
+</body>
+</html>

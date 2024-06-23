@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description" />
+  <meta content="Coderthemes" name="author" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+</head>
+
+<body>
+  <div id="wrapper">
+    <%- include('header') %>
+      <%- include('sidebar') %>
+        <div class="content-page">
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Category</span>
+                  </div>
+                </div>
+              </div><br>
+              <div class="row justify-content-center align-items-center">
+                <div class="col-12 col-lg-8">
+                  <div class="card mb-4">
+                    <div class="card-header">
+                      <h5 class="card-title mb-0">Category details</h5>
+                      <% if (addCategoryMsg && addCategoryMsg.length > 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          <strong><%= addCategoryMsg[0] %></strong>
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="card-body">
+                      <form action="/admin/categories/editCategory" method="POST" id="category-form">
+                        <div class="mb-3">
+                          <label class="form-label" for="ecommerce-category-name">Name</label>
+                          <input type="text" class="form-control" id="name" placeholder="Category name" name="Name"
+                            aria-label="Category name" value="<%=categoryObj.Name%>" required>
+                            <input type="hidden" class="form-control" id="" name="_id"
+                                value="<%=categoryObj._id%>" required>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label" for="ecommerce-category-status">Status</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="isActive" id="isActive" value="true">
+                            <label class="form-check-label" for="isActive">
+                              Active
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="isActive" id="isActive" value="false" checked>
+                            <label class="form-check-label" for="isActive">
+                              Inactive
+                            </label>
+                          </div>
+                        </div>
+                        <div class="text-center">
+                          <button type="submit" class="btn btn-success">Update Category</a>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="rightbar-overlay"></div>
+            
+            <script src="/assets/js/vendor.min.js"></script>
+            <script src="/assets/libs/morris-js/morris.min.js"></script>
+            <script src="/assets/libs/raphael/raphael.min.js"></script>
+            <script src="/assets/js/pages/dashboard.init.js"></script>
+            <script src="/assets/js/app.min.js"></script>
+          </div>
+</body>
+
+</html>

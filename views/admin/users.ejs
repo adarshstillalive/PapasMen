@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Responsive bootstrap 4 admin template" name="description" />
+    <meta content="Coderthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <!-- App css -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="wrapper">
+
+
+        <!-- Topbar Start -->
+        <%-include('header')%>
+        <!-- end Topbar --> <!-- ========== Left Sidebar Start ========== -->
+        <%-include('sidebar')%>
+        <!-- Left Sidebar End -->
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <div class="content">
+          
+                <!-- Start container-fluid -->
+                <div class="container-fluid">
+          
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Categories</span>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row -->
+          
+                    <div class="row container-fluid">
+                        <!-- <table class="table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Contact No.</th>
+                                <th scope="col">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                <td class="move-right"><a class="btn btn-warning">Edit</a><a class="btn btn-danger">Delete</a></td>
+                              </tr>
+                              
+                            </tbody>
+                          </table> -->
+                          <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    
+                                    <th>Sl No.</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% Object.keys(userObj).forEach((key, index) => { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= userObj[key].Name %></td>
+                                            <td><%= userObj[key].Email %></td>
+                                            <td><%= userObj[key].Contact %></td>
+                                            <% if(userObj[key].isActive){%>
+                                            <td>Active</td>
+                                            <td class="text-right">                                                
+                                                <a href="#deleteUser" class="btn btn-warning" data-toggle="modal">View </a>
+                                                <a href="#deleteUser<%=userObj[key]._id%>" class="btn btn-danger" data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                                            </td>
+                                            <%}else{%>
+                                                <td>Blocked</td>
+                                                <td class="text-right">                                                
+                                                    <a href="#deleteUser" class="btn btn-warning">VIew</a>
+                                                    <a href="/admin/users/unblock?id=<%=userObj[key]._id%>" class="btn btn-danger" >UnBlock</a>
+                                                </td> 
+                                        </tr>
+                                        <%}%>
+                                <% }); %>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--end row -->
+          
+          
+                </div>
+                <!-- end container-fluid -->
+          
+          
+          
+          
+          
+            </div>
+            <!-- end content -->
+          
+          </div>
+        
+        <!-- END content-page -->
+
+    </div>
+    <!-- END wrapper -->
+     <% Object.keys(userObj).forEach((key)=>{%>
+    <div id="deleteUser<%=userObj[key]._id%>" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">						
+						<h4 class="modal-title">Block user</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">					
+						<h3>Are you sure you want to Block </h3>
+					</div>
+					<div class="modal-footer">
+						<a type="button" class="btn border-secondary text-secondary" data-dismiss="modal" >Cancel</a>
+						<a href="/admin/users/delete?id=<%=userObj[key]._id%>" class="btn btn-danger">Block</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+    <%})%>
+    
+
+
+
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+
+    <!-- Vendor js -->
+    <script src="/assets/js/vendor.min.js"></script>
+
+    <script src="/assets/libs/morris-js/morris.min.js"></script>
+    <script src="/assets/libs/raphael/raphael.min.js"></script>
+
+    <script src="/assets/js/pages/dashboard.init.js"></script>
+
+    <!-- App js -->
+    <script src="/assets/js/app.min.js"></script>
+
+</body>
+
+</html>

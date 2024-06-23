@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zxx">
+
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="author" content="flexkit">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com/">
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/plugins/swiper.min.css" type="text/css">
+  <link rel="stylesheet" href="/css/plugins/jquery.fancybox.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+  <![endif]-->
+
+  <!-- Document Title -->
+  <title>Account Signin | PapasMen</title>
+
+</head>
+
+<!-- Mobile Header -->
+<header id="mobile-header" class="fixed-top bg-light">
+  <div class="container d-flex align-items-center justify-content-between py-2">
+    <a class="mobile-nav-activator d-block" href="#">
+      <svg class="nav-icon" width="25" height="18" viewBox="0 0 25 18" xmlns="http://www.w3.org/2000/svg">
+        <use href="#icon_nav" />
+      </svg>
+    </a>
+    <div class="mx-auto">
+      <a href="/">
+        <img src="../images/logo.png" alt="PapasMen" class="logo__image d-block">
+      </a>
+    </div><!-- /.logo -->
+  </div><!-- /.container -->
+</header>
+<!-- /.header-mobile -->
+
+<!-- Header Type 2 -->
+<header id="header" class="header header-fullwidth header-transparent-bg ">
+  <div class="container">
+    <div class="header-desk header-desk_type_1">
+      <div class="logo">
+        <a href="/">
+          <img src="../images/logo.png" alt="PapasMen" class="logo__image d-block">
+        </a>
+      </div><!-- /.logo -->
+    </div><!-- /.header-desk header-desk_type_1 -->
+  </div><!-- /.container -->
+</header>
+<!-- End Header Type 2 -->
+
+<body>
+  <main>
+    <div class="pb-5"></div>
+
+    <div class="mb-4 pb-4"></div>
+    <section class="login-register container">
+      <h2 class="d-none">Login & Register</h2>
+      <ul class="nav nav-tabs mb-5" id="login_register" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link nav-link_underscore active" id="login-tab" data-bs-toggle="tab" href="#tab-item-login"
+            role="tab" aria-controls="tab-item-login" aria-selected="true">Login</a>
+        </li>
+      </ul>
+      <h4 class="flex-grow-1 text-center m-0 " style="color:red">
+        <%= loginMessage %>
+      </h4>
+      <div class="tab-content pt-2" id="login_register_tab_content">
+        <div class="tab-pane fade show active" id="tab-item-login" role="tabpanel" aria-labelledby="login-tab">
+          <div class="login-form">
+            <form name="login-form" class="needs-validation" id="loginForm" action="/signin" method="post">
+              <div class="form-floating mb-3">
+                <input name="Email" type="email" class="form-control form-control_gray" id="customerNameEmailInput1"
+                  placeholder="Email address *" >
+                <label for="customerNameEmailInput1">Email address *</label><span class="text-secondary error-message" style="color:red" id="emailError"></span>
+              </div>
+
+              <div class="pb-3"></div>
+
+              <div class="form-floating mb-3">
+                <input name="Password" type="password" class="form-control form-control_gray" id="customerPasswodInput"
+                  placeholder="Password *" >
+                <label for="customerPasswodInput">Password *</label><span class="text-secondary error-message"
+                style="color:red" id="passwordError"></span>
+                <a href="/forgotPassword" class="btn-text ms-auto">Lost password?</a>
+              </div>
+
+              <button class="btn btn-primary w-100 text-uppercase" id="loginButton">Log In</button>
+
+              <div class="pb-3"></div>
+            </form>
+            <a href="/auth/google">
+              <button
+                class="btn btn-outline-secondary d-flex w-100 justify-content-center align-items-center gap-2 rounded border border-secondary p-2 text-sm font-medium text-dark">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width:15px">
+                Continue with Google
+              </button>
+            </a>
+
+            <div class="customer-option mt-4 text-center">
+              <span class="text-secondary">No account yet?</span>
+              <a href="/signup" class="btn-text js-show-register">Create Account</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <%-include('footer-mob')%>
+    <%-include('footer')%>
+      <div class="mb-5 pb-xl-5"></div>
+
+
+
+
+
+      <!-- Go To Top -->
+      <div id="scrollTop" class="visually-hidden end-0"></div>
+
+      <!-- Page Overlay -->
+      <div class="page-overlay"></div><!-- /.page-overlay -->
+
+      <script>
+        const loginButton = document.getElementById('loginButton')
+
+        
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+
+        loginButton.addEventListener('click', (event) => {
+          const email = document.getElementById('customerNameEmailInput1').value.trim();
+          const password = document.getElementById('customerPasswodInput').value.trim();
+
+          let isValid = true;
+
+
+          // Email validation
+          if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+            document.getElementById('customerNameEmailInput1').style.borderColor = 'red';
+            emailError.innerHTML = 'Invalid email format';
+            isValid = false;
+          } else {
+            document.getElementById('customerNameEmailInput1').style.borderColor = 'green';
+            emailError.innerHTML = '';
+          }
+
+
+          // Password validation
+          if (password.length <= 5) {
+            document.getElementById('customerPasswodInput').style.borderColor = 'red';
+            passwordError.innerHTML = 'Password must be more than 5 characters long';
+            isValid = false;
+          } else {
+            document.getElementById('customerPasswodInput').style.borderColor = 'green';
+            passwordError.innerHTML = '';
+          }
+
+
+          if (isValid) {
+            document.getElementById('loginForm').submit();
+          } else {
+            event.preventDefault();
+          }
+        })
+      </script>
+
+      <!-- External JavaScripts -->
+      <script src="/js/plugins/jquery.min.js"></script>
+      <script src="/js/plugins/bootstrap.bundle.min.js"></script>
+      <script src="/js/plugins/bootstrap-slider.min.js"></script>
+
+      <script src="/js/plugins/swiper.min.js"></script>
+      <script src="/js/plugins/countdown.js"></script>
+      <script src="/js/plugins/jquery.fancybox.js"></script>
+
+      <!-- Footer Scripts -->
+      <script src="/js/theme.js"></script>
+
+</body>
+
+</html>

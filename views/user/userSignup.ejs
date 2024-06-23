@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zxx">
+
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="author" content="flexkit">
+
+
+  <link rel="preconnect" href="https://fonts.gstatic.com/">
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/plugins/swiper.min.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+  <![endif]-->
+
+  <!-- Document Title -->
+  <title>PapasMen</title>
+
+</head>
+
+<!-- Mobile Header -->
+<header id="mobile-header" class="fixed-top bg-light">
+  <div class="container d-flex align-items-center justify-content-between py-2">
+    <a class="mobile-nav-activator d-block" href="#">
+      <svg class="nav-icon" width="25" height="18" viewBox="0 0 25 18" xmlns="http://www.w3.org/2000/svg">
+        <use href="#icon_nav" />
+      </svg>
+    </a>
+    <div class="mx-auto">
+      <a href="/">
+        <img src="../images/logo.png" alt="Uomo" class="logo__image d-block">
+      </a>
+    </div><!-- /.logo -->
+  </div><!-- /.container -->
+</header>
+<!-- /.header-mobile -->
+
+<!-- Header Type 2 -->
+<header id="header" class="header header_sticky">
+  <div class="container">
+    <div class="header-desk header-desk_type_1">
+      <div class="logo">
+        <a href="/">
+          <img src="../images/logo.png" alt="PapasMen" class="logo__image d-block">
+        </a>
+      </div><!-- /.logo -->
+    </div><!-- /.container -->
+</header>
+<!-- End Header Type 2 -->
+
+<body>
+  <main>
+
+
+    <div class=" pb-5"></div> <!-- Added margin-bottom and padding-bottom to ensure no overlap -->
+    <section class="login-register container ">
+      <div class="text-center"> <!-- Added wrapper div with text-center class -->
+        <h2> User Register</h2>
+      </div>
+      <div class="tab-content pt-2" id="login_register_tab_content">
+        <div class="tab-pane fade show active" id="tab-item-register" role="tabpanel" aria-labelledby="register-tab">
+          <div class="register-form">
+            <form name="register-form" class="needs-validation" id="signupForm" action="/signup" method="post">
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control form-control_gray" id="customerNameRegisterInput" name="Name"
+                  placeholder="Fullname">
+                <label for="customerNameRegisterInput">Fullname *</label><span class="text-secondary error-message"
+                  style="color:red" id="nameError"></span>
+              </div>
+
+
+              <div class="form-floating mb-3">
+                <div class="input-group">
+                  <input type="email" placeholder="Email address *" class="form-control form-control_gray"
+                    id="customerEmailRegisterInput" name="Email">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="verifyButton">Verify</button>
+                  </div>
+                </div><span class="text-secondary error-message" style="color:red" id="emailError"></span>
+
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control form-control_gray" id="customerContactRegisterInput"
+                  name="Contact" placeholder="Contact number *">
+                <label for="customerContactRegisterInput">Contact number *</label><span
+                  class="text-secondary error-message" style="color:red" id="contactError"></span>
+              </div>
+
+              <div class="pb-3"></div>
+
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control form-control_gray" id="customerPasswodRegisterInput"
+                  name="Password" placeholder="Password *">
+                <label for="customerPasswodRegisterInput">Password *</label><span class="text-secondary error-message"
+                  style="color:red" id="passwordError"></span>
+                  
+              </div>
+
+              <div class="d-flex align-items-center mb-3 pb-2">
+                <p class="m-0">Your personal data will be used to support your experience throughout this website, to
+                  manage access to your account, and for other purposes described in our privacy policy.</p>
+              </div>
+              <div class="d-flex align-items-center mb-3 pb-2">
+                <h4 class="flex-grow-1 text-center m-0 " style="color: red;">
+                  <%= loginMessage %>
+                </h4>
+              </div>
+
+              <button class="btn btn-primary w-100 text-uppercase">Register</button>
+            </form>
+
+            <div class="pb-3"></div>
+            </form>
+            <a href="/auth/google">
+              <button
+                class="btn btn-outline-secondary d-flex w-100 justify-content-center align-items-center gap-2 rounded border border-secondary p-2 text-sm font-medium text-dark">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width:15px">
+                Continue with Google
+              </button>
+            </a>
+
+            <div class="customer-option mt-4 text-center">
+              <span class="text-secondary">Have Account</span>
+              <a href="/signin" class="btn-text js-show-register">Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <hr class="mt-2 text-secondary">
+
+  <!-- Footer Type 2 -->
+  <%-include('footer')%>
+
+    <!-- Mobile Fixed Footer -->
+    <!-- /.footer-mobile container position-fixed d-md-none bottom-0 -->
+    <%-include('footer-mob')%>
+
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">PapasMen</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <header>
+                  <i class="bx bxs-check-shield"></i>
+                </header>
+                <h4>Enter OTP Code</h4>
+                <form id="otpForm">
+                  <div class="row">
+                    <input type="number" class="form-control col otp_num" name="otp1" maxlength="1" autofocus />
+                    <input type="number" class="form-control col otp_num" name="otp2" maxlength="1" />
+                    <input type="number" class="form-control col otp_num" name="otp3" maxlength="1" />
+                    <input type="number" class="form-control col otp_num" name="otp4" maxlength="1" />
+                  </div>
+                  <div class="d-flex justify-content-between mt-3">
+                    <button type="submit" class="btn btn-primary">Verify OTP</button>
+                    <a href="#" id="resendLink" class="text-decoration-none">Resend OTP (00:59)</a>
+                    <span id="timer"></span>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <!-- Go To Top -->
+      <div id="scrollTop" class="visually-hidden end-0"></div>
+
+      <!-- Page Overlay -->
+      <div class="page-overlay"></div><!-- /.page-overlay -->
+
+      <script>
+        const timerDuration = 59; // Seconds for the timer
+        let currentTime = timerDuration;
+        let timerInterval;
+
+        const resendLink = document.getElementById('resendLink');
+        const otpInputs = document.querySelectorAll('.modal-body .otp_num');
+        const verifyButton = document.getElementById('verifyButton');
+        const otpForm = document.getElementById('otpForm');
+        const registerButton = document.querySelector('.btn.btn-primary.w-100.text-uppercase');
+
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const contactError = document.getElementById('contactError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Reset error messages
+
+
+
+
+
+        registerButton.addEventListener('click', (event) => {
+          const name = document.getElementById('customerNameRegisterInput').value.trim();
+          const email = document.getElementById('customerEmailRegisterInput').value.trim();
+          const contact = document.getElementById('customerContactRegisterInput').value.trim();
+          const password = document.getElementById('customerPasswodRegisterInput').value.trim();
+
+          let isValid = true;
+
+          // Name validation
+          if (name.length < 3) {
+            document.getElementById('customerNameRegisterInput').style.borderColor = 'red';
+            nameError.innerHTML = 'Name must be at least 3 characters long';
+            isValid = false;
+          } else {
+            document.getElementById('customerNameRegisterInput').style.borderColor = 'green';
+            nameError.innerHTML = '';
+          }
+
+          // Email validation
+          if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+            document.getElementById('customerEmailRegisterInput').style.borderColor = 'red';
+            emailError.innerHTML = 'Invalid email format';
+            isValid = false;
+          } else {
+            document.getElementById('customerEmailRegisterInput').style.borderColor = 'green';
+            emailError.innerHTML = '';
+          }
+
+          // Contact validation
+          if (contact.length !== 10) {
+            document.getElementById('customerContactRegisterInput').style.borderColor = 'red';
+            contactError.innerHTML = 'Contact number must be exactly 10 digits long';
+            isValid = false;
+          } else {
+            document.getElementById('customerContactRegisterInput').style.borderColor = 'green';
+            contactError.innerHTML = '';
+          }
+
+          // Password validation
+          if (password.length <= 5) {
+            document.getElementById('customerPasswodRegisterInput').style.borderColor = 'red';
+            passwordError.innerHTML = 'Password must be more than 5 characters long';
+            isValid = false;
+          } else {
+            document.getElementById('customerPasswodRegisterInput').style.borderColor = 'green';
+            passwordError.innerHTML = '';
+          }
+
+          //Verify Button
+          if (!verifyButton.disabled) {
+            verifyButton.style.borderColor = 'red';
+            emailError.innerHTML = 'Please verify your OTP'
+            isValid = false;
+          }
+
+          if (isValid) {
+            document.getElementById('signupForm').submit();
+          } else {
+            event.preventDefault();
+          }
+        });
+
+        verifyButton.addEventListener('click', function () {
+          const email = document.getElementById('customerEmailRegisterInput').value.trim();
+
+          if (email) {
+            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            modal.show();
+            handleVerifyButtonClick(email);
+          } else {
+            alert('Please enter your email address.');
+          }
+        });
+
+        function startTimer() {
+          currentTime--;
+
+          if (currentTime === 0) {
+            clearInterval(timerInterval);
+            resendLink.classList.remove('disabled');
+            resendLink.textContent = 'Resend OTP';
+            resendLink.style.color = 'blue'
+          } else {
+            resendLink.style.cursor = 'default';
+            resendLink.style.color = ''
+            resendLink.textContent = `Resend OTP (00:${currentTime.toString().padStart(2, '0')})`;
+          }
+        }
+
+        resendLink.addEventListener('click', function (event) {
+          event.preventDefault();
+
+          if (!resendLink.classList.contains('disabled')) {
+            currentTime = timerDuration;
+            startTimer();
+            resendLink.classList.add('disabled');
+            handleVerifyButtonClick();
+          }
+        });
+
+        function handleVerifyButtonClick(email = '') {
+          fetch('/signup/sendOtp', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Email: email }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                $('#exampleModal').modal('show');
+                currentTime = timerDuration;
+                startTimer();
+                resendLink.classList.add('disabled');
+                $('#exampleModal').modal('show');
+              } else {
+                window.location.href = '/signup';
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              // alert('An error occurred. Please try again.');
+            });
+
+          timerInterval = setInterval(startTimer, 1000);
+          resendLink.classList.add('disabled');
+        }
+
+        otpInputs.forEach((input, index) => {
+          input.addEventListener('keyup', (e) => {
+            const nextInput = otpInputs[index + 1];
+            const prevInput = otpInputs[index - 1];
+
+            if (e.key !== 'Backspace' && input.value.length === 1) {
+              if (nextInput) {
+                nextInput.focus();
+              } else {
+                e.preventDefault();
+              }
+            } else if (e.key === 'Backspace' && input.value === '') {
+              if (prevInput) {
+                prevInput.focus();
+              }
+            }
+          });
+
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              e.preventDefault();
+            }
+          });
+        });
+
+        otpForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(otpForm);
+
+          fetch('/signup/validateOtp', {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                verifyButton.style.backgroundColor = 'green';
+                verifyButton.style.color = 'white';
+                verifyButton.textContent = 'Verified';
+                verifyButton.disabled = true;
+
+                sessionStorage.removeItem('otp');
+                sessionStorage.removeItem('Email');
+                $('#exampleModal').modal('hide');
+              } else {
+                verifyButton.style.backgroundColor = 'red';
+                verifyButton.style.color = 'white';
+                verifyButton.textContent = 'Wrong OTP';
+
+                sessionStorage.removeItem('otp');
+                $('#exampleModal').modal('hide');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              // alert('An error occurred. Please try again.');
+            });
+        });
+      </script>
+
+      <!-- External JavaScripts -->
+      <script src="/js/plugins/jquery.min.js"></script>
+      <script src="/js/plugins/bootstrap.bundle.min.js"></script>
+      <script src="/js/plugins/bootstrap-slider.min.js"></script>
+
+      <script src="/js/plugins/swiper.min.js"></script>
+      <script src="/js/plugins/countdown.js"></script>
+
+      <!-- Footer Scripts -->
+      <script src="/js/theme.js"></script>
+
+</body>
+
+</html>
+
+<style>
+  /* Hide the spin buttons */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    /* Optionally remove the margin */
+  }
+</style>

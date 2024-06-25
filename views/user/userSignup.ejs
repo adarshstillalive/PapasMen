@@ -107,7 +107,7 @@
                   name="Password" placeholder="Password *">
                 <label for="customerPasswodRegisterInput">Password *</label><span class="text-secondary error-message"
                   style="color:red" id="passwordError"></span>
-                  
+
               </div>
 
               <div class="d-flex align-items-center mb-3 pb-2">
@@ -174,7 +174,7 @@
                   </div>
                   <div class="d-flex justify-content-between mt-3">
                     <button type="submit" class="btn btn-primary">Verify OTP</button>
-                    <a href="#" id="resendLink" class="text-decoration-none">Resend OTP (00:59)</a>
+                    <a href="#" id="resendLink" class="text-decoration-none">Resend OTP</a>
                     <span id="timer"></span>
                   </div>
                 </form>
@@ -197,215 +197,211 @@
       <!-- Page Overlay -->
       <div class="page-overlay"></div><!-- /.page-overlay -->
 
+
       <script>
-        const timerDuration = 59; // Seconds for the timer
-        let currentTime = timerDuration;
-        let timerInterval;
+        document.addEventListener('DOMContentLoaded', (event) => {
+          const initialTimerDuration = 59; // Initial seconds for the timer
+          let timerInterval;
+          const resendLink = document.getElementById('resendLink');
+          const timer = document.getElementById('timer');
 
-        const resendLink = document.getElementById('resendLink');
-        const otpInputs = document.querySelectorAll('.modal-body .otp_num');
-        const verifyButton = document.getElementById('verifyButton');
-        const otpForm = document.getElementById('otpForm');
-        const registerButton = document.querySelector('.btn.btn-primary.w-100.text-uppercase');
+          const otpInputs = document.querySelectorAll('.modal-body .otp_num');
+          const verifyButton = document.getElementById('verifyButton');
+          const otpForm = document.getElementById('otpForm');
+          const registerButton = document.querySelector('.btn.btn-primary.w-100.text-uppercase');
 
-        const nameError = document.getElementById('nameError');
-        const emailError = document.getElementById('emailError');
-        const contactError = document.getElementById('contactError');
-        const passwordError = document.getElementById('passwordError');
+          const nameError = document.getElementById('nameError');
+          const emailError = document.getElementById('emailError');
+          const contactError = document.getElementById('contactError');
+          const passwordError = document.getElementById('passwordError');
 
-        // Reset error messages
-
-
-
-
-
-        registerButton.addEventListener('click', (event) => {
-          const name = document.getElementById('customerNameRegisterInput').value.trim();
-          const email = document.getElementById('customerEmailRegisterInput').value.trim();
-          const contact = document.getElementById('customerContactRegisterInput').value.trim();
-          const password = document.getElementById('customerPasswodRegisterInput').value.trim();
-
-          let isValid = true;
-
-          // Name validation
-          if (name.length < 3) {
-            document.getElementById('customerNameRegisterInput').style.borderColor = 'red';
-            nameError.innerHTML = 'Name must be at least 3 characters long';
-            isValid = false;
-          } else {
-            document.getElementById('customerNameRegisterInput').style.borderColor = 'green';
-            nameError.innerHTML = '';
-          }
-
-          // Email validation
-          if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-            document.getElementById('customerEmailRegisterInput').style.borderColor = 'red';
-            emailError.innerHTML = 'Invalid email format';
-            isValid = false;
-          } else {
-            document.getElementById('customerEmailRegisterInput').style.borderColor = 'green';
-            emailError.innerHTML = '';
-          }
-
-          // Contact validation
-          if (contact.length !== 10) {
-            document.getElementById('customerContactRegisterInput').style.borderColor = 'red';
-            contactError.innerHTML = 'Contact number must be exactly 10 digits long';
-            isValid = false;
-          } else {
-            document.getElementById('customerContactRegisterInput').style.borderColor = 'green';
-            contactError.innerHTML = '';
-          }
-
-          // Password validation
-          if (password.length <= 5) {
-            document.getElementById('customerPasswodRegisterInput').style.borderColor = 'red';
-            passwordError.innerHTML = 'Password must be more than 5 characters long';
-            isValid = false;
-          } else {
-            document.getElementById('customerPasswodRegisterInput').style.borderColor = 'green';
-            passwordError.innerHTML = '';
-          }
-
-          //Verify Button
-          if (!verifyButton.disabled) {
-            verifyButton.style.borderColor = 'red';
-            emailError.innerHTML = 'Please verify your OTP'
-            isValid = false;
-          }
-
-          if (isValid) {
-            document.getElementById('signupForm').submit();
-          } else {
-            event.preventDefault();
-          }
-        });
-
-        verifyButton.addEventListener('click', function () {
-          const email = document.getElementById('customerEmailRegisterInput').value.trim();
-
-          if (email) {
-            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            modal.show();
-            handleVerifyButtonClick(email);
-          } else {
-            alert('Please enter your email address.');
-          }
-        });
-
-        function startTimer() {
-          currentTime--;
-
-          if (currentTime === 0) {
-            clearInterval(timerInterval);
-            resendLink.classList.remove('disabled');
-            resendLink.textContent = 'Resend OTP';
-            resendLink.style.color = 'blue'
-          } else {
-            resendLink.style.cursor = 'default';
-            resendLink.style.color = ''
-            resendLink.textContent = `Resend OTP (00:${currentTime.toString().padStart(2, '0')})`;
-          }
-        }
-
-        resendLink.addEventListener('click', function (event) {
-          event.preventDefault();
-
-          if (!resendLink.classList.contains('disabled')) {
-            currentTime = timerDuration;
-            startTimer();
+          function startTimer() {
+            clearInterval(timerInterval); // Clear any existing interval
             resendLink.classList.add('disabled');
-            handleVerifyButtonClick();
-          }
-        });
+            resendLink.style.pointerEvents = 'none'; // Disable click event
+            resendLink.style.color = '';
+            let remainingTime = initialTimerDuration;
 
-        function handleVerifyButtonClick(email = '') {
-          fetch('/signup/sendOtp', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ Email: email }),
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                $('#exampleModal').modal('show');
-                currentTime = timerDuration;
-                startTimer();
-                resendLink.classList.add('disabled');
-                $('#exampleModal').modal('show');
+            timer.innerHTML = `00:${remainingTime < 10 ? '0' : ''}${remainingTime}`;
+
+            timerInterval = setInterval(() => {
+              if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                resendLink.classList.remove('disabled');
+                resendLink.style.pointerEvents = 'auto'; // Re-enable click event
+                resendLink.style.color = 'blue';
+                timer.innerHTML = "00:00";
               } else {
-                window.location.href = '/signup';
+                remainingTime--;
+                timer.innerHTML = `00:${remainingTime < 10 ? '0' : ''}${remainingTime}`;
               }
+            }, 1000);
+          }
+
+          resendLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            startTimer();
+            handleVerifyButtonClick();
+          });
+
+          registerButton.addEventListener('click', (event) => {
+            const name = document.getElementById('customerNameRegisterInput').value.trim();
+            const email = document.getElementById('customerEmailRegisterInput').value.trim();
+            const contact = document.getElementById('customerContactRegisterInput').value.trim();
+            const password = document.getElementById('customerPasswodRegisterInput').value.trim();
+
+            let isValid = true;
+
+            // Name validation
+            if (name.length < 3) {
+              document.getElementById('customerNameRegisterInput').style.borderColor = 'red';
+              nameError.innerHTML = 'Name must be at least 3 characters long';
+              isValid = false;
+            } else {
+              document.getElementById('customerNameRegisterInput').style.borderColor = 'green';
+              nameError.innerHTML = '';
+            }
+
+            // Email validation
+            if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+              document.getElementById('customerEmailRegisterInput').style.borderColor = 'red';
+              emailError.innerHTML = 'Invalid email format';
+              isValid = false;
+            } else {
+              document.getElementById('customerEmailRegisterInput').style.borderColor = 'green';
+              emailError.innerHTML = '';
+            }
+
+            // Contact validation
+            if (contact.length !== 10) {
+              document.getElementById('customerContactRegisterInput').style.borderColor = 'red';
+              contactError.innerHTML = 'Contact number must be exactly 10 digits long';
+              isValid = false;
+            } else {
+              document.getElementById('customerContactRegisterInput').style.borderColor = 'green';
+              contactError.innerHTML = '';
+            }
+
+            // Password validation
+            if (password.length <= 5) {
+              document.getElementById('customerPasswodRegisterInput').style.borderColor = 'red';
+              passwordError.innerHTML = 'Password must be more than 5 characters long';
+              isValid = false;
+            } else {
+              document.getElementById('customerPasswodRegisterInput').style.borderColor = 'green';
+              passwordError.innerHTML = '';
+            }
+
+            //Verify Button
+            if (!verifyButton.disabled) {
+              verifyButton.style.borderColor = 'red';
+              emailError.innerHTML = 'Please verify your OTP'
+              isValid = false;
+            }
+
+            if (isValid) {
+              document.getElementById('signupForm').submit();
+            } else {
+              event.preventDefault();
+            }
+          });
+          let otpSendFlag = false
+          verifyButton.addEventListener('click', function () {
+            const email = document.getElementById('customerEmailRegisterInput').value.trim();
+            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            if (otpSendFlag) {
+              modal.show();
+            } else {
+              if (email) {
+                otpSendFlag = true
+                modal.show();
+                startTimer();
+                handleVerifyButtonClick(email);
+              } else {
+                alert('Please enter your email address.');
+              }
+            }
+          });
+
+          function handleVerifyButtonClick(email = '') {
+            fetch('/signup/sendOtp', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ Email: email }),
             })
-            .catch(error => {
-              console.error('Error:', error);
-              // alert('An error occurred. Please try again.');
+              .then(response => response.json())
+              .then(data => {
+                if (!data.success) {
+                  window.location.href = '/signup';
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          }
+
+          // OTP Input
+          otpInputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+              const nextInput = otpInputs[index + 1];
+              const prevInput = otpInputs[index - 1];
+
+              if (e.key !== 'Backspace' && input.value.length === 1) {
+                if (nextInput) {
+                  nextInput.focus();
+                } else {
+                  e.preventDefault();
+                }
+              } else if (e.key === 'Backspace' && input.value === '') {
+                if (prevInput) {
+                  prevInput.focus();
+                }
+              }
             });
 
-          timerInterval = setInterval(startTimer, 1000);
-          resendLink.classList.add('disabled');
-        }
-
-        otpInputs.forEach((input, index) => {
-          input.addEventListener('keyup', (e) => {
-            const nextInput = otpInputs[index + 1];
-            const prevInput = otpInputs[index - 1];
-
-            if (e.key !== 'Backspace' && input.value.length === 1) {
-              if (nextInput) {
-                nextInput.focus();
-              } else {
+            input.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
                 e.preventDefault();
               }
-            } else if (e.key === 'Backspace' && input.value === '') {
-              if (prevInput) {
-                prevInput.focus();
-              }
-            }
-          });
-
-          input.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-              e.preventDefault();
-            }
-          });
-        });
-
-        otpForm.addEventListener('submit', function (event) {
-          event.preventDefault();
-
-          const formData = new FormData(otpForm);
-
-          fetch('/signup/validateOtp', {
-            method: 'POST',
-            body: formData,
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                verifyButton.style.backgroundColor = 'green';
-                verifyButton.style.color = 'white';
-                verifyButton.textContent = 'Verified';
-                verifyButton.disabled = true;
-
-                sessionStorage.removeItem('otp');
-                sessionStorage.removeItem('Email');
-                $('#exampleModal').modal('hide');
-              } else {
-                verifyButton.style.backgroundColor = 'red';
-                verifyButton.style.color = 'white';
-                verifyButton.textContent = 'Wrong OTP';
-
-                sessionStorage.removeItem('otp');
-                $('#exampleModal').modal('hide');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              // alert('An error occurred. Please try again.');
             });
+          });
+
+
+          otpForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(otpForm);
+
+            fetch('/signup/validateOtp', {
+              method: 'POST',
+              body: formData,
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  verifyButton.style.backgroundColor = 'green';
+                  verifyButton.style.color = 'white';
+                  verifyButton.textContent = 'Verified';
+                  verifyButton.disabled = true;
+
+                  sessionStorage.removeItem('otp');
+                  sessionStorage.removeItem('Email');
+                  $('#exampleModal').modal('hide');
+                } else {
+                  verifyButton.style.backgroundColor = 'red';
+                  verifyButton.style.color = 'white';
+                  verifyButton.textContent = 'Wrong OTP';
+
+                  sessionStorage.removeItem('otp');
+                  $('#exampleModal').modal('hide');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          });
         });
       </script>
 

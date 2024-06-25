@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <title>Edit Product | Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="Responsive bootstrap 4 admin template" name="description" />
   <meta content="Coderthemes" name="author" />
@@ -24,7 +24,7 @@
               <div class="row">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Edit Product</span>
                   </div>
                 </div>
               </div>
@@ -48,7 +48,7 @@
                       <form action="/admin/products/editProduct" enctype="multipart/form-data" method="POST"
                         id="product-form">
                         <div class="mb-3">
-                          <label class="form-label" for="ecommerce-product-name">Name</label>
+                          <label class="form-label" for="name">Name</label>
                           <input type="text" class="form-control" id="name" placeholder="Product title" name="Name"
                             aria-label="Product title" value="<%= productObj.Name %>" required>
                         </div>
@@ -56,14 +56,10 @@
                           <div class="col">
                             <label class="form-label" for="brand">Brand</label>
                             <div class="input-group">
-                              <!-- Input field for brand name -->
                               <input type="text" class="form-control" id="selectedBrand"
                                 value="<%= productObj.Brand.Name %>" name="Brand" readonly required>
-
-                              <!-- Input field for brand ObjectId (hidden) -->
                               <input type="hidden" class="form-control" id="selectedBrandId"
                                 value="<%= productObj.Brand._id %>" name="BrandId" readonly required>
-
                               <div class="input-group-append">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -108,178 +104,293 @@
                             </div>
                           </div>
                         </div>
-                        <div class=" mb-3">
-                          <div>
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control h-200" rows="1" name="Description"
-                              placeholder="<%= productObj.Description %>"
-                              required><%= productObj.Description %></textarea>
-                          </div>
+                        <div class="mb-3">
+                          <label class="form-label">Description</label>
+                          <textarea class="form-control h-200" rows="1" name="Description"
+                            placeholder="<%= productObj.Description %>"
+                            required><%= productObj.Description %></textarea>
                         </div>
 
-                        <div class="card mb-4 mt-4">
+                        <div class="card mb-4 mt-4 p-3">
                           <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 card-title">Versions</h5>
                             <button type="button" class="btn btn-secondary" onclick="addVersion()">Add Version</button>
                           </div>
-                          <div id="versions-container"></div>
-                          <% for(key=0;key<productObj.Versions.length;key++){%>
-                            <div class="card-body version-item mb-3 p-3 border rounded"
-                              id="version<%= productObj.Versions[key]._id %>">
-                              <!-- Versions will be dynamically added here -->
-                              <input type="hidden" name="existingVersions[]"
-                                value="<%= productObj.Versions[key]._id %>">
-                              <div class="row mb-2">
-                                <div class="col d-flex justify-content-between align-items-center">
-                                  <span class="font-weight-bold">Version</span>
-                                  <button type="button" class="btn btn-danger btn-sm"
-                                    onclick="removeVersion('<%= productObj.Versions[key]._id %>')">Delete</button>
+                          <div id="versions-container">
+                            <input type="hidden" id="deletedVersions" name="deletedVersions" value="">
+                            <% for(let key=0; key < productObj.Versions.length; key++) { %>
+                              <div class="card-body version-item mb-3 p-3 border rounded"
+                                id="version<%= productObj.Versions[key]._id %>">
+                                <input type="hidden" name="existingVersions[<%= key %>]._id"
+                                  value="<%= productObj.Versions[key]._id %>">
+                                <div class="row mb-2">
+                                  <div class="col d-flex justify-content-between align-items-center">
+                                    <span class="font-weight-bold">Existing version</span>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                      onclick="removeVersion('<%= productObj.Versions[key]._id %>')">Delete</button>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="row">
-                                <div class="col">
-                                  <label class="form-label" for="color">Color</label>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" id="selectedColor${versionCount}"
-                                      name="Versions[${versionCount}].ColorName"
-                                      value="<%= productObj.Versions[key].Color.Name %>" readonly required>
-                                    <input type="hidden" class="form-control" id="selectedColorId${versionCount}"
-                                      name="Versions[${versionCount}].Color" value="<%= productObj.Versions[key].Color._id %>" readonly required>
-                                    <div class="input-group-append">
-                                      <button class="btn btn-secondary dropdown-toggle" type="button"
-                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Select Color
-                                      </button>
-                                      <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
-                                        <div class="row">
-                                          <% colorsData.forEach((color)=> { %>
-                                            <div class="col-sm-4">
-                                              <button class="dropdown-item" type="button"
-                                                onclick="selectColor('<%= color._id %>', '<%= color.Name %>', ${versionCount})">
-                                                <%= color.Name %>
-                                              </button>
-                                            </div>
-                                            <% }) %>
-                                        </div>
+                                <div class="row">
+                                  <div class="col">
+                                    <label class="form-label" for="color">Color</label>
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" id="selectedColor<%= key %>"
+                                        name="existingVersions[<%= key %>].ColorName"
+                                        value="<%= productObj.Versions[key].Color.Name %>" readonly required>
+                                      <input type="hidden" class="form-control" id="selectedColorId<%= key %>"
+                                        name="existingVersions[<%= key %>].Color"
+                                        value="<%= productObj.Versions[key].Color._id %>" readonly required>
+                                    </div>
+                                  </div>
+                                  <div class="col">
+                                    <label class="form-label" for="size">Size (UK)</label>
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" id="selectedSize<%= key %>"
+                                        name="existingVersions[<%= key %>].SizeName"
+                                        value="<%= productObj.Versions[key].Size.Name %>" readonly required>
+                                      <input type="hidden" class="form-control" id="selectedSizeId<%= key %>"
+                                        name="existingVersions[<%= key %>].Size"
+                                        value="<%= productObj.Versions[key].Size._id %>" readonly required>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col">
+                                    <label class="form-label" for="quantity">Quantity</label>
+                                    <div class="input-group">
+                                      <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                          onclick="changeQuantity('minus', <%= key %>)">-</button>
+                                      </div>
+                                      <input type="number" class="form-control"
+                                        value="<%= productObj.Versions[key].Quantity %>" id="quantity<%= key %>"
+                                        name="existingVersions[<%= key %>].Quantity" aria-label="Quantity" required>
+                                      <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                          onclick="changeQuantity('plus', <%= key %>)">+</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col">
+                                    <label class="form-label" for="Price">Price</label>
+                                    <div class="input-group">
+                                      <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                          onclick="changePrice('minus', <%= key %>)">-</button>
+                                      </div>
+                                      <input type="number" class="form-control"
+                                        value="<%= productObj.Versions[key].Price %>" id="price<%= key %>"
+                                        name="existingVersions[<%= key %>].Price" aria-label="Price" required>
+                                      <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                          onclick="changePrice('plus', <%= key %>)">+</button>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div class="col">
-                                  <label class="form-label" for="size">Size (UK)</label>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" id="selectedSize${versionCount}"
-                                      name="Versions[${versionCount}].SizeName"
-                                      value="<%= productObj.Versions[key].Size.Name %>" readonly required>
-                                    <input type="hidden" class="form-control" id="selectedSizeId${versionCount}"
-                                      name="Versions[${versionCount}].Size" value="<%= productObj.Versions[key].Size._id %>"  readonly required>
-                                    <div class="input-group-append">
-                                      <button class="btn btn-secondary dropdown-toggle" type="button"
-                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Select Size
-                                      </button>
-                                      <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
-                                        <div class="row">
-                                          <% sizesData.forEach((size)=> { %>
-                                            <div class="col-sm-4">
-                                              <button class="dropdown-item" type="button"
-                                                onclick="selectSize('<%= size._id %>', '<%= size.Name %>', ${versionCount})">
-                                                <%= size.Name %>
-                                              </button>
-                                            </div>
-                                            <% }) %>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
                               </div>
-                              <div class="row">
-                                <div class="col">
-                                  <label class="form-label" for="quantity">Quantity</label>
-                                  <div class="input-group">
-                                    <div class="input-group-prepend">
-                                      <button class="btn btn-outline-secondary" type="button"
-                                        onclick="changeQuantity('minus', ${versionCount})">-</button>
-                                    </div>
-                                    <input type="number" class="form-control"
-                                      value="<%= productObj.Versions[key].Quantity%>" id="quantity${versionCount}"
-                                      name="Versions[${versionCount}].Quantity" aria-label="Quantity" required>
-                                    <div class="input-group-append">
-                                      <button class="btn btn-outline-secondary" type="button"
-                                        onclick="changeQuantity('plus', ${versionCount})">+</button>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="col">
-                                  <label class="form-label" for="Price">Price</label>
-                                  <div class="input-group">
-                                    <div class="input-group-prepend">
-                                      <button class="btn btn-outline-secondary" type="button"
-                                        onclick="changePrice('minus', ${versionCount})">-</button>
-                                    </div>
-                                    <input type="number" class="form-control"
-                                      value="<%= productObj.Versions[key].Price %>" id="price${versionCount}"
-                                      name="Versions[${versionCount}].Price" aria-label="Price" required>
-                                    <div class="input-group-append">
-                                      <button class="btn btn-outline-secondary" type="button"
-                                        onclick="changePrice('plus', ${versionCount})">+</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <%}%>
-                        </div>
+                              <% } %>
+                          </div>
 
-                        <div class="row mb-3">
-                          <div class="col">
-                            <label class="form-label" for="color">Images</label>
-                            <div class="mb-3">
-                              <button type="button" class="btn btn-primary" id="add-image-button">Add Image</button>
-                              <input type="file" id="image-upload" name="Image" accept="image/png" multiple
-                                style="display: none;">
-                            </div>
-                            <div id="selected-images-preview" class="d-flex flex-wrap">
-                              <div id="existing-images-preview">
-                                <% for (var i=0; i < productObj.Image.length; i++) { %>
-                                  <div
-                                    class="rounded bg-light p-2 m-1 d-flex align-items-center existing-image-container">
-                                    <img class="img-fluid" src="/<%= productObj.Image[i] %>" alt="Image"
-                                      style="width: 100px; height: 100px;">
-                                    <button type="button"
-                                      class="btn btn-danger btn-sm ml-2 delete-existing-image-button">Remove</button>
-                                    <input type="hidden" name="existingImages[]" value="<%= productObj.Image[i] %>">
-                                  </div>
-                                  <% } %>
+                          <div class="row mb-3">
+                            <div class="col">
+                              <label class="form-label" for="color">Images</label>
+                              <div class="mb-3">
+                                <button type="button" class="btn btn-primary" id="add-image-button">Add Image</button>
+                                <input type="file" id="image-upload" name="Image" accept="image/png" multiple
+                                  style="display: none;">
                               </div>
-                              <div id="new-images-preview"></div>
+                              <div id="selected-images-preview" class="d-flex flex-wrap">
+                                <div id="existing-images-preview">
+                                  <% for (var i=0; i < productObj.Image.length; i++) { %>
+                                    <div
+                                      class="rounded bg-light p-2 m-1 d-flex align-items-center existing-image-container">
+                                      <img class="img-fluid" src="/<%= productObj.Image[i] %>" alt="Image"
+                                        style="width: 100px; height: 100px;">
+                                      <button type="button"
+                                        class="btn btn-danger btn-sm ml-2 delete-existing-image-button">Remove</button>
+                                      <input type="hidden" name="existingImages[]" value="<%= productObj.Image[i] %>">
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <div id="new-images-preview"></div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="text-center mt-3">
-                          <input type="hidden" name="productId" value="<%= productObj._id %>">
-                          <button type="submit" class="btn btn-primary">Update Product</button>
-                        </div>
+                          <div class="text-center mt-3">
+                            <input type="hidden" name="productId" value="<%= productObj._id %>">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                          </div>
                       </form>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- end row-->
             </div>
-            <!-- container -->
           </div>
-          <!-- content -->
         </div>
-        <!-- content-page -->
   </div>
-  <!-- End of wrapper -->
+
   <script src="/assets/js/vendor.min.js"></script>
   <script src="/assets/js/app.min.js"></script>
+
   <script>
+
+    function selectColor(colorId, colorName, index) {
+      document.getElementById(`selectedColor${index}`).value = colorName;
+      document.getElementById(`selectedColorId${index}`).value = colorId;
+    }
+
+    function selectSize(sizeId, sizeName, index) {
+      document.getElementById(`selectedSize${index}`).value = sizeName;
+      document.getElementById(`selectedSizeId${index}`).value = sizeId;
+    }
+
+    function selectCategory(categoryId, categoryName) {
+      document.getElementById("selectedCategory").value = categoryName;
+      document.getElementById("selectedCategoryId").value = categoryId;
+    }
+
+    function selectBrand(brandId, brandName) {
+      document.getElementById("selectedBrand").value = brandName;
+      document.getElementById("selectedBrandId").value = brandId;
+    }
+
+    function changeQuantity(action, index) {
+      const quantityInput = document.getElementById(`quantity${index}`);
+      let currentValue = parseInt(quantityInput.value);
+      if (action === 'minus' && currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+      } else if (action === 'plus') {
+        quantityInput.value = currentValue + 1;
+      }
+    }
+
+    function changePrice(action, index) {
+      const priceInput = document.getElementById(`price${index}`);
+      let currentValue = parseFloat(priceInput.value);
+      if (action === 'minus' && currentValue > 0) {
+        priceInput.value = (currentValue - 1).toFixed(2);
+      } else if (action === 'plus') {
+        priceInput.value = (currentValue + 1).toFixed(2);
+      }
+    }
+
+    let versionCount = <%= productObj.Versions.length %>;
+
+    function addVersion() {
+      const versionContainer = document.getElementById('versions-container');
+
+      const newVersionHTML = `
+    <div class="card-body version-item mb-3 p-3 border rounded" id="newVersion${versionCount}">
+      <div class="row mb-2">
+        <div class="col d-flex justify-content-between align-items-center">
+          <span class="font-weight-bold">New version</span>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeNewVersion('newVersion${versionCount}')">Delete</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label class="form-label" for="color">Color</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="selectedColor${versionCount}" name="newVersions[${versionCount}].ColorName" value="" readonly required>
+            <input type="hidden" class="form-control" id="selectedColorId${versionCount}" name="newVersions[${versionCount}].Color" value="" readonly required>
+            <div class="input-group-append">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select Color
+              </button>
+              <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
+                <div class="row">
+                  <% colorsData.forEach((color)=> { %>
+                    <div class="col-sm-4">
+                      <button class="dropdown-item" type="button" onclick="selectColor('<%= color._id %>', '<%= color.Name %>', ${versionCount})">
+                        <%= color.Name %>
+                      </button>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="size">Size (UK)</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="selectedSize${versionCount}" name="newVersions[${versionCount}].SizeName" value="" readonly required>
+            <input type="hidden" class="form-control" id="selectedSizeId${versionCount}" name="newVersions[${versionCount}].Size" value="" readonly required>
+            <div class="input-group-append">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select Size
+              </button>
+              <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
+                <div class="row">
+                  <% sizesData.forEach((size)=> { %>
+                    <div class="col-sm-4">
+                      <button class="dropdown-item" type="button" onclick="selectSize('<%= size._id %>', '<%= size.Name %>', ${versionCount})">
+                        <%= size.Name %>
+                      </button>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label class="form-label" for="quantity">Quantity</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('minus', ${versionCount})">-</button>
+            </div>
+            <input type="number" class="form-control" value="0" id="quantity${versionCount}" name="newVersions[${versionCount}].Quantity" aria-label="Quantity" required>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('plus', ${versionCount})">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="Price">Price</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus', ${versionCount})">-</button>
+            </div>
+            <input type="number" class="form-control" value="0" id="price${versionCount}" name="newVersions[${versionCount}].Price" aria-label="Price" required>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus', ${versionCount})">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+      versionContainer.insertAdjacentHTML('beforeend', newVersionHTML);
+      versionCount++;
+    }
+
+    function removeVersion(versionId) {
+      // Add the versionId to a hidden input for deletions
+      const deletionsInput = document.getElementById('deletedVersions');
+      deletionsInput.value += (deletionsInput.value ? ',' : '') + versionId;
+      console.log(deletionsInput.value);
+
+      // Remove the version from the DOM
+      const versionElement = document.getElementById(`version${versionId}`);
+      if (versionElement) {
+        versionElement.remove();
+      }
+    }
+    function removeNewVersion(versionId) {
+
+      // Remove the version from the DOM
+      const versionElement = document.getElementById(versionId);
+      if (versionElement) {
+        versionElement.remove();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       const addImageButton = document.getElementById("add-image-button");
       const imageUploadInput = document.getElementById("image-upload");
@@ -352,187 +463,11 @@
       });
     });
 
-    let versionCount = <%= productObj.Versions.length %>;
-
-    function selectColor(colorId, colorName, index) {
-      document.getElementById(`selectedColor${index}`).value = colorName;
-      document.getElementById(`selectedColorId${index}`).value = colorId;
-    }
-
-    function selectSize(sizeId, sizeName, index) {
-      document.getElementById(`selectedSize${index}`).value = sizeName;
-      document.getElementById(`selectedSizeId${index}`).value = sizeId;
-    }
-
-    function selectCategory(categoryId, categoryName) {
-      document.getElementById("selectedCategory").value = categoryName;
-      document.getElementById("selectedCategoryId").value = categoryId;
-    }
-
-    function selectBrand(brandId, brandName) {
-      document.getElementById("selectedBrand").value = brandName;
-      document.getElementById("selectedBrandId").value = brandId;
-    }
-
-    function changeQuantity(action, index) {
-      const quantityInput = document.getElementById(`quantity${index}`);
-      let currentValue = parseInt(quantityInput.value);
-      if (action === 'minus' && currentValue > 1) {
-        quantityInput.value = currentValue - 1;
-      } else if (action === 'plus') {
-        quantityInput.value = currentValue + 1;
-      }
-    }
-
-    function addVersion() {
-      const versionsContainer = document.getElementById("versions-container");
-      const newVersion = document.createElement("div");
-      newVersion.classList.add("version-item", "mb-3", "p-3", "border", "rounded");
-      newVersion.id = `version${versionCount}`;
-      newVersion.innerHTML = `
-    <div class="row mb-2">
-      <div class="col d-flex justify-content-between align-items-center">
-        <span class="font-weight-bold">Version</span>
-        <button type="button" class="btn btn-danger btn-sm" onclick="removeVersion(${versionCount})">Delete</button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label class="form-label" for="color">Color</label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="selectedColor${versionCount}" name="Versions[${versionCount}].ColorName" readonly required>
-          <input type="hidden" class="form-control" id="selectedColorId${versionCount}" name="Versions[${versionCount}].Color" readonly required>
-          <div class="input-group-append">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Select Color
-            </button>
-            <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
-              <div class="row">
-                <% colorsData.forEach(color => { %>
-                  <div class="col-sm-4">
-                    <button class="dropdown-item" type="button" onclick="selectColor('<%= color._id %>', '<%= color.Name %>', ${versionCount})">
-                      <%= color.Name %>
-                    </button>
-                  </div>
-                <% }) %>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <label class="form-label" for="size">Size (UK)</label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="selectedSize${versionCount}" name="Versions[${versionCount}].SizeName" readonly required>
-          <input type="hidden" class="form-control" id="selectedSizeId${versionCount}" name="Versions[${versionCount}].Size" readonly required>
-          <div class="input-group-append">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Select Size
-            </button>
-            <div class="dropdown-menu columns-3" aria-labelledby="dropdownMenuButton">
-              <div class="row">
-                <% sizesData.forEach(size => { %>
-                  <div class="col-sm-4">
-                    <button class="dropdown-item" type="button" onclick="selectSize('<%= size._id %>', '<%= size.Name %>', ${versionCount})">
-                      <%= size.Name %>
-                    </button>
-                  </div>
-                <% }) %>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label class="form-label" for="quantity">Quantity</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('minus', ${versionCount})">-</button>
-          </div>
-          <input type="number" class="form-control" value="1" id="quantity${versionCount}" name="Versions[${versionCount}].Quantity" aria-label="Quantity" required>
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('plus', ${versionCount})">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <label class="form-label" for="Price">Price</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus', ${versionCount})">-</button>
-          </div>
-          <input type="number" class="form-control" value="1" id="price${versionCount}" name="Versions[${versionCount}].Price" aria-label="Price" required>
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus', ${versionCount})">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-      versionsContainer.appendChild(newVersion);
-      versionCount++;
-    }
-
-    function removeVersion(versionId) {
-
-      const versionElement = document.getElementById(`version${versionId}`);
-      versionElement.remove();
-
-
-      const removedVersionInput = document.createElement('input');
-      removedVersionInput.type = 'hidden';
-      removedVersionInput.name = 'removedVersions[]';
-      removedVersionInput.value = versionId;
-      document.getElementById('product-form').appendChild(removedVersionInput);
-    }
-
-    window.removeVersion = removeVersion;
-
-    function collectVersionsData() {
-      const versions = [];
-
-      // Assuming you have a way to dynamically add versions on the client side
-      const versionContainers = document.querySelectorAll('.version-container');
-
-      versionContainers.forEach(container => {
-        const colorName = container.querySelector('.version-color-name').value;
-        const colorId = container.querySelector('.version-color').value;
-        const sizeName = container.querySelector('.version-size-name').value;
-        const sizeId = container.querySelector('.version-size').value;
-        const quantity = container.querySelector('.version-quantity').value;
-        const price = container.querySelector('.version-price').value;
-
-        versions.push({
-          ColorName: colorName,
-          Color: colorId,
-          SizeName: sizeName,
-          Size: sizeId,
-          Quantity: quantity,
-          Price: price
-        });
-      });
-
-      return versions;
-    }
-
-    // Function to handle form submission
+    // Form submission
     document.getElementById('product-form').addEventListener('submit', async function (event) {
       event.preventDefault();
 
       const formData = new FormData(this);
-      const versions = collectVersionsData();
-
-      // Append versions directly to formData
-      versions.forEach((version, index) => {
-        formData.append(`Versions[${index}].ColorName`, version.ColorName);
-        formData.append(`Versions[${index}].Color`, version.Color);
-        formData.append(`Versions[${index}].SizeName`, version.SizeName);
-        formData.append(`Versions[${index}].Size`, version.Size);
-        formData.append(`Versions[${index}].Quantity`, version.Quantity);
-        formData.append(`Versions[${index}].Price`, version.Price);
-      });
 
       try {
         const response = await fetch('/admin/products/editProduct', {
@@ -543,13 +478,13 @@
         if (response.ok) {
           window.location.href = '/admin/products';
         } else {
-          console.log('Something went wrong');
+          const errorData = await response.json();
+          console.log('Error:', errorData.message);
         }
       } catch (error) {
         console.error('Error:', error);
       }
     });
-
   </script>
 </body>
 

@@ -3,18 +3,19 @@ const userRoute = express(); // Use express.Router() for a sub-router
 const session = require('express-session');
 const flash = require('connect-flash');
 const Auth = require('../middlewares/userAuth');
+const Swal = require('sweetalert2')
 const multer = require('multer')
 const passport = require('passport');
 require('../others/passport')
 
-const userController = require('../controller/userController');
+const authController = require('../controller/userControllers/authController');
+const cartController = require('../controller/userControllers/cartController');
+const productController = require('../controller/userControllers/productController');
+const profileController = require('../controller/userControllers/profileController');
+const sortingController = require('../controller/userControllers/sortingController')
 
 const upload = multer({ dest: 'uploads/' });
 
-
-// // Middleware to parse JSON and URL-encoded payloads
-// userRoute.use(express.json());
-// userRoute.use(express.urlencoded({ extended: true }));
 
 // Session middleware
 userRoute.use(session({
@@ -45,31 +46,32 @@ userRoute.use((req, res, next) => {
 });
 
 //User Routes
-userRoute.get('/', userController.getHome);
-userRoute.get('/signin', Auth.notUser, userController.getSignin);
-userRoute.post('/signin', Auth.notUser, userController.postSignin);
-userRoute.get('/signup', Auth.notUser, userController.getSignup);
-userRoute.post('/signup', Auth.notUser, userController.postSignup);
-userRoute.post('/signup/sendOtp', Auth.notUser, userController.postSendOtp);
-userRoute.post('/signup/validateOtp', Auth.notUser, upload.none(), userController.postValidateOtp);
-userRoute.get('/signout',userController.getSignout);
-userRoute.get('/forgotPassword',Auth.notUser,userController.getForgotPassword);
-userRoute.post('/forgotPassword',Auth.notUser,userController.postForgotPassword);
-userRoute.post('/forgotPassword/sendOtp', Auth.notUser, userController.postForgotSendOtp);
-userRoute.get('/auth/google/success', userController.getAuthSuccess);
-userRoute.get('/auth/google/failure', userController.getAuthFailure);
+userRoute.get('/', authController.getHome);
+userRoute.get('/signin', Auth.notUser, authController.getSignin);
+userRoute.post('/signin', Auth.notUser, authController.postSignin);
+userRoute.get('/signup', Auth.notUser, authController.getSignup);
+userRoute.post('/signup', Auth.notUser, authController.postSignup);
+userRoute.post('/signup/sendOtp', Auth.notUser, authController.postSendOtp);
+userRoute.post('/signup/validateOtp', Auth.notUser, upload.none(), authController.postValidateOtp);
+userRoute.get('/signout',authController.getSignout);
+userRoute.get('/forgotPassword',Auth.notUser,authController.getForgotPassword);
+userRoute.post('/forgotPassword',Auth.notUser,authController.postForgotPassword);
+userRoute.post('/forgotPassword/sendOtp', Auth.notUser, authController.postForgotSendOtp);
+userRoute.get('/auth/google/success', authController.getAuthSuccess);
+userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
-userRoute.get('/product', userController.getProduct);
-userRoute.get('/profile',Auth.isUser,userController.getProfile);
-userRoute.get('/profile/orders',Auth.isUser,userController.getOrders);
-userRoute.get('/profile/address',Auth.isUser, userController.getAddress);
-userRoute.post('/profile/editAddress',Auth.isUser, userController.postEditAddress);
-userRoute.post('/profile/addAddress',Auth.isUser, userController.postAddAddress);
-userRoute.get('/profile/deleteAddress',Auth.isUser,userController.getDeleteAddress);
-userRoute.get('/category',userController.getCategory)
-userRoute.get('/cart',Auth.isUser,userController.getCart)
-userRoute.post('/cart/addToCart',Auth.isUser,userController.getAddToCart)
-userRoute.get('/cart/checkout',Auth.isUser,userController.getCheckout)
+userRoute.get('/product', productController.getProduct);
+userRoute.get('/profile',Auth.isUser,profileController.getProfile);
+userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
+userRoute.get('/profile/address',Auth.isUser, profileController.getAddress);
+userRoute.post('/profile/editAddress',Auth.isUser, profileController.postEditAddress);
+userRoute.post('/profile/addAddress',Auth.isUser, profileController.postAddAddress);
+userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAddress);
+userRoute.get('/category',productController.getCategory)
+userRoute.get('/category/sort',sortingController.getSortCategory)
+userRoute.get('/cart',Auth.isUser,cartController.getCart)
+userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
+userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
 
 
 

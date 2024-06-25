@@ -6,7 +6,6 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="author" content="flexkit">
 
-  <link rel="shortcut icon" href="https://uomo-html.flexkitux.com/images/favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.gstatic.com/">
 
   <!-- Fonts -->
@@ -520,12 +519,12 @@
               <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
                 <a href="/" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
                 <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium" disabled>The Shop</a>
+                <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium" >The Shop</a>
               </div><!-- /.breadcrumb -->
 
               <div
                 class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                <select id="sort-select" class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0"
+                <select id="sort-select" class="shop-acs__select form-select w-auto border-3 py-0 order-1 order-md-0 p-3"
                   aria-label="Sort Items" name="total-number">
                   <option value="default" selected>Default Sorting</option>
                   <option value="1">Popularity</option>
@@ -562,7 +561,7 @@
               </div><!-- /.shop-acs -->
             </div><!-- /.d-flex justify-content-between -->
 
-            <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+            <div class="products-grid row row-cols-2 row-cols-md-3 border p-3" id="products-grid">
               <% for(key=0;key<productObj.length;key++){%>
                 <div class="product-card-wrapper">
                   <div class="product-card mb-3 mb-md-4 mb-xxl-5">
@@ -573,12 +572,12 @@
                           <div class="swiper-slide">
                             <a href="/product?id=<%= productObj[key]._id %>"><img loading="lazy"
                                 src="<%= productObj[key].Image[0] %>" width="330" height="400"
-                                alt="Cropped Faux leather Jacket" class="pc__img"></a>
+                                alt="Product image" class="pc__img"></a>
                           </div><!-- /.pc__img-wrapper -->
                           <div class="swiper-slide">
                             <a href="/product?id=<%= productObj[key]._id %>"><img loading="lazy"
                                 src="<%= productObj[key].Image[1] %>" width="330" height="400"
-                                alt="Cropped Faux leather Jacket" class="pc__img"></a>
+                                alt="Product image" class="pc__img"></a>
                           </div><!-- /.pc__img-wrapper -->
                         </div>
                         <span class="pc__img-prev"><svg width="7" height="11" viewBox="0 0 7 11"
@@ -687,109 +686,95 @@
           <!-- Internal JS -->
           <!-- Embedding the JSON safely -->
           <script id="product-data" type="application/json">
-  <%- JSON.stringify(productObj) %>
-</script>
-
+            <%- JSON.stringify(productObj) %>
+          </script>
+          
           <script>
             document.addEventListener('DOMContentLoaded', function () {
               const productDataScript = document.getElementById('product-data').textContent;
               let productObj;
-
+          
               try {
                 productObj = JSON.parse(productDataScript);
               } catch (error) {
                 console.error('Error parsing product data:', error);
                 return;
               }
-
-              document.getElementById('sort-select').addEventListener('change', function (event) {
-                // console.log('Selected value:', event.target.value); // Debugging log
-                let sortedProducts;
-                switch (event.target.value) {
-                  case "1":
-                    sortedProducts = productObj; // Placeholder for sorting by popularity
-                    break;
-                  case "2":
-                    sortedProducts = [...productObj].sort((a, b) => a.Versions[0].Price - b.Versions[0].Price);
-                    break;
-                  case "3":
-                    sortedProducts = [...productObj].sort((a, b) => b.Versions[0].Price - a.Versions[0].Price);
-                    break;
-                  case "4":
-                    sortedProducts = productObj; // Placeholder for sorting by average ratings
-                    break;
-                  case "5":
-                    sortedProducts = productObj; // Placeholder for sorting by featured
-                    break;
-                  case "6":
-                    sortedProducts = [...productObj].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                    break;
-                  case "7":
-                    sortedProducts = [...productObj].sort((a, b) => a.Name.localeCompare(b.Name));
-                    break;
-                  case "8":
-                    sortedProducts = [...productObj].sort((a, b) => b.Name.localeCompare(a.Name));
-                    break;
-                  default:
-                    sortedProducts = productObj;
+          
+              const categoryId = productObj[0]?.Category?._id; // Assuming categoryId is the same for all products
+          
+              document.getElementById('sort-select').addEventListener('change', async function (event) {
+                const sortOption = event.target.value;
+                
+                try {
+                  const response = await fetch(`/category/sort?id=${sortOption}&categoryId=${categoryId}`);
+          
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+          
+                  const sortedProducts = await response.json();
+                  renderProducts(sortedProducts);
+                } catch (error) {
+                  console.error('Error fetching sorted products:', error);
                 }
-                renderProducts(sortedProducts);
               });
-
+          
               // Initial render
               renderProducts(productObj);
-
+          
               function renderProducts(products) {
                 const productGrid = document.getElementById('products-grid');
                 productGrid.innerHTML = ''; // Clear existing products
-
+          
                 products.forEach(product => {
                   const productCard = `
-          <div class="product-card-wrapper">
-            <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-              <div class="pc__img-wrapper bg-light">
-                <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
-                  <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                      <a href="/product?id=${product._id}"><img loading="lazy" src="${product.Image[0]}" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                    <div class="product-card-wrapper">
+                      <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+                        <div class="pc__img-wrapper bg-light">
+                          <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
+                            <div class="swiper-wrapper">
+                              <div class="swiper-slide">
+                                <a href="/product?id=${product._id}"><img loading="lazy" src="${product.Image[0]}" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                              </div>
+                              <div class="swiper-slide">
+                                <a href="/product?id=${product._id}"><img loading="lazy" src="${product.Image[1]}" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                              </div>
+                            </div>
+                            <span class="pc__img-prev"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_prev_sm" /></svg></span>
+                            <span class="pc__img-next"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_next_sm" /></svg></span>
+                          </div>
+                          <button class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                        </div>
+                        <div class="pc__info position-relative">
+                          <p class="pc__category">${product.Category.Name}</p>
+                          <h6 class="pc__title"><a href="/product?id=${product._id}">${product.Name}/${product.Brand.Name}</a></h6>
+                          <div class="product-card__price d-flex">
+                            <span class="money price">₹${product.Versions[0].Price}</span>
+                          </div>
+                          <div class="product-card__review d-flex align-items-center">
+                            <div class="reviews-group d-flex">
+                              <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                              <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                              <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                              <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                              <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                            </div>
+                            <span class="reviews-note text-lowercase text-secondary ms-1">${product.Reviews} reviews</span>
+                          </div>
+                          <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_heart" /></svg>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <div class="swiper-slide">
-                      <a href="/product?id=${product._id}"><img loading="lazy" src="${product.Image[1]}" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
-                    </div>
-                  </div>
-                  <span class="pc__img-prev"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_prev_sm" /></svg></span>
-                  <span class="pc__img-next"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_next_sm" /></svg></span>
-                </div>
-                <button class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-              </div>
-              <div class="pc__info position-relative">
-                <p class="pc__category">${product.Category.Name}</p>
-                <h6 class="pc__title"><a href="/product?id=${product._id}">${product.Name}/${product.Brand.Name}</a></h6>
-                <div class="product-card__price d-flex">
-                  <span class="money price">₹${product.Versions[0].Price}</span>
-                </div>
-                <div class="product-card__review d-flex align-items-center">
-                  <div class="reviews-group d-flex">
-                    <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
-                    <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
-                    <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
-                    <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
-                    <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
-                  </div>
-                  <span class="reviews-note text-lowercase text-secondary ms-1">${product.Reviews} reviews</span>
-                </div>
-                <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_heart" /></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
+                  `;
                   productGrid.insertAdjacentHTML('beforeend', productCard);
                 });
               }
             });
           </script>
+          
 
           <!-- External JavaScripts -->
           <script src="js/plugins/jquery.min.js"></script>
@@ -805,3 +790,4 @@
 </body>
 
 </html>
+

@@ -14,8 +14,8 @@
 </head>
 <body>
   <div id="wrapper">
-    <% include('header') %>
-    <% include('sidebar') %>
+    <%-include('header') %>
+    <%-include('sidebar') %>
     <div class="content-page">
       <div class="content">
         <div class="container-fluid">
@@ -157,6 +157,15 @@
         quantityInput.value = currentValue - 1;
       } else if (action === 'plus') {
         quantityInput.value = currentValue + 1;
+      }
+    }
+    function changePrice(action, index) {
+      const priceInput = document.getElementById(`price${index}`);
+      let currentValue = parseInt(priceInput.value);
+      if (action === 'minus' && currentValue > 1) {
+        priceInput.value = currentValue - 1;
+      } else if (action === 'plus') {
+        priceInput.value = currentValue + 1;
       }
     }
 

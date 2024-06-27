@@ -92,7 +92,7 @@ const getAddCategory = async (req, res) => {
 const postAddCategory = async (req, res) => {
   try {
     const { Name, isActive } = req.body;
-    const categoryData = await Category.findOne({ "Name": Name.trim() });
+    const categoryData = await Category.findOne({ "Name": { $regex: new RegExp(`^${Name.trim()}$`, 'i') }});
     if (categoryData) {
       req.flash('msg', 'Category exists')
       res.redirect('/admin/categories/addCategory')

@@ -4,12 +4,13 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
+const Order = require('../../model/orderModel')
 const UserAuth = require('../../model/userAuthModel')
 
 // Function
 
 async function fetchData(id){
-  const dataCollection = [Size.find(),Color.find(),Category.find(),Brand.find(),User.findOne({"_id":id})]
+  const dataCollection = [Size.find(),Color.find(),Category.find(),Brand.find(),User.findById({"_id":id})]
   const [sizeData,colorData,categoryData,brandData,userData] = await Promise.all(dataCollection)
   const fetchedData = {sizeData,colorData,categoryData,brandData,userData}
   return fetchedData;
@@ -39,13 +40,16 @@ const getOrders = async (req, res) => {
   try {
 
     const {sizeData,colorData,categoryData,brandData,userData} =await fetchData(req.session.userData._id)
+    const orderData = await Order.find({"UserId":req.session.userData._id});
+    console.log(orderData);
 
     const pushData = {
       userData,
       sizeData,
       colorData,
       categoryData,
-      brandData
+      brandData,
+      orderData,
     }
     res.render('userOrders', pushData)
   } catch (error) {
@@ -74,17 +78,18 @@ const getAddress = async (req, res) => {
 
 const postEditAddress = async (req, res) => {
   try {
-    const index = req.query.index;
+    const {index,route,Fname,Lname,Housename,City,State,Pincode,Phone} = req.body;
+
     const userData = await User.findOne({ "_id": req.session.userData._id });
 
     const updateData = {
-      "Fname": req.body.Fname,
-      "Lname": req.body.Lname,
-      "Housename": req.body.Housename,
-      "City": req.body.City,
-      "State": req.body.State,
-      "Pincode": req.body.Pincode,
-      "Phone": req.body.Phone
+      "Fname": Fname,
+      "Lname": Lname,
+      "Housename": Housename,
+      "City": City,
+      "State": State,
+      "Pincode": Pincode,
+      "Phone": Phone
     }
 
     userData.Address[index] = updateData;
@@ -92,9 +97,9 @@ const postEditAddress = async (req, res) => {
 
     console.log(result);
     if (result) {
-      res.redirect('/profile/address')
+      res.redirect(`${route}`)
     } else {
-      res.redirect('/profile/address')
+      res.redirect(`${route}`)
     }
 
 
@@ -106,18 +111,18 @@ const postEditAddress = async (req, res) => {
 
 const postAddAddress = async (req, res) => {
   try {
-
+    const {Fname,Lname,Housename,City,State,Pincode,Phone,route} = req.body
     const updateData = await User.updateOne({ "_id": req.session.userData._id }, {
       $push: {
         Address: {
           $each: [{
-            "Fname": req.body.Fname,
-            "Lname": req.body.Lname,
-            "Housename": req.body.Housename,
-            "City": req.body.City,
-            "State": req.body.State,
-            "Pincode": req.body.Pincode,
-            "Phone": req.body.Phone
+            "Fname": Fname,
+            "Lname": Lname,
+            "Housename": Housename,
+            "City": City,
+            "State": State,
+            "Pincode": Pincode,
+            "Phone": Phone
           }]
         }
       }
@@ -125,9 +130,9 @@ const postAddAddress = async (req, res) => {
 
     console.log(updateData);
     if (updateData) {
-      res.redirect('/profile/address')
+      res.redirect(`${route}`)
     } else {
-      res.redirect('/profile/address')
+      res.redirect(`${route}`)
     }
 
 

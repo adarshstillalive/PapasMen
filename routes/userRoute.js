@@ -13,6 +13,7 @@ const cartController = require('../controller/userControllers/cartController');
 const productController = require('../controller/userControllers/productController');
 const profileController = require('../controller/userControllers/profileController');
 const sortingController = require('../controller/userControllers/sortingController')
+const orderController = require('../controller/userControllers/orderController')
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -61,6 +62,7 @@ userRoute.get('/auth/google/success', authController.getAuthSuccess);
 userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 userRoute.get('/product', productController.getProduct);
+userRoute.get('/searchProduct',productController.getSearchProduct)
 userRoute.get('/profile',Auth.isUser,profileController.getProfile);
 userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
 userRoute.get('/profile/address',Auth.isUser, profileController.getAddress);
@@ -68,10 +70,14 @@ userRoute.post('/profile/editAddress',Auth.isUser, profileController.postEditAdd
 userRoute.post('/profile/addAddress',Auth.isUser, profileController.postAddAddress);
 userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAddress);
 userRoute.get('/category',productController.getCategory)
-userRoute.get('/category/sort',sortingController.getSortCategory)
+userRoute.get('/sort',sortingController.getSortCategory)
 userRoute.get('/cart',Auth.isUser,cartController.getCart)
+userRoute.post('/cart',Auth.isUser,cartController.postCart)
 userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
+userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
 userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
+userRoute.post('/createOrder',Auth.isUser,orderController.postCreateOrder)
+userRoute.get('/orderDetails',Auth.isUser,orderController.getOrderDetails)
 
 
 

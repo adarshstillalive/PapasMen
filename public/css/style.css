@@ -15590,7 +15590,7 @@ button.js-add-wishlist.active .flaticon.flaticon-heart, a.add-to-wishlist.active
   .order-complete .checkout__totals {
     width: 100%; }
     .order-complete .checkout__totals .checkout-cart-items thead th:last-child {
-      text-align: right; }
+      text-align: left; }
 
 .order-tracking {
   width: 31.25rem;

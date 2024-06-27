@@ -311,12 +311,7 @@
                   <a href="/" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
                   <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
                   <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium" disabled>The Shop</a>
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <div class="d-flex align-items-center mb-3 pb-2">
-                    <h3 class="flex-grow-1 text-center m-0 " style="color: green">
-                      <%= loginMessage %>
-                    </h3>
-                  </div>
+
                 </div><!-- /.breadcrumb -->
 
                 <!-- <div
@@ -1009,6 +1004,16 @@
           <!-- Internal JS -->
           <script>
             document.addEventListener('DOMContentLoaded', function () {
+              if (localStorage.getItem('showAlert') === 'true') {
+                Swal.fire({
+                  title: "Success",
+                  text: "Product added to cart",
+                  icon: "success",
+                  showConfirmButton:false,
+                  timer:1500
+                });
+                localStorage.removeItem('showAlert')
+              }
               const addToCartForm = document.getElementById('addToCartForm');
 
               addToCartForm.addEventListener('submit', function (event) {
@@ -1030,16 +1035,16 @@
                   .then(response => response.json())
                   .then(data => {
                     if (data.success) {
-                      console.log("Item added to cart successfully");
-
-                      window.location.reload(() => {
-                        setTimeout(() => {
-                          document.getElementById('openMiniCart').click();
-                        }, 500);
-                      });
+                      localStorage.setItem('showAlert', 'true')
+                      window.location.reload();
 
                       // Additional success handling logic here
                     } else {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something happened",
+                      });
                       console.error("Error adding item to cart", data.error);
                       // Error handling logic here
                     }
@@ -1062,6 +1067,7 @@
           <script src="/js/plugins/swiper.min.js"></script>
           <script src="/js/plugins/countdown.js"></script>
           <script src="/js/plugins/jquery.fancybox.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
           <!-- Footer Scripts -->
           <script src="/js/theme.js"></script>

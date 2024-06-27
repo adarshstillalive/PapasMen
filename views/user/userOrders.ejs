@@ -273,7 +273,7 @@
                   <table class="orders-table">
                     <thead>
                       <tr>
-                        <th>Order</th>
+                        <th>Order Id</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Total</th>
@@ -281,34 +281,21 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>#2416</td>
-                        <td>October 1, 2023</td>
-                        <td>On hold</td>
-                        <td>$1,200.65 for 3 items</td>
-                        <td><button class="btn btn-primary">VIEW</button></td>
-                      </tr>
-                      <tr>
-                        <td>#2417</td>
-                        <td>October 2, 2023</td>
-                        <td>On hold</td>
-                        <td>$1,200.65 for 3 items</td>
-                        <td><button class="btn btn-primary">VIEW</button></td>
-                      </tr>
-                      <tr>
-                        <td>#2418</td>
-                        <td>October 3, 2023</td>
-                        <td>On hold</td>
-                        <td>$1,200.65 for 3 items</td>
-                        <td><button class="btn btn-primary">VIEW</button></td>
-                      </tr>
-                      <tr>
-                        <td>#2419</td>
-                        <td>October 4, 2023</td>
-                        <td>On hold</td>
-                        <td>$1,200.65 for 3 items</td>
-                        <td><button class="btn btn-primary">VIEW</button></td>
-                      </tr>
+                      <% for(key=0;key<orderData.length;key++){%>
+                        <tr>
+                          <td>
+                            <%= orderData[key].OrderId %>
+                          </td>
+                          <% const timestamp= orderData[key].createdAt;
+                             const date=new Date(timestamp); const formattedDate=date.toISOString().split('T')[0]; %>
+                            <td><%= formattedDate %></td>
+                            <td>
+                              <%= orderData[key].Orderstatus %>
+                            </td>
+                            <td>₹<%= orderData[key].TotalAmount %> for <%= orderData[key].Products.length %> items</td>
+                            <td><a href="/orderDetails?id=<%= orderData[key].OrderId %>" class="btn btn-primary">VIEW</a></td>
+                        </tr>
+                        <%}%>
                     </tbody>
                   </table>
                 </div>

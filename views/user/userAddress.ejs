@@ -248,10 +248,12 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="edit-address">
           <h2 class="edit-address__title">Edit Address</h2>
-          <form name="edit-address-form" action="/profile/editAddress?index=<%=key%>" method="post">
+          <form name="edit-address-form" action="/profile/editAddress" method="post">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
+                  <input type="hidden" name="index" value="<%=key%>">
+                  <input type="hidden" name="route" value="/profile/address">
                   <label for="firstName" class="form-label">First Name</label>
                   <input type="text" class="form-control" id="firstName" name="Fname" value="<%=userData.Address[key].Fname%>" required>
                 </div>
@@ -312,6 +314,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
+                  <input type="hidden" name="route" value="/profile/address">
                   <label for="firstName" class="form-label">First Name</label>
                   <input type="text" class="form-control" id="firstName" name="Fname" required>
                 </div>

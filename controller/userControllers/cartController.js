@@ -6,14 +6,19 @@ const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const UserAuth = require('../../model/userAuthModel')
 
+// FUNCTIONS
+async function fetchData(){
+  const dataCollection = [Size.find(),Color.find(),Category.find(),Brand.find()]
+  const [sizeData,colorData,categoryData,brandData] = await Promise.all(dataCollection)
+  const fetchedData = {sizeData,colorData,categoryData,brandData}
+  return fetchedData;
+}
+
 
 const getCart = async(req,res)=>{
   try {
 
-    const sizeData = await Size.find();
-    const colorData = await Color.find();
-    const categoryData = await Category.find();
-    const brandData = await Brand.find();
+    const {sizeData,colorData,categoryData,brandData} = await fetchData()
     // Fetch user data and populate cart products with nested fields
     const userData = await User.findById(req.session.userData._id)
       .populate({
@@ -63,6 +68,20 @@ const getCart = async(req,res)=>{
   }
 }
 
+const postCart = async (req,res)=>{
+  try {
+    const userData = await User.findOne({"_id":req.session.userData._id});
+    for(let i=0;i<userData.Cart.length;i++){
+      userData.Cart[i].Quantity = req.body.quantity[i]
+    };
+    await userData.save();
+     
+    res.redirect('/cart/checkout');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 const postAddToCart = async (req, res) => {
   try {
@@ -88,10 +107,8 @@ const postAddToCart = async (req, res) => {
 
     }
     if (flag) {
-      req.flash('msg', 'Product added to Cart');
       res.json({ success: true })
     } else {
-      req.flash('msg', 'Error occured');
       res.json({ success: false })
     }
 
@@ -101,16 +118,65 @@ const postAddToCart = async (req, res) => {
   }
 }
 
+const getRemoveProduct = async(req,res)=>{
+  try {
+    const productId = req.query.id;
+    const removeProduct = await User.updateOne({"_id":req.session.userData._id},{$pull:{"Cart":{"_id":productId}}});
+    if(removeProduct){
+      req.flash('msg','Product removed successfully');
+      res.redirect('/cart')
+    }else{
+      req.flash('msg','Product removing failed, Try again')
+      res.redirect('/cart')
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const getCheckout = async(req,res)=>{
   try {
-    const sizeData = await Size.find();
-    const colorData = await Color.find();
-    const categoryData = await Category.find();
-    const brandData = await Brand.find();
-    const userData = await User.find({"_id":req.session.userData._id});
+    const {sizeData,colorData,categoryData,brandData} = await fetchData()
+    // Fetch user data and populate cart products with nested fields
+    const userData = await User.findById(req.session.userData._id)
+      .populate({
+        path: 'Cart.Product',
+        model: 'Product',
+        populate: [
+          { path: 'Brand', model: 'Brand' },
+          { path: 'Category', model: 'Category' },
+          { path: 'Versions.Color', model: 'Color' },
+          { path: 'Versions.Size', model: 'Size' }
+        ]
+      });
+
+    const userCartData = await Promise.all(userData.Cart.map(async (cartItem) => {
+      const product = cartItem.Product;
+      const versionId = cartItem.Version;
+
+      // Find the specific version in product's Versions array
+      const version = product.Versions.find(v => v._id.equals(versionId));
+
+      if (version) {
+        // Populate Color and Size in the found version
+        const populatedVersion = await Product.populate(version, [
+          { path: 'Color', model: 'Color' },
+          { path: 'Size', model: 'Size' }
+        ]);
+
+
+        // Return the cart item with populated version
+        return {
+          ...cartItem.toObject(),  // Convert Mongoose document to plain object
+          Version: populatedVersion
+        };
+      }
+
+      return cartItem.toObject();
+    }));
 
     const pushData = {
-      productObj, sizeData, colorData, categoryData, brandData,userData
+       sizeData, colorData, categoryData, brandData,userData,userCartData
     }
 
     res.render('checkout',pushData)
@@ -123,6 +189,8 @@ const getCheckout = async(req,res)=>{
 module.exports = {
 
   getCart,
+  postCart,
   postAddToCart,
   getCheckout,
+  getRemoveProduct,
 }

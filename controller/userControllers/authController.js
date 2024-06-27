@@ -14,14 +14,17 @@ const getHome = async (req, res) => {
   try {
     const productObj = await Product.find({ "isActive": true }).populate('Brand').populate('Category')
       .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] })
+    let userData;
+      if(req.session.userData){
+        userData = await User.findById({"_id":req.session.userData._id})
+      }
     
     const fetchArray = [Size.find(),Color.find(),Category.find(),Brand.find()]
     const [ sizeData, colorData, categoryData, brandData] = await Promise.all(fetchArray)
 
     const pushData = {
       loginMessage: req.flash('msg'),
-      userData: req.session.userData,
-      productObj, sizeData, colorData, categoryData, brandData
+      productObj, sizeData, colorData, categoryData, brandData,userData
     }
     res.render('userHome', pushData)
   } catch (error) {

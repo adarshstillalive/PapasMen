@@ -93,7 +93,7 @@ const getAddBrand = async (req, res) => {
 const postAddBrand = async (req, res) => {
   try {
     const { Name, isActive } = req.body;
-    const brandData = await Brand.findOne({ "Name": Name.trim() });
+    const brandData = await Brand.findOne({ "Name":{ $regex: new RegExp(`^${Name.trim()}$`, 'i') }});
     if (brandData) {
       req.flash('msg', 'Brand exists')
       res.redirect('/admin/brands/addBrand')

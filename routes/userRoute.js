@@ -3,7 +3,6 @@ const userRoute = express(); // Use express.Router() for a sub-router
 const session = require('express-session');
 const flash = require('connect-flash');
 const Auth = require('../middlewares/userAuth');
-const Swal = require('sweetalert2')
 const multer = require('multer')
 const passport = require('passport');
 require('../others/passport')
@@ -55,27 +54,34 @@ userRoute.post('/signup', Auth.notUser, authController.postSignup);
 userRoute.post('/signup/sendOtp', Auth.notUser, authController.postSendOtp);
 userRoute.post('/signup/validateOtp', Auth.notUser, upload.none(), authController.postValidateOtp);
 userRoute.get('/signout',authController.getSignout);
+
 userRoute.get('/forgotPassword',Auth.notUser,authController.getForgotPassword);
 userRoute.post('/forgotPassword',Auth.notUser,authController.postForgotPassword);
 userRoute.post('/forgotPassword/sendOtp', Auth.notUser, authController.postForgotSendOtp);
+
 userRoute.get('/auth/google/success', authController.getAuthSuccess);
 userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+
 userRoute.get('/product', productController.getProduct);
 userRoute.get('/searchProduct',productController.getSearchProduct)
+
 userRoute.get('/profile',Auth.isUser,profileController.getProfile);
 userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
 userRoute.get('/profile/address',Auth.isUser, profileController.getAddress);
 userRoute.post('/profile/editAddress',Auth.isUser, profileController.postEditAddress);
 userRoute.post('/profile/addAddress',Auth.isUser, profileController.postAddAddress);
 userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAddress);
+
 userRoute.get('/category',productController.getCategory)
 userRoute.get('/sort',sortingController.getSortCategory)
+
 userRoute.get('/cart',Auth.isUser,cartController.getCart)
 userRoute.post('/cart',Auth.isUser,cartController.postCart)
 userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
 userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
 userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
+
 userRoute.post('/createOrder',Auth.isUser,orderController.postCreateOrder)
 userRoute.get('/orderDetails',Auth.isUser,orderController.getOrderDetails)
 

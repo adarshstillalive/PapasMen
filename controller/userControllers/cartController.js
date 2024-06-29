@@ -85,8 +85,7 @@ const postCart = async (req,res)=>{
 
 const postAddToCart = async (req, res) => {
   try {
-    console.log(req.body);
-    const userData = await User.findOne({ "_id": req.session.userData._id });
+    
     const productData = await Product.findOne({ "_id": req.body.ProductId });
     let flag = false;
 

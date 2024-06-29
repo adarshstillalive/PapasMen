@@ -41,7 +41,7 @@ const getOrders = async (req, res) => {
 
     const {sizeData,colorData,categoryData,brandData,userData} =await fetchData(req.session.userData._id)
     const orderData = await Order.find({"UserId":req.session.userData._id});
-    console.log(orderData);
+
 
     const pushData = {
       userData,

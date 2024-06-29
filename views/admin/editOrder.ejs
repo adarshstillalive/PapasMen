@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description" />
+  <meta content="Coderthemes" name="author" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- App favicon -->
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <!-- App css -->
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+
+</head>
+
+<body>
+
+  <!-- Begin page -->
+  <div id="wrapper">
+
+
+    <!-- Topbar Start -->
+    <%-include('header')%>
+      <!-- end Topbar --> <!-- ========== Left Sidebar Start ========== -->
+      <%-include('sidebar')%>
+        <!-- Left Sidebar End -->
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+          <div class="content">
+
+            <!-- Start container-fluid -->
+            <main class="main-wrap">
+              <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
+                <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a href="/admin/orders" class="menu-link menu-link_us-s text-uppercase fw-medium">Orders</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a class="menu-link menu-link_us-s text-uppercase fw-medium">Edit order</a>
+              </div>
+              <section class="content-main">
+                <div class="content-header">
+                  <div>
+                    <h2 class="content-title card-title">Order detail</h2>
+                    <p>Details for Order ID: <%= orderData.OrderId %>
+                    </p>
+                  </div>
+                </div>
+                <div class="card">
+                  <header class="card-header">
+                    <div class="row align-items-center">
+                      <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                        <span>Ordered Date : 
+                          <% const timestamp=orderData.createdAt; const date=new Date(timestamp); const
+                            formattedDate=date.toISOString().split('T')[0]; %>
+                            <i class="material-icons md-calendar_today"></i> <b>
+                              <%= formattedDate %>
+                            </b>
+                        </span> <br>
+                        <small class="text-muted">Order ID: <%= orderData.OrderId %></small>
+                      </div>
+                      <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                        <form id="statusForm" action="/admin/updateOrderStatus" method="POST">
+                          <input type="hidden" name="orderId" value="<%= orderData._id %>">
+                          <select name="orderStatus" class="form-select d-inline-block mb-lg-0 mb-15 mw-200 p-2">
+                            <option disabled selected>Change status</option>
+                            <option value="Order Placed">Order Placed</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Returned">Returned</option>
+                          </select>
+                          <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                      </div>
+                    </div>
+                  </header> <!-- card-header end// -->
+                  <div class="card-body">
+                    <div class="row mb-50 mt-20 order-info-wrap">
+                      <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                          </span>
+                          <div class="text border p-3">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                              <%= orderData.Address[0].Fname %>
+                                <%= orderData.Address[0].Lname %> <br>
+                                <%= orderData.UserId.Email %><br>
+                                  <%= orderData.Address[0].Phone %>
+                            </p>
+
+                          </div>
+                        </article>
+                      </div> <!-- col// -->
+                      <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                          </span>
+                          <div class="text border p-3">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                              Shipping: Pending <br> Pay method: <%= orderData.PaymentMethod %> <br> Status: <%= orderData.Orderstatus %>
+                            </p>
+                          </div>
+                        </article>
+                      </div> <!-- col// -->
+                      <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                          </span>
+                          <div class="text border p-3">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                              City: <%= orderData.Address[0].City %>, <%= orderData.Address[0].State %> <br>
+                                  <%= orderData.Address[0].Housename %><br> PIN : <%= orderData.Address[0].Pincode %>
+                            </p>
+                          </div>
+                        </article>
+                      </div> <!-- col// -->
+                    </div> <!-- row // -->
+                    <div class="row">
+                      <div class="col-lg-8">
+                        <div class="table-responsive">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th width="40%">Product</th>
+                                <th width="20%">Unit Price</th>
+                                <th width="10%">Color</th>
+                                <th width="10%">Size</th>
+                                <th width="10%">QTY</th>
+                                <th width="20%" class="text-end">Total</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% for(key=0;key<orderData.Products.length;key++){ %>
+                              <tr>
+                                <td>
+                                  <a class="itemside">
+                                    <div class="left">
+                                      <img src="<%= orderData.Products[key].Product.Image[0] %>" width="40" height="40" class="img-xs"
+                                        alt="Item">
+                                    </div>
+                                    <div><%= orderData.Products[key].Product.Name %> </div>
+                                    <div><%=orderData.Products[key].Product.Brand.Name %> </div>
+                                  </a>
+                                </td>
+                                <td> ₹<%= orderData.Products[key].Version.Price %> </td>
+                                <td> <%= orderData.Products[key].Version.Color.Name %> </td>
+                                <td> <%= orderData.Products[key].Version.Size.Name %> </td>
+                                <td> <%= orderData.Products[key].Quantity %> </td>
+                                <td class="text-end"> ₹<%= (orderData.Products[key].Quantity * orderData.Products[key].Version.Price) %> </td>
+                              </tr>
+                              <%}%>
+                              <tr>
+                                <td colspan="4">
+                                  <article class="float-end">
+                                    <dl class="dlist">
+                                      <dt>Subtotal:</dt>
+                                      <dd>₹<%= orderData.TotalAmount %></dd>
+                                    </dl>
+                                    <dl class="dlist">
+                                      <dt>Shipping cost:</dt>
+                                      <dd>₹70</dd>
+                                    </dl>
+                                    <dl class="dlist">
+                                      <dt>Grand total:</dt>
+                                      <dd> <b class="h5">₹<%= (orderData.TotalAmount + 70) %></b> </dd>
+                                    </dl>
+                                    <dl class="dlist">
+                                      <dt class="text-muted">Status:</dt>
+                                      <dd>
+                                        <span class="badge rounded-pill alert-success text-success"><%= orderData.Orderstatus %></span>
+                                      </dd>
+                                    </dl>
+                                  </article>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div> <!-- table-responsive// -->
+                        <!-- <a class="btn btn-primary" href="page-orders-tracking.html">View Order Tracking</a> -->
+                      </div> <!-- col// -->
+                      <!-- <div class="col-lg-1"></div> -->
+                      <div class="col-lg-4 ">
+                        <div class="box shadow-sm bg-light border">
+                          <h6 class="mb-15">Payment info</h6>
+                          <p>
+                            <span class="badge rounded-pill alert-success text-success"><%= orderData.PaymentMethod %></span>
+                          </p>
+                          <p></p>
+                        </div>
+                        <div class="h-25 pt-4 ">
+                          <div class="mb-3 border">
+                            <label>Order notes</label>
+                            <textarea class="form-control" name="notes"  id="notes"
+                              placeholder="Type some note" readonly><%= orderData.OrderNotes %></textarea>
+                          </div>
+                        </div>
+                      </div> <!-- col// -->
+                    </div>
+                  </div> <!-- card-body end// -->
+                </div> <!-- card end// -->
+              </section> <!-- content-main end// -->
+ 
+            </main>
+            <!-- end container-fluid -->
+
+
+
+
+
+          </div>
+          <!-- end content -->
+
+        </div>
+
+        <!-- END content-page -->
+
+  </div>
+  <!-- END wrapper -->
+
+
+
+
+
+  <!-- Right bar overlay-->
+  <div class="rightbar-overlay"></div>
+
+  <!-- JS -->
+  
+
+  <!-- Vendor js -->
+  <script src="/assets/js/vendor.min.js"></script>
+
+  <script src="/assets/libs/morris-js/morris.min.js"></script>
+  <script src="/assets/libs/raphael/raphael.min.js"></script>
+
+  <script src="/assets/js/pages/dashboard.init.js"></script>
+
+  <!-- App js -->
+  <script src="/assets/js/app.min.js"></script>
+
+</body>
+
+</html>

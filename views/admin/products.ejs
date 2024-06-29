@@ -2,66 +2,70 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Responsive bootstrap 4 admin template" name="description" />
-    <meta content="Coderthemes" name="author" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
-    <!-- App css -->
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+  <meta charset="utf-8" />
+  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description" />
+  <meta content="Coderthemes" name="author" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- App favicon -->
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <!-- App css -->
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
 </head>
 
 <body>
 
-    <!-- Begin page -->
-    <div id="wrapper">
+  <!-- Begin page -->
+  <div id="wrapper">
 
 
-        <!-- Topbar Start -->
-        <%-include('header')%>
-        <!-- end Topbar --> <!-- ========== Left Sidebar Start ========== -->
-        <%-include('sidebar')%>
+    <!-- Topbar Start -->
+    <%-include('header')%>
+      <!-- end Topbar --> <!-- ========== Left Sidebar Start ========== -->
+      <%-include('sidebar')%>
         <!-- Left Sidebar End -->
 
         <!-- ============================================================== -->
         <!-- Start Page Content here -->
         <!-- ============================================================== -->
         <div class="content-page">
-            <div class="content">
-          
-                <!-- Start container-fluid -->
-                <div class="container-fluid">
-          
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
-                                <% if (addProductMsg && addProductMsg.length> 0) { %>
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong>
-                                            <%= addProductMsg[0] %>
-                                        </strong>
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <% } %>
-                                <a href="/admin/products/addProduct" class="btn btn-success"><span>Add Product</span></a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- end row -->
-          
-                    <div class="row container-fluid border">
-                        <!-- <table class="table table-striped table-hover">
+          <div class="content">
+
+            <!-- Start container-fluid -->
+            <div class="container-fluid">
+              <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
+                <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a class="menu-link menu-link_us-s text-uppercase fw-medium">Products</a>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+                    <% if (addProductMsg && addProductMsg.length> 0) { %>
+                      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>
+                          <%= addProductMsg[0] %>
+                        </strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <% } %>
+                        <a href="/admin/products/addProduct" class="btn btn-success"><span>Add Product</span></a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- end row -->
+
+              <div class="row container-fluid border">
+                <!-- <table class="table table-striped table-hover">
                             <thead>
                               <tr>
                                 <th scope="col">#</th>
@@ -82,107 +86,123 @@
                               
                             </tbody>
                           </table> -->
-                          <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    
-                                    <th>Sl No.</th>
-                                    <th>Name</th>
-                                    <th>Cateogory</th>
-                                    <th>Brand</th>
-                                    <th>QTY</th>
-                                    <th>Price</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% Object.keys(productObj).forEach((key, index) => { %>
-                                        <tr>
-                                            <td><%= index + 1 %></td>
-                                            <td><%= productObj[key].Name %></td>
-                                            <td><%= productObj[key].Category.Name %></td>
-                                            <td><%= productObj[key].Brand.Name %></td>
-                                            <td><%= productObj[key].Quantity %></td>
-                                            <td><%= productObj[key].Price %></td>
-                                            <% if(productObj[key].isActive){%>
-                                            <td>Active</td>
-                                            <td class="text-right">                                                
-                                                <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>" class="btn btn-warning" >Edit</a>
-                                                <a href="#deleteUser<%=productObj[key]._id%>" class="btn btn-danger" data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
-                                            </td>
-                                            <%}else{%>
-                                                <td>Blocked</td>
-                                                <td class="text-right">                                                
-                                                    <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>" class="btn btn-warning">Edit</a>
-                                                    <a href="/admin/products/unblock?id=<%=productObj[key]._id%>" class="btn btn-danger" >UnBlock</a>
-                                                </td> 
-                                        </tr>
-                                        <%}%>
-                                <% }); %>
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                    <!--end row -->
-          
-          
-                </div>
-                <!-- end container-fluid -->
-          
-          
-          
-          
-          
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr>
+
+                      <th>Sl No.</th>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Brand</th>
+                      <th>QTY</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% Object.keys(productObj).forEach((key, index)=> { %>
+                      <tr>
+                        <td>
+                          <%= index + 1 %>
+                        </td>
+                        <td>
+                          <%= productObj[key].Name %>
+                        </td>
+                        <td>
+                          <%= productObj[key].Category.Name %>
+                        </td>
+                        <td>
+                          <%= productObj[key].Brand.Name %>
+                        </td>
+                        <td>
+                          <%= productObj[key].Quantity %>
+                        </td>
+                        <td>
+                          <%= productObj[key].Price %>
+                        </td>
+                        <% if(productObj[key].isActive){%>
+                          <td>Active</td>
+                          <td class="text-right">
+                            <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>"
+                              class="btn btn-warning">Edit</a>
+                            <a href="#deleteUser<%=productObj[key]._id%>" class="btn btn-danger"
+                              data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                          </td>
+                          <%}else{%>
+                            <td>Blocked</td>
+                            <td class="text-right">
+                              <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>"
+                                class="btn btn-warning">Edit</a>
+                              <a href="/admin/products/unblock?id=<%=productObj[key]._id%>"
+                                class="btn btn-danger">UnBlock</a>
+                            </td>
+                      </tr>
+                      <%}%>
+                        <% }); %>
+
+                  </tbody>
+                </table>
+              </div>
+              <!--end row -->
+
+
             </div>
-            <!-- end content -->
-          
+            <!-- end container-fluid -->
+
+
+
+
+
           </div>
-        
+          <!-- end content -->
+
+        </div>
+
         <!-- END content-page -->
 
-    </div>
-    <!-- END wrapper -->
-     <% Object.keys(productObj).forEach((key)=>{%>
+  </div>
+  <!-- END wrapper -->
+  <% Object.keys(productObj).forEach((key)=>{%>
     <div id="deleteUser<%=productObj[key]._id%>" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">						
-						<h4 class="modal-title">Block user</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">					
-						<h3>Are you sure you want to Block </h3>
-					</div>
-					<div class="modal-footer">
-						<a type="button" class="btn border-secondary text-secondary" data-dismiss="modal" >Cancel</a>
-						<a href="/admin/products/delete?id=<%=productObj[key]._id%>" class="btn btn-danger">Block</a>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form>
+            <div class="modal-header">
+              <h4 class="modal-title">Block user</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+              <h3>Are you sure you want to Block </h3>
+            </div>
+            <div class="modal-footer">
+              <a type="button" class="btn border-secondary text-secondary" data-dismiss="modal">Cancel</a>
+              <a href="/admin/products/delete?id=<%=productObj[key]._id%>" class="btn btn-danger">Block</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <%})%>
-    
 
 
 
 
-    <!-- Right bar overlay-->
-    <div class="rightbar-overlay"></div>
+
+      <!-- Right bar overlay-->
+      <div class="rightbar-overlay"></div>
 
 
-    <!-- Vendor js -->
-    <script src="/assets/js/vendor.min.js"></script>
+      <!-- Vendor js -->
+      <script src="/assets/js/vendor.min.js"></script>
 
-    <script src="/assets/libs/morris-js/morris.min.js"></script>
-    <script src="/assets/libs/raphael/raphael.min.js"></script>
+      <script src="/assets/libs/morris-js/morris.min.js"></script>
+      <script src="/assets/libs/raphael/raphael.min.js"></script>
 
-    <script src="/assets/js/pages/dashboard.init.js"></script>
+      <script src="/assets/js/pages/dashboard.init.js"></script>
 
-    <!-- App js -->
-    <script src="/assets/js/app.min.js"></script>
+      <!-- App js -->
+      <script src="/assets/js/app.min.js"></script>
 
 </body>
 

@@ -40,25 +40,23 @@
               <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
                 <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
                 <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-                <a class="menu-link menu-link_us-s text-uppercase fw-medium">Brands</a>
+                <a class="menu-link menu-link_us-s text-uppercase fw-medium">Orders</a>
               </div>
 
               <div class="row">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Brands</span>
-                    <% if (addBrandMsg && addBrandMsg.length> 0) { %>
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+                    <% if (addProductMsg && addProductMsg.length> 0) { %>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <strong>
-                          <%= addBrandMsg[0] %>
+                          <%= addProductMsg[0] %>
                         </strong>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
                       <% } %>
-                        <a href="/admin/brands/addBrand" class="btn btn-success"><span>Add
-                            Brand</span></a>
                   </div>
                 </div>
               </div>
@@ -66,101 +64,110 @@
               <!-- end row -->
 
               <div class="row container-fluid border">
+                <!-- <table class="table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Contact No.</th>
+                                <th scope="col">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                <td class="move-right"><a class="btn btn-warning">Edit</a><a class="btn btn-danger">Delete</a></td>
+                              </tr>
+                              
+                            </tbody>
+                          </table> -->
                 <table class="table table-striped table-hover">
                   <thead>
                     <tr>
 
                       <th>Sl No.</th>
-                      <th>Name</th>
+                      <th>Order Id</th>
+                      <th>User name</th>
+                      <th>Date</th>
                       <th>Status</th>
+                      <th>Total</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <% Object.keys(brandObj).forEach((key, index)=> { %>
+                    <% Object.keys(orderObj).forEach((key, index)=> { %>
                       <tr>
                         <td>
                           <%= index + 1 %>
                         </td>
                         <td>
-                          <%= brandObj[key].Name %>
+                          <%= orderObj[key].OrderId %>
                         </td>
-                        <% if(brandObj[key].isActive){%>
-                          <td>Active</td>
+                        <td>
+                          <%= orderObj[key].UserId.Name.toUpperCase() %>
+                        </td>
+                        <td>
+                          <% const timestamp= orderObj[key].createdAt;
+                             const date=new Date(timestamp); const formattedDate=date.toISOString().split('T')[0]; %>
+                          <%= formattedDate %>
+                        </td>
+                        <td>
+                          <%= orderObj[key].Orderstatus %>
+                        </td>
+                        <td>
+                          ₹<%= orderObj[key].TotalAmount %> for <%= orderObj[key].Products.length %> items
+                        </td>
                           <td class="text-right">
-                            <a href="/admin/brands/editBrand?id=<%=brandObj[key]._id%>" class="btn btn-warning">Edit</a>
-                            <a href="#deleteBrand<%=brandObj[key]._id%>" class="btn btn-danger"
-                              data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                            <a href="/admin/viewOrder?id=<%=orderObj[key]._id%>"
+                              class="btn btn-warning">View</a>
                           </td>
-                          <%}else{%>
-                            <td>Inactive</td>
-                            <td class="text-right">
-                              <a href="/admin/brands/editBrand?id=<%=brandObj[key]._id%>"
-                                class="btn btn-warning">Edit</a>
-                              <a href="/admin/brands/unblock?id=<%=brandObj[key]._id%>"
-                                class="btn btn-danger">UnBlock</a>
-                            </td>
-                      </tr>
-                      <%}%>
                         <% }); %>
 
                   </tbody>
                 </table>
               </div>
-
-
-
+              <!--end row -->
 
 
             </div>
-            <!-- end content -->
+            <!-- end container-fluid -->
+
+
+
+
 
           </div>
-
-          <!-- END content-page -->
+          <!-- end content -->
 
         </div>
-        <!-- END wrapper -->
-        <% Object.keys(brandObj).forEach((key)=>{%>
-          <div id="deleteBrand<%=brandObj[key]._id%>" class="modal fade">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <form>
-                  <div class="modal-header">
-                    <h4 class="modal-title">Block user</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                    <h3>Are you sure you want to Block </h3>
-                  </div>
-                  <div class="modal-footer">
-                    <a type="button" class="btn border-secondary text-secondary" data-dismiss="modal">Cancel</a>
-                    <a href="/admin/brands/delete?id=<%=brandObj[key]._id%>" class="btn btn-danger">Block</a>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <%})%>
+
+        <!-- END content-page -->
+
+  </div>
+  <!-- END wrapper -->
 
 
 
 
 
-            <!-- Right bar overlay-->
-            <div class="rightbar-overlay"></div>
+      <!-- Right bar overlay-->
+      <div class="rightbar-overlay"></div>
 
 
-            <!-- Vendor js -->
-            <script src="/assets/js/vendor.min.js"></script>
+      <!-- Vendor js -->
+      <script src="/assets/js/vendor.min.js"></script>
 
-            <script src="/assets/libs/morris-js/morris.min.js"></script>
-            <script src="/assets/libs/raphael/raphael.min.js"></script>
+      <script src="/assets/libs/morris-js/morris.min.js"></script>
+      <script src="/assets/libs/raphael/raphael.min.js"></script>
 
-            <script src="/assets/js/pages/dashboard.init.js"></script>
+      <script src="/assets/js/pages/dashboard.init.js"></script>
 
-            <!-- App js -->
-            <script src="/assets/js/app.min.js"></script>
+      <!-- App js -->
+      <script src="/assets/js/app.min.js"></script>
 
 </body>
 

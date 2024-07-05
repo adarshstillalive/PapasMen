@@ -46,7 +46,7 @@
               <div class="row">
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
-                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Orders</span>
                     <% if (addProductMsg && addProductMsg.length> 0) { %>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <strong>
@@ -102,7 +102,7 @@
                     <% Object.keys(orderObj).forEach((key, index)=> { %>
                       <tr>
                         <td>
-                          <%= index + 1 %>
+                          <%= ((page-1)*6) + index + 1 %>
                         </td>
                         <td>
                           <%= orderObj[key].OrderId %>
@@ -136,8 +136,27 @@
             </div>
             <!-- end container-fluid -->
 
+            <div class="pb-3"></div>
 
-
+            <nav aria-label="Page navigation example align-items-center">
+              <ul class="pagination pagination justify-content-center">
+                <li class="page-item <% if (Number(page)===1) { %> disabled-page <% } %>">
+                  <a class="page-link" href="/admin/orders?page=<%= Number(page)-1 %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <%for(i=0;i<totalPage;i++){%>
+                <li class="page-item <% if (Number(page)=== i+1) { %> disabled-page <% } %>"><a class="page-link" href="/admin/orders?page=<%= i+1 %>"><%= i+1 %></a></li>
+                  <%}%>
+                <li class="page-item <% if (Number(page)===totalPage) { %> disabled-page <% } %>">
+                  <a class="page-link" href="/admin/orders?page=<%= Number(page)+1 %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
 
 
           </div>
@@ -172,3 +191,10 @@
 </body>
 
 </html>
+
+<style>
+  .disabled-page {
+    pointer-events: none; 
+    opacity: 0.5;          
+  }
+</style>

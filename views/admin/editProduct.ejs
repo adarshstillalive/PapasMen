@@ -52,7 +52,7 @@
                         <% } %>
                     </div>
                     <div class="card-body">
-                      <form action="/admin/products/editProduct" enctype="multipart/form-data" method="POST"
+                      <form action="/admin/products/editProduct?_method=PUT" enctype="multipart/form-data" method="POST"
                         id="product-form">
                         <div class="mb-3">
                           <label class="form-label" for="name">Name</label>
@@ -477,7 +477,7 @@
       const formData = new FormData(this);
 
       try {
-        const response = await fetch('/admin/products/editProduct', {
+        const response = await fetch('/admin/products/editProduct?_method=PUT', {
           method: 'POST',
           body: formData
         });

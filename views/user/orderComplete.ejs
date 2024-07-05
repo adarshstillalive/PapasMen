@@ -275,13 +275,16 @@
           </div>
           <div class="order-complete">
             <div class="order-complete__message">
-              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="40" r="40" fill="#B9A16B" />
-                <path
-                  d="M52.9743 35.7612C52.9743 35.3426 52.8069 34.9241 52.5056 34.6228L50.2288 32.346C49.9275 32.0446 49.5089 31.8772 49.0904 31.8772C48.6719 31.8772 48.2533 32.0446 47.952 32.346L36.9699 43.3449L32.048 38.4062C31.7467 38.1049 31.3281 37.9375 30.9096 37.9375C30.4911 37.9375 30.0725 38.1049 29.7712 38.4062L27.4944 40.683C27.1931 40.9844 27.0257 41.4029 27.0257 41.8214C27.0257 42.24 27.1931 42.6585 27.4944 42.9598L33.5547 49.0201L35.8315 51.2969C36.1328 51.5982 36.5513 51.7656 36.9699 51.7656C37.3884 51.7656 37.8069 51.5982 38.1083 51.2969L40.385 49.0201L52.5056 36.8996C52.8069 36.5982 52.9743 36.1797 52.9743 35.7612Z"
-                  fill="white" />
-              </svg>
-              <h3>Order Data</h3>
+              <% if(orderData.Orderstatus !=="Payment failed" && orderData.Orderstatus !=="Cancelled" ){ %>
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="40" fill="#B9A16B" />
+                  <path
+                    d="M52.9743 35.7612C52.9743 35.3426 52.8069 34.9241 52.5056 34.6228L50.2288 32.346C49.9275 32.0446 49.5089 31.8772 49.0904 31.8772C48.6719 31.8772 48.2533 32.0446 47.952 32.346L36.9699 43.3449L32.048 38.4062C31.7467 38.1049 31.3281 37.9375 30.9096 37.9375C30.4911 37.9375 30.0725 38.1049 29.7712 38.4062L27.4944 40.683C27.1931 40.9844 27.0257 41.4029 27.0257 41.8214C27.0257 42.24 27.1931 42.6585 27.4944 42.9598L33.5547 49.0201L35.8315 51.2969C36.1328 51.5982 36.5513 51.7656 36.9699 51.7656C37.3884 51.7656 37.8069 51.5982 38.1083 51.2969L40.385 49.0201L52.5056 36.8996C52.8069 36.5982 52.9743 36.1797 52.9743 35.7612Z"
+                    fill="white" />
+                </svg>
+                <% }%>
+
+                  <h3>Order Data</h3>
             </div>
             <div class="order-info">
               <div class="order-info__item">
@@ -312,54 +315,91 @@
             </div>
             <div class="checkout__totals-wrapper">
               <div class="checkout__totals">
-                <h3>Order Details</h3>
-                <table class="checkout-cart-items">
-                  <thead>
-                    <tr>
-                      <th>PRODUCT</th>
-                      <th>SUBTOTAL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for(key=0;key<orderData.Products.length;key++){ %>
-                      <tr>
-                        <td>
-                          <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>
-                        </td>
-                        <td>
-                          ₹<%=( orderData.Products[key].Version.Price * orderData.Products[key].Quantity )%>
-                        </td>
-                      </tr>
-                      <%}%>
-                  </tbody>
-                </table>
-                <table class="checkout-totals">
-                  <tbody>
-                    <tr>
-                      <th>SUBTOTAL</th>
-                      <td>₹<%= (orderData.TotalAmount - 70) %>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>COUPON</th>
-                      <td>NIL</td>
-                    </tr>
-                    <tr>
-                      <th>DELIVERY</th>
-                      <td>₹70</td>
-                    </tr>
-                    <tr>
-                      <th>TOTAL</th>
-                      <td>₹<%= orderData.TotalAmount %>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <% if(orderData.Orderstatus=="Payment failed" || orderData.Orderstatus=='Cancelled' ){ %>
+                  <h3>Order status : <span style="color:red">
+                      <%= orderData.Orderstatus %>
+                    </span></h3>
+                  <% }else{%>
+                    <h3>Order status : <span style="color:green">
+                        <%= orderData.Orderstatus %>
+                      </span></h3>
+                    <%}%>
+                      <h3>Order Details</h3>
+                      <table class="checkout-cart-items">
+                        <thead>
+                          <tr>
+                            <th>PRODUCT</th>
+                            <th>SUBTOTAL</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% for(key=0;key<orderData.Products.length;key++){ %>
+                            <tr>
+                              <td>
+                                <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>
+                              </td>
+                              <td>
+                                ₹<%=( orderData.Products[key].Version.Price * orderData.Products[key].Quantity )%>
+                              </td>
+                            </tr>
+                            <%}%>
+                        </tbody>
+                      </table>
+                      <table class="checkout-totals">
+                        <tbody>
+                          <tr>
+                            <th>SUBTOTAL</th>
+                            <td>₹<%= (orderData.TotalAmount - 70) %>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>COUPON</th>
+                            <td>NIL</td>
+                          </tr>
+                          <tr>
+                            <th>DELIVERY</th>
+                            <td>₹70</td>
+                          </tr>
+                          <tr>
+                            <th>TOTAL</th>
+                            <td>₹<%= orderData.TotalAmount %>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
               </div>
             </div>
+            <% if(orderData.Orderstatus=='Order Placed' || orderData.Orderstatus=='Shipped' ){%>
+              <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#cancelOrder">Cancel order</a>
+              <%}else if(orderData.Orderstatus=='Delivered' ){%>
+                <a href="#" class="btn btn-primary w-25">Return order</a>
+                <%}%>
           </div>
         </section>
       </main>
+
+      <div class="modal fade" id="cancelOrder" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-body p-5">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="edit-address">
+                <h2 class="edit-address__title">Reason for cancel</h2>
+                <form name="edit-address-form" action="/cancelOrder" method="post">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <textarea name="cancellingReason" cols="115" rows="4"></textarea>
+                      <input type="hidden" name="orderId" value="<%= orderData.OrderId %>">
+                      <div class="pb-3"></div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
       <div class="mb-5 pb-xl-5"></div>
 

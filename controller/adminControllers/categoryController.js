@@ -6,12 +6,22 @@ const path = require('path');
 
 const getCategories = async (req, res) => {
   try {
+
+    let page = 1;
+    const limit = 6
+    if(req.query.page){
+      page = req.query.page;
+    }
+    const totalCount = await Category.find().countDocuments();
+    const totalPage = Math.ceil(totalCount/limit)
+    const categoryObj = await Category.find().limit(limit).skip((page-1)*limit)
+
     const pushData = {
       adminName: req.session.adminData.Name,
-      categoryObj: await Category.find({}).limit(10),
+      categoryObj,totalPage,page,
       addCategoryMsg: req.flash('msg')
     }
-    res.render('category', pushData)
+    res.render('admin/category', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -48,7 +58,7 @@ const getEditCategory = async (req, res) => {
       categoryObj: await Category.findOne({ "_id": req.query.id }),
       addCategoryMsg: req.flash('msg')
     }
-    res.render('editCategory', pushData)
+    res.render('admin/editCategory', pushData)
 
   } catch (error) {
     console.log(error)
@@ -84,7 +94,7 @@ const getAddCategory = async (req, res) => {
       adminName: req.session.adminData.Name,
       addCategoryMsg: req.flash('msg')
     }
-    res.render('addcategory', pushData)
+    res.render('admin/addcategory', pushData)
   } catch (error) {
     console.log(error)
   }

@@ -1,9 +1,10 @@
 const express = require('express');
-const userRoute = express(); // Use express.Router() for a sub-router
+const userRoute = express.Router(); // Use express.Router() for a sub-router
 const session = require('express-session');
 const flash = require('connect-flash');
 const Auth = require('../middlewares/userAuth');
 const multer = require('multer')
+const methodOverride = require('method-override')
 const passport = require('passport');
 require('../others/passport')
 
@@ -13,6 +14,7 @@ const productController = require('../controller/userControllers/productControll
 const profileController = require('../controller/userControllers/profileController');
 const sortingController = require('../controller/userControllers/sortingController')
 const orderController = require('../controller/userControllers/orderController')
+const wishlistController = require('../controller/userControllers/wishlistController')
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -28,11 +30,14 @@ userRoute.use(session({
 // Flash middleware
 userRoute.use(flash());
 
-userRoute.set('view engine', 'ejs');
-userRoute.set('views', './views/user');
+// userRoute.set('view engine', 'ejs');
+// userRoute.set('views', './views/user');
 
 // Middleware to serve static files
 userRoute.use('/uploads', express.static('uploads'));
+
+
+userRoute.use(methodOverride('_method'))
 
 // Passport middleware
 userRoute.use(passport.initialize());
@@ -56,7 +61,7 @@ userRoute.post('/signup/validateOtp', Auth.notUser, upload.none(), authControlle
 userRoute.get('/signout',authController.getSignout);
 
 userRoute.get('/forgotPassword',Auth.notUser,authController.getForgotPassword);
-userRoute.post('/forgotPassword',Auth.notUser,authController.postForgotPassword);
+userRoute.put('/forgotPassword',Auth.notUser,authController.putForgotPassword);
 userRoute.post('/forgotPassword/sendOtp', Auth.notUser, authController.postForgotSendOtp);
 
 userRoute.get('/auth/google/success', authController.getAuthSuccess);
@@ -69,9 +74,10 @@ userRoute.get('/searchProduct',productController.getSearchProduct)
 userRoute.get('/profile',Auth.isUser,profileController.getProfile);
 userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
 userRoute.get('/profile/address',Auth.isUser, profileController.getAddress);
-userRoute.post('/profile/editAddress',Auth.isUser, profileController.postEditAddress);
+userRoute.put('/profile/editAddress',Auth.isUser, profileController.putEditAddress);
 userRoute.post('/profile/addAddress',Auth.isUser, profileController.postAddAddress);
 userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAddress);
+userRoute.get('/profile/wallet',Auth.isUser,profileController.getWallet)
 
 userRoute.get('/category',productController.getCategory)
 userRoute.get('/sort',sortingController.getSortCategory)
@@ -83,7 +89,14 @@ userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
 userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
 
 userRoute.post('/createOrder',Auth.isUser,orderController.postCreateOrder)
+userRoute.post('/cancelOrder',Auth.isUser,orderController.postCancelOrder)
 userRoute.get('/orderDetails',Auth.isUser,orderController.getOrderDetails)
+userRoute.get('/paypal/orderComplete',Auth.isUser,orderController.paypalOrderComplete)
+
+userRoute.get('/wishlist', Auth.isUser, wishlistController.getWishlist)
+userRoute.post('/wishlist/addToWishlist',upload.none(), wishlistController.postAddToWishlist)
+userRoute.get('/wishlist/removeProduct',Auth.isUser, wishlistController.getRemoveFromWishlist)
+
 
 
 

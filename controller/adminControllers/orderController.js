@@ -57,13 +57,23 @@ async function orderProductData(orderId) {
 
 const getOrders = async (req,res)=>{
   try {
-    const orderObj = await Order.find().populate('UserId')
+
+    let page = 1;
+    const limit = 6
+    if(req.query.page){
+      page = req.query.page;
+      console.log(page);
+    }
+    const totalCount = await Order.find().countDocuments();
+    const totalPage = Math.ceil(totalCount/limit)
+
+    const orderObj = await Order.find().populate('UserId').limit(limit).skip((page-1)*limit)
     const adminName = req.session.adminData.Name
     addProductMsg = req.flash('msg');
     const pushData = {
-      orderObj,adminName,addProductMsg
+      orderObj,adminName,addProductMsg, totalPage,page
     }
-    res.render('orders',pushData)
+    res.render('admin/orders',pushData)
   } catch (error) {
     console.log(error);
   }
@@ -77,7 +87,7 @@ const getViewOrder = async(req,res)=>{
     const pushData = {
       orderData,adminName,addProductMsg
     }
-    res.render('editOrder',pushData)
+    res.render('admin/editOrder',pushData)
   } catch (error) {
     console.log(error);
   }
@@ -86,7 +96,31 @@ const getViewOrder = async(req,res)=>{
 const postUpdateOrderStatus = async(req,res)=>{
   try {
     const {orderStatus,orderId} = req.body;
-    const updateStatus = await Order.updateOne({"_id":orderId},{$set:{"Orderstatus":orderStatus}});
+    let values;
+    switch(orderStatus){
+
+      case 'Order Placed':
+        values = {"Orderstatus":orderStatus};
+        break;
+      case 'Shipped':
+        values = {"Orderstatus":orderStatus, "ShippedDate": Date.now()};
+        break;
+      case 'Delivered':
+        values = {"Orderstatus":orderStatus, "DeliveredDate": Date.now()};
+        break;
+      case 'Cancelled':
+        values = {"Orderstatus":orderStatus, "CancelledDate": Date.now()};
+        break;
+      case 'Returned':
+        values = {"Orderstatus":orderStatus, "ReturnedDate": Date.now()};
+        break;
+
+      default :
+        values = {"Orderstatus":orderStatus};
+        break;
+    }
+
+    const updateStatus = await Order.updateOne({"_id":orderId},{$set:values});
 
     if(updateStatus){
       req.flash('msg','Status updated');

@@ -26,7 +26,7 @@ const getHome = async (req, res) => {
       loginMessage: req.flash('msg'),
       productObj, sizeData, colorData, categoryData, brandData,userData
     }
-    res.render('userHome', pushData)
+    res.render('user/userHome', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -38,7 +38,7 @@ const getSignin = async (req, res) => {
       loginMessage: req.flash('msg'),
       userData: req.session.userData
     }
-    res.render('userLogin', pushData)
+    res.render('user/userLogin', pushData)
   } catch (error) {
     console.log(error);
   }
@@ -78,7 +78,7 @@ const getSignup = async (req, res) => {
       loginMessage: req.flash('msg'),
       userData: req.session.userData
     }
-    res.render('userSignup', pushData)
+    res.render('user/userSignup', pushData)
   } catch (error) {
     console.log(error);
   }
@@ -199,13 +199,13 @@ const getForgotPassword = async (req, res) => {
     const pushData = {
       loginMessage: req.flash('msg')
     }
-    res.render('forgotPassword', pushData)
+    res.render('user/forgotPassword', pushData)
   } catch (error) {
     console.log(error);
   }
 }
 
-const postForgotPassword = async (req, res) => {
+const putForgotPassword = async (req, res) => {
   try {
     console.log(req.body.Email, req.body.Password)
     const { Email, Password } = req.body;
@@ -314,7 +314,7 @@ module.exports = {
   postValidateOtp,
   getSignout,
   getForgotPassword,
-  postForgotPassword,
+  putForgotPassword,
   postForgotSendOtp,
   getAuthSuccess,
   getAuthFailure,

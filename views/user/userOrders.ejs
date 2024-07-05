@@ -290,7 +290,11 @@
                              const date=new Date(timestamp); const formattedDate=date.toISOString().split('T')[0]; %>
                             <td><%= formattedDate %></td>
                             <td>
-                              <%= orderData[key].Orderstatus %>
+                              <% if(orderData[key].Orderstatus == "Payment failed" || orderData[key].Orderstatus == 'Cancelled'){ %>
+                                <span style="color:red"><%= orderData[key].Orderstatus %></span>
+                                <% }else{%>
+                                <span style="color:green"><%= orderData[key].Orderstatus %></span>
+                                <%}%>
                             </td>
                             <td>₹<%= orderData[key].TotalAmount %> for <%= orderData[key].Products.length %> items</td>
                             <td><a href="/orderDetails?id=<%= orderData[key].OrderId %>" class="btn btn-primary">VIEW</a></td>

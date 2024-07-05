@@ -5,7 +5,9 @@ const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Order = require('../../model/orderModel')
+const Wallet = require('../../model/walletModel')
 const UserAuth = require('../../model/userAuthModel')
+const Paypal = require('../../others/paypal')
 
 
 function generateOrderId() {
@@ -80,7 +82,7 @@ async function orderProductData(orderId) {
 const postCreateOrder = async (req, res) => {
   try {
     const orderId = generateOrderId();
-    const userData = await User.findById({ "_id": req.session.userData._id });
+    const userData = await User.findById({ "_id": req.session.userData._id })
     const { checkoutAddress, orderNotes, totalAmount, paymentMethod } = req.body;
 
     const addressDoc = await User.findOne(
@@ -95,45 +97,105 @@ const postCreateOrder = async (req, res) => {
       Quantity: item.Quantity,
     }));
 
-    if (paymentMethod === 'COD') {
-      for (const cartItem of userData.Cart) {
-        const product = await Product.findById(cartItem.Product);
-        if (product) {
-          const version = product.Versions.id(cartItem.Version);
-          if (version) {
-            version.Quantity -= cartItem.Quantity;
-            if (version.Quantity < 0) {
-              throw new Error('Insufficient stock for product version');
-            } else {
+
+    for (const cartItem of userData.Cart) {
+      const product = await Product.findById(cartItem.Product);
+      if (product) {
+        const version = product.Versions.id(cartItem.Version);
+        if (version) {
+          version.Quantity -= cartItem.Quantity;
+          if (version.Quantity < 0) {
+            throw new Error('Insufficient stock for product version');
+          } else {
+
+            if (paymentMethod === 'Cash On Delivery') {
               const newOrder = new Order({
                 "UserId": userData._id,
                 "Products": products,
                 "Address": [address],
                 "TotalAmount": totalAmount,
+                "PaymentMethod": paymentMethod,
                 "OrderNotes": orderNotes,
                 "OrderId": orderId
               });
 
-              const result = await newOrder.save();
+              await newOrder.save();
 
-              if (result) {
-                userData.Cart = [];
-                await userData.save();
-                res.redirect(`/orderDetails?id=${orderId}`);
-              }
+              userData.Cart = [];
+              await userData.save();
+              res.redirect(`/orderDetails?id=${orderId}`);
+            } else if (paymentMethod === 'Paypal') {
+
+              const newOrder = new Order({
+                "UserId": userData._id,
+                "Products": products,
+                "Address": [address],
+                "TotalAmount": totalAmount,
+                "PaymentMethod": paymentMethod,
+                "Orderstatus": 'Payment failed',
+                "OrderNotes": orderNotes,
+                "OrderId": orderId
+              });
+
+              await newOrder.save();
+              userData.Cart = [];
+              await userData.save();
+              req.session.orderId = orderId;
+              const url =await Paypal.paypalCreateOrder(orderId)
+              res.redirect(url)
             }
-          } else {
-            throw new Error('Version not found for product');
           }
-
-          await product.save();
         } else {
-          throw new Error('Product not found');
+          throw new Error('Version not found for product');
         }
+
+        await product.save();
+      } else {
+        throw new Error('Product not found');
       }
-
-
     }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const postCancelOrder = async(req,res)=>{
+  try {
+    const {orderId, cancellingReason} = req.body;
+
+    const orderData = await Order.findOne({"OrderId":orderId})
+
+    if(orderData.PaymentMethod==='Paypal' && orderData.Orderstatus!=='Payment failed'){
+      const updateWallet = await Wallet.updateOne({"UserId":req.session.userData._id},{$set:{"Balance":orderData.TotalAmount,"Transaction.Type":'Refund',"Transaction.Amount":orderData.TotalAmount}},{upsert:true});
+      if(updateWallet){
+        orderData.cancellingReason = cancellingReason;
+        orderData.Orderstatus = 'Cancelled';
+        orderData.CancelledDate = Date.now()
+        await orderData.save();
+        res.redirect(`/orderDetails?id=${orderId}`)
+      }
+    }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const paypalOrderComplete = async(req,res)=>{
+  try {
+
+    const result = await Paypal.capturePayment(req.query.token);
+      const orderData = await Order.updateOne({"OrderId":req.session.orderId},{$set:{"Orderstatus":'Order Placed'}})
+      if(orderData){
+
+        res.redirect(`/orderDetails?id=${req.session.orderId}`);
+
+        req.session.orderId = '';
+      }
+    
   } catch (error) {
     console.log(error);
   }
@@ -153,7 +215,7 @@ const getOrderDetails = async (req, res) => {
       userData,
     }
 
-    res.render('orderComplete', pushData);
+    res.render('user/orderComplete', pushData);
 
   } catch (error) {
     console.log(error);
@@ -163,5 +225,7 @@ const getOrderDetails = async (req, res) => {
 
 module.exports = {
   postCreateOrder,
+  postCancelOrder,
   getOrderDetails,
+  paypalOrderComplete,
 }

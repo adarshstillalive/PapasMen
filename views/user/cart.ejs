@@ -363,7 +363,7 @@
                     </tbody>
                   </table>
                   <div class="cart-table-footer">
-                    <form action="https://uomo-html.flexkitux.com/Demo3/" class="position-relative bg-body">
+                    <form action="#" class="position-relative bg-body">
                       <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
                       <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type=""
                         value="APPLY COUPON">
@@ -512,7 +512,7 @@
                 const max = parseInt(input.dataset.max);
                 let quantity = parseInt(input.value);
 
-                if (quantity < max) {
+                if (quantity < max && quantity <= 4) {
                   quantity++;
                   item.Quantity = quantity;
                   updateSubtotal(quantity, item.Version.Price, key);
@@ -569,3 +569,9 @@
 </body>
 
 </html>
+<style>
+  .disabled-tr {
+    pointer-events: none; 
+    opacity: 0.5;          
+  }
+</style>

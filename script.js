@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const nocache = require('nocache');
-const multer = require('multer');
 const mongoose = require('mongoose');
+const path = require('path')
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 8080;
 // Express configuration
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(express.static(path.join(__dirname,'public')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(nocache());

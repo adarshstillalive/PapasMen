@@ -140,7 +140,9 @@ function pureFadeOut(e) {
         });
 
         $increase.addEventListener('click', function() {
+          if($number.value<=4){
           $number.value = parseInt($number.value) + 1;
+          }
         });
       });
     }

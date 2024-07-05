@@ -57,14 +57,29 @@ const orderSchema = mongoose.Schema({
   },
   Orderstatus:{
     type:String,
-    enum:['Order Placed','Shipped','Delivered','Cancelled','Returned'],
+    enum:['Order Placed','Shipped','Delivered','Cancelled','Returned', 'Payment failed'],
     default:'Order Placed'
   },
   PaymentMethod : {
     type : String,
-    enum:['Cash On Delivery','PAYPAL','Bank Transfer'],
+    enum:['Cash On Delivery','Paypal','Wallet'],
     default:'Cash On Delivery'
-  }
+  },
+  CancellingReason : {
+    type:String,
+  },
+  CancelledDate : { 
+    type: Date
+  },
+  ShippedDate : { 
+    type: Date
+  },
+  DeliveredDate : { 
+    type: Date
+  },
+  ReturnedDate : { 
+    type: Date
+  },
 }, {
   timestamps: true
 })

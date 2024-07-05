@@ -62,7 +62,7 @@ const getCart = async(req,res)=>{
     const pushData = { sizeData, categoryData, colorData, brandData, userCartData,userData };
 
     // Render the 'cart' view with the populated data
-    res.render('cart', pushData);
+    res.render('user/cart', pushData);
   } catch (error) {
     console.log(error);
   }
@@ -85,7 +85,10 @@ const postCart = async (req,res)=>{
 
 const postAddToCart = async (req, res) => {
   try {
-    
+    if(!req.session.userData){
+      return res.status(302).redirect('/signin')
+    }
+       
     const productData = await Product.findOne({ "_id": req.body.ProductId });
     let flag = false;
 
@@ -108,10 +111,11 @@ const postAddToCart = async (req, res) => {
     if (flag) {
       res.json({ success: true })
     } else {
-      res.json({ success: false })
+      res.json({ success: false, message:'Adding to cart failed, try again' })
     }
 
 
+   
   } catch (error) {
     console.log(error);
   }
@@ -178,7 +182,7 @@ const getCheckout = async(req,res)=>{
        sizeData, colorData, categoryData, brandData,userData,userCartData
     }
 
-    res.render('checkout',pushData)
+    res.render('user/checkout',pushData)
   } catch (error) {
     console.log(error);
   }

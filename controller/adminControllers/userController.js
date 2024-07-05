@@ -7,11 +7,21 @@ const path = require('path');
 
 const getUsers = async (req, res) => {
   try {
+
+    let page = 1;
+    const limit = 6
+    if(req.query.page){
+      page = req.query.page;
+    }
+    const totalCount = await User.find().countDocuments();
+    const totalPage = Math.ceil(totalCount/limit)
+    const userObj = await User.find().limit(limit).skip((page-1)*limit)
+
     const pushData = {
       adminName: req.session.adminData.Name,
-      userObj: await User.find({})
+      userObj,totalPage,page,
     }
-    res.render('users', pushData)
+    res.render('admin/users', pushData)
   } catch (error) {
     console.log(error)
   }

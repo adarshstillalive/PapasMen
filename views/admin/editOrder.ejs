@@ -66,7 +66,7 @@
                         <small class="text-muted">Order ID: <%= orderData.OrderId %></small>
                       </div>
                       <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                        <form id="statusForm" action="/admin/updateOrderStatus" method="POST">
+                        <form id="statusForm" action="/admin/updateOrderStatus?_method=PUT" method="POST">
                           <input type="hidden" name="orderId" value="<%= orderData._id %>">
                           <select name="orderStatus" class="form-select d-inline-block mb-lg-0 mb-15 mw-200 p-2">
                             <option disabled selected>Change status</option>
@@ -75,6 +75,7 @@
                             <option value="Delivered">Delivered</option>
                             <option value="Cancelled">Cancelled</option>
                             <option value="Returned">Returned</option>
+                            <option value="Payment failed">Payment Failed</option>
                           </select>
                           <button type="submit" class="btn btn-primary">Save</button>
                         </form>

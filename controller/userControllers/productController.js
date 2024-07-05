@@ -4,6 +4,7 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
+const Wishlist = require('../../model/wishlistModel')
 const UserAuth = require('../../model/userAuthModel')
 
 // Functions
@@ -27,14 +28,16 @@ const getProduct = async (req, res) => {
 
     const { sizeData, colorData, categoryData, brandData } = await fetchData()
     let userData = {};
+    let wishlistData = {};
     if (req.session.userData) {
       userData = await User.findById({ "_id": req.session.userData._id });
+      wishlistData = await Wishlist.findOne({"UserId":req.session.userData._id })
     }
 
     const pushData = {
-      productData, productObj, sizeData, colorData, categoryData, userData, brandData, loginMessage: req.flash('msg')
+      wishlistData, productData, productObj, sizeData, colorData, categoryData, userData, brandData, loginMessage: req.flash('msg')
     }
-    res.render('userProduct', pushData)
+    res.render('user/userProduct', pushData)
   } catch (error) {
     console.log(error);
   }
@@ -56,7 +59,7 @@ const getCategory = async (req, res) => {
       productObj, sizeData, colorData, categoryData, brandData, userData
     }
 
-    res.render('category', pushData)
+    res.render('user/category', pushData)
 
   } catch (error) {
     console.log(error);
@@ -79,7 +82,7 @@ const getSearchProduct = async (req, res) => {
       productObj, sizeData, colorData, categoryData, brandData, userData, keyword
     }
 
-    res.render('category',pushData)
+    res.render('user/category',pushData)
 
 
   } catch (error) {

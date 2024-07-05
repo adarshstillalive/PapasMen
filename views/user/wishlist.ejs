@@ -5,7 +5,6 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="author" content="flexkit">
 
-
   <link rel="preconnect" href="https://fonts.gstatic.com/">
 
   <!-- Fonts -->
@@ -13,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
 
   <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/plugins/flaticon.css" type="text/css">
   <link rel="stylesheet" href="/css/plugins/swiper.min.css" type="text/css">
   <link rel="stylesheet" href="/css/plugins/jquery.fancybox.css" type="text/css">
   <link rel="stylesheet" href="/css/style.css" type="text/css">
@@ -23,7 +23,7 @@
   <![endif]-->
 
   <!-- Document Title -->
-  <title>Edit Address | Uomo eCommerce HTML5 Template</title>
+  <title>My Wishlist | PapasMen</title>
 
 </head>
 
@@ -178,8 +178,7 @@
     </symbol>
   </svg>
   <!-- Mobile Header -->
-  <%-include('header-mob')%>
-  <!-- /.header-mobile -->
+  <%-include('header-mob')%><!-- /.header-mobile -->
 
   <!-- Header Type 1 -->
   <%-include('header')%>
@@ -188,45 +187,86 @@
   <main>
     <div class="mb-4 pb-4"></div>
     <section class="my-account container">
-      <h2 class="page-title">Addresses</h2>
+      <h2 class="page-title">Wishlist</h2>
       <div class="row">
         <%-include('userProfileSide')%>
         <div class="col-lg-9">
-          <div class="page-content my-account__address">
-            <p class="notice">The following addresses will be used on the checkout page by default.</p>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddress">
-              Add Address
-            </button>
-            <div class="pb-3"></div>
-            <div class="my-account__address-list" style="display: flex; flex-wrap: wrap;">
-              <% for(key=0;key<userData.Address.length;key++){%>
-              <div class="my-account__address-item border p-5">
-                <div class="my-account__address-item__title">
-                  <h5>Address <%=key+1%> </h5>
-                  <div class="col d-flex flex-column align-items-end"> 
-                  <button type="button" class="btn btn-primary mb-2 " style="width:150px" data-bs-toggle="modal" data-bs-target="#editModal<%=key%>">
-                    Edit
-                  </button>
-                  <button type="button" class="btn btn-primary " style="width:150px" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal<%=key%>">
-                    Delete
-                  </button>
+          <div class="page-content my-account__wishlist">
+            <div class="products-grid row row-cols-2 row-cols-lg-3" id="products-grid" >
+              <%for(key=0;key<wishlistData.Products.length;key++){%>
+                <div class="product-card-wrapper">
+                  <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+                    <div class="pc__img-wrapper bg-light">
+                      <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
+                        <div class="swiper-wrapper">
+                          <div class="swiper-slide">
+                            <a href="/product?id=<%= wishlistData.Products[key].Product._id %>"><img loading="lazy" src="<%= wishlistData.Products[key].Product.Image[0] %>" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                          </div>
+                          <div class="swiper-slide">
+                            <a href="/product?id=<%= wishlistData.Products[key].Product._id %>"><img loading="lazy" src="<%= wishlistData.Products[key].Product.Image[1] %>" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                          </div>
+                        </div>
+                        <span class="pc__img-prev"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_prev_sm" /></svg></span>
+                        <span class="pc__img-next"><svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg"><use href="#icon_next_sm" /></svg></span>
+                      </div>
+                      <button class="btn-remove-from-wishlist" data-bs-target="#remove<%= wishlistData.Products[key].Product._id %>" data-bs-toggle="modal">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_close" /></svg>
+                      </button>
+                      <a href="/product?id=<%= wishlistData.Products[key].Product._id %>" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium" title="Add To Cart" >Add To Cart</a>
+                    </div>
+                    <div class="pc__info position-relative">
+                      <p class="pc__category"><%= wishlistData.Products[key].Product.Category.Name %></p>
+                      <h6 class="pc__title"><a href="/product?id=<%= wishlistData.Products[key].Product._id %>"><%= wishlistData.Products[key].Product.Name %>/<%= wishlistData.Products[key].Product.Brand.Name %></a></h6>
+                      <div class="product-card__price d-flex">
+                        <span class="money price">₹<%= wishlistData.Products[key].Product.Versions[0].Price%></span>
+                      </div>
+                      <div class="product-card__review d-flex align-items-center">
+                        <div class="reviews-group d-flex">
+                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                          <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>
+                        </div>
+                        <span class="reviews-note text-lowercase text-secondary ms-1">8000+</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                </div>
-                <div class="my-account__address-item__detail">
-                  <p><%=userData.Address[key].Fname%> <%=userData.Address[key].Lname%></p>
-                  <p><%=userData.Address[key].Housename%>,<%=userData.Address[key].City%></p>
-                  <p><%=userData.Address[key].State%>,<%=userData.Address[key].Pincode%></p>
-                  <br>
-                  <p><%=userData.Email%></p>
-                  <p><%=userData.Address[key].Phone%></p>
-                </div>
-              </div>
               <%}%>
-            </div>
+            </div><!-- /.products-grid row -->
           </div>
         </div>
       </div>
     </section>
+
+    <% for(let key=0; key < wishlistData.Products.length; key++) { %>
+      <div class="modal fade" id="remove<%= wishlistData.Products[key].Product._id %>" tabindex="-1"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">PapasMen</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <header>
+                  <i class="bx bxs-check-shield"></i>
+                </header>
+                <h4>Are you sure?</h4>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <a href="/wishlist/removeProduct?id=<%= wishlistData.Products[key].Product._id %>"
+                class="btn btn-primary remove-cart">Remove</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%}%>
+
   </main>
 
   <div class="mb-5 pb-xl-5"></div>
@@ -239,149 +279,6 @@
   <!-- Mobile Fixed Footer -->
   <%-include('footer-mob')%>
   <!-- /.footer-mobile container position-fixed d-md-none bottom-0 -->
-
-  <% for(key=0;key<userData.Address.length;key++){%>
-  <div class="modal fade" id="editModal<%=key%>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-body p-5">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="edit-address">
-          <h2 class="edit-address__title">Edit Address</h2>
-          <form name="edit-address-form" action="/profile/editAddress?_method=PUT" method="post">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="hidden" name="index" value="<%=key%>">
-                  <input type="hidden" name="route" value="/profile/address">
-                  <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" name="Fname" value="<%=userData.Address[key].Fname%>" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="lastName" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="lastName" name="Lname" value="<%=userData.Address[key].Lname%>" required>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="housename" class="form-label">House Name / Building Name</label>
-              <input type="text" class="form-control" id="housename" name="Housename" value="<%=userData.Address[key].Housename%>" required>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="city" class="form-label">City</label>
-                  <input type="text" class="form-control" id="city" name="City" value="<%=userData.Address[key].City%>" required>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="state" class="form-label">State</label>
-                  <input type="text" class="form-control" id="state" name="State" value="<%=userData.Address[key].State%>" required>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="pincode" class="form-label">Pincode</label>
-                  <input type="text" class="form-control" id="pincode" name="Pincode" maxlength="6" value="<%=userData.Address[key].Pincode%>" required> </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="phone" class="form-label">Phone Number</label>
-              <input type="tel" class="form-control" id="phone" name="Phone" value="<%=userData.Address[key].Phone%>" required> </div>
-              <div class="pb-3"></div>
-            <button type="submit" class="btn btn-primary">Save Address</button>
-          </form>
-        </div>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  <%}%>
-
-  <!-- Add address Modal -->
-  <div class="modal fade" id="addAddress" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-body p-5">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <div class="edit-address">
-          <h2 class="edit-address__title">Add Address</h2>
-          <form name="edit-address-form" action="/profile/addAddress" method="post">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <input type="hidden" name="route" value="/profile/address">
-                  <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" name="Fname" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="lastName" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="lastName" name="Lname" required>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="housename" class="form-label">House Name / Building Name</label>
-              <input type="text" class="form-control" id="housename" name="Housename" required>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="city" class="form-label">City</label>
-                  <input type="text" class="form-control" id="city" name="City" required>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="state" class="form-label">State</label>
-                  <input type="text" class="form-control" id="state" name="State"  required>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="pincode" class="form-label">Pincode</label>
-                  <input type="text" class="form-control" id="pincode" name="Pincode" maxlength="6" required> </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="phone" class="form-label">Phone Number</label>
-              <input type="tel" class="form-control" id="phone" name="Phone" required> </div>
-              <div class="pb-3"></div>
-            <button type="submit" class="btn btn-primary">Save Address</button>
-          </form>
-        </div>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-
-  <!-- DeleteModal -->
-  <% for(key=0;key<userData.Address.length;key++){%>
-  <div class="modal fade" id="deleteConfirmationModal<%=key%>" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">  <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to delete this address?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close&nbsp;</button>
-          <a href="/profile/deleteAddress?id=<%=userData.Address[key]._id%>" class="btn btn-primary" id="deleteAddressButton">Delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <%}%>
-
 
 
   <!-- Go To Top -->

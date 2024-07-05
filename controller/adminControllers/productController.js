@@ -10,13 +10,21 @@ const path = require('path');
 
 const getProducts = async (req, res) => {
   try {
+    let page = 1;
+    const limit = 6
+    if(req.query.page){
+      page = req.query.page;
+    }
+    const totalCount = await Product.find().countDocuments();
+    const totalPage = Math.ceil(totalCount/limit)
+    const productObj = await Product.find().populate('Brand').populate('Category').limit(limit).skip((page-1)*limit)
     const pushData = {
       adminName: req.session.adminData.Name,
       addProductMsg: req.flash('msg'),
-      productObj: await Product.find({}).populate('Brand').populate('Category').limit(10)
+      productObj, totalPage,page
     }
 
-    res.render('products', pushData)
+    res.render('admin/products', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -63,7 +71,7 @@ const getEditProduct = async (req, res) => {
       addProductMsg: req.flash('msg')
     }
     // console.log(pushData.productObj)
-    res.render('editProduct', pushData)
+    res.render('admin/editProduct', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -195,7 +203,7 @@ const getAddProduct = async (req, res) => {
       colorsData,
       sizesData
     }
-    res.render('addProduct', pushData)
+    res.render('admin/addProduct', pushData)
   } catch (error) {
     console.log(error)
   }

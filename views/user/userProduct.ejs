@@ -6,7 +6,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="author" content="flexkit">
 
- 
+
   <link rel="preconnect" href="https://fonts.gstatic.com/">
 
   <!-- Fonts -->
@@ -271,15 +271,10 @@
                     <div class="swiper-wrapper">
                       <% for(key=0; key<productData.Image.length;key++){%>
                         <div class="swiper-slide product-single__image-item">
-                          <img loading="lazy" class="h-auto" src="/<%=productData.Image[key]%>" width="674" height="674"
-                            alt="">
-                          <a data-fancybox="gallery" href="/<%=productData.Image[key]%>" data-bs-toggle="tooltip"
-                            data-bs-placement="left" title="Zoom">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <use href="#icon_zoom" />
-                            </svg>
-                          </a>
+                          <div class="zoom-wrapper">
+                            <img id="mainImage" class="zoom-image" src="/<%=productData.Image[key]%>" width="674"
+                              height="674" alt="">
+                          </div>
                         </div>
                         <%}%>
                     </div>
@@ -297,8 +292,10 @@
                   <div class="swiper-container">
                     <div class="swiper-wrapper">
                       <% for(key=0; key<productData.Image.length;key++){%>
-                        <div class="swiper-slide product-single__image-item bg-light"><img loading="lazy" class="h-auto"
-                            src="/<%=productData.Image[key]%>" width="104" height="104" alt=""></div>
+                        <div class="swiper-slide product-single__image-item bg-light">
+                          <img loading="lazy" class="h-auto" src="/<%=productData.Image[key]%>" width="104" height="104"
+                            alt="">
+                        </div>
                         <%}%>
                     </div>
                   </div>
@@ -312,20 +309,7 @@
                   <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
                   <a class="menu-link text-uppercase text-muted fw-medium">Add Product</a>
 
-                </div><!-- /.breadcrumb -->
-
-                <!-- <div
-                  class="product-single__prev-next d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                  <a href="product15_v10.html" class="text-uppercase fw-medium"><svg class="mb-1px" width="10"
-                      height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                      <use href="#icon_prev_md" />
-                    </svg><span class="menu-link menu-link_us-s">Prev</span></a>
-                  <a href="#" class="text-uppercase fw-medium disabled"><span
-                      class="menu-link menu-link_us-s">Next</span><svg class="mb-1px" width="10" height="10"
-                      viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                      <use href="#icon_next_md" />
-                    </svg></a>
-                </div>/.shop-acs -->
+                </div>
               </div>
               <h1 class="product-single__name">
                 <%=productData.Name%>/<%=productData.Brand.Name%>
@@ -351,7 +335,13 @@
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
               <div class="product-single__price">
-                <span class="current-price">₹<%=productData.Versions[0].Price%></span>
+                <span class="current-price">₹<%=productData.Versions[0].Price%></span>&emsp;&emsp;
+                <% const quantity=productData.Versions.reduce((acc,curr)=>acc+=curr.Quantity,0) %>
+                  <% if(quantity<=5 && quantity>0){ %>
+                    <span style="color:red">HURRY, Only <%= quantity %> left</span>
+                    <%}else if(quantity<=0){%>
+                      <span style="color:red">Out of stock</span>
+                      <%}%>
               </div>
               <div class="product-single__short-desc">
                 <p>
@@ -365,16 +355,29 @@
                     <label>Sizes</label>
                     <div class="swatch-list">
                       <% const uniqueSize=new Set() %>
-                        <% for(i=0;i<productData.Versions.length;i++){%>
-                          <% if(!uniqueSize.has(productData.Versions[i].Size.Name)){ %>
-                            <% uniqueSize.add(productData.Versions[i].Size.Name)%>
-                              <input type="radio" name="Size" id="swatch-<%=i%>"
-                                value="<%= productData.Versions[i].Size._id %>">
-                              <label class="swatch js-swatch" for="swatch-<%=i%>" aria-label="Extra Small"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title="6">
-                                <%= productData.Versions[i].Size.Name %>
-                              </label>
-                              <%}}%>
+                        <% if(quantity>0){%>
+                          <% for(i=0;i<productData.Versions.length;i++){%>
+                            <% if(!uniqueSize.has(productData.Versions[i].Size.Name)){ %>
+                              <% uniqueSize.add(productData.Versions[i].Size.Name)%>
+                                <input type="radio" name="Size" id="swatch-<%=i%>"
+                                  value="<%= productData.Versions[i].Size._id %>">
+                                <label class="swatch js-swatch" for="swatch-<%=i%>" aria-label="Extra Small"
+                                  data-bs-toggle="tooltip" data-bs-placement="top" title="6">
+                                  <%= productData.Versions[i].Size.Name %>
+                                </label>
+                                <%}}%>
+                                  <%}else if(quantity<=0){%>
+                                    <% for(i=0;i<productData.Versions.length;i++){%>
+                                      <% if(!uniqueSize.has(productData.Versions[i].Size.Name)){ %>
+                                        <% uniqueSize.add(productData.Versions[i].Size.Name)%>
+                                          <input type="radio" name="Size" id="swatch-<%=i%>"
+                                            value="<%= productData.Versions[i].Size._id %>" disabled>
+                                          <label class="swatch js-swatch" for="swatch-<%=i%>" aria-label="Extra Small"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="6" disabled>
+                                            <%= productData.Versions[i].Size.Name %>
+                                          </label>
+                                          <%}}%>
+                                            <%}%>
                     </div>
                     <!-- <a href="#" class="sizeguide-link" data-bs-toggle="modal" data-bs-target="#sizeGuide">Size Guide</a> -->
                   </div>
@@ -382,66 +385,57 @@
                     <label>Color</label>
                     <div class="swatch-list  bg-light">
                       <% const uniqueColor=new Set() %>
-                        <% for(i=0;i<productData.Versions.length;i++){%>
-                          <% if(!uniqueColor.has(productData.Versions[i].Color.Name)){ %>
-                            <% uniqueColor.add(productData.Versions[i].Color.Name)%>
-                              <input type="radio" name="Color" id="swatch-1<%=i%>"
-                                value="<%= productData.Versions[i].Color._id%>">
-                              <label class="swatch swatch-color js-swatch" for="swatch-1<%=i%>"
-                                aria-label="<%= productData.Versions[i].Color.Name %>" data-bs-toggle="tooltip"
-                                data-bs-placement="top" title="<%= productData.Versions[i].Color.Name %>"
-                                style="color: <%= productData.Versions[i].Color.Name %>"></label>
-                              <%}}%>
+                        <% if(quantity>0){%>
+                          <% for(i=0;i<productData.Versions.length;i++){%>
+                            <% if(!uniqueColor.has(productData.Versions[i].Color.Name)){ %>
+                              <% uniqueColor.add(productData.Versions[i].Color.Name)%>
+                                <input type="radio" name="Color" id="swatch-1<%=i%>"
+                                  value="<%= productData.Versions[i].Color._id%>">
+                                <label class="swatch swatch-color js-swatch" for="swatch-1<%=i%>"
+                                  aria-label="<%= productData.Versions[i].Color.Name %>" data-bs-toggle="tooltip"
+                                  data-bs-placement="top" title="<%= productData.Versions[i].Color.Name %>"
+                                  style="color: <%= productData.Versions[i].Color.Name %>"></label>
+                                <%}}%>
+                                  <%}else if(quantity<=0){%>
+                                    <% for(i=0;i<productData.Versions.length;i++){%>
+                                      <% if(!uniqueColor.has(productData.Versions[i].Color.Name)){ %>
+                                        <% uniqueColor.add(productData.Versions[i].Color.Name)%>
+                                          <input type="radio" name="Color" id="swatch-1<%=i%>"
+                                            value="<%= productData.Versions[i].Color._id%>" disabled>
+                                          <label class="swatch swatch-color js-swatch" for="swatch-1<%=i%>"
+                                            aria-label="<%= productData.Versions[i].Color.Name %>"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="<%= productData.Versions[i].Color.Name %>"
+                                            style="color: <%= productData.Versions[i].Color.Name %>"></label>
+                                          <%}}}%>
                     </div>
                   </div>
                 </div>
                 <div class="product-single__addtocart">
                   <div class="qty-control position-relative">
-                    <input type="number" name="Quantity" value="1" min="1" class="qty-control__number text-center">
+                    <input type="number" name="Quantity" value="1" min="1" max="5"
+                      class="qty-control__number text-center" readonly>
                     <div class="qty-control__reduce">-</div>
                     <div class="qty-control__increase">+</div>
                   </div><!-- .qty-control -->
-                  <a id="openMiniCart" class="js-open-aside" data-aside="cartDrawer"></a>
-                  <button type="submit" class="btn btn-primary btn-addtocart ">Add
-                    to Cart</button>
+                  <!-- <a id="openMiniCart" class="js-open-aside" data-aside="cartDrawer"></a> -->
+                  <% if(quantity<=0){ %>
+                    <button type="submit" class="btn btn-primary btn-addtocart " disabled>Add
+                      to Cart</button>
+                    <%}else{%>
+                      <button type="submit" class="btn btn-primary btn-addtocart ">Add
+                        to Cart</button>
+                      <%}%>
                 </div>
               </form>
-              <div class="product-single__addtolinks">
-                <a href="#" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16" height="16"
-                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <div class="product-single__addtolinks" id="wishlistForm">
+
+                <input type="hidden" name="productId" value="<%= productData._id %>">
+                <a href="#" id="addToWishlist" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16"
+                    height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_heart" />
                   </svg><span>Add to Wishlist</span></a>
-                <share-button class="share-button">
-                  <button class="menu-link menu-link_us-s to-share border-0 bg-transparent d-flex align-items-center">
-                    <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <use href="#icon_sharing" />
-                    </svg>
-                    <span>Share</span>
-                  </button>
-                  <details id="Details-share-template__main" class="m-1 xl:m-1.5" hidden="">
-                    <summary class="btn-solid m-1 xl:m-1.5 pt-3.5 pb-3 px-5">+</summary>
-                    <div id="Article-share-template__main"
-                      class="share-button__fallback flex items-center absolute top-full left-0 w-full px-2 py-4 bg-container shadow-theme border-t z-10">
-                      <div class="field grow mr-4">
-                        <label class="field__label sr-only" for="url">Link</label>
-                        <input type="text" class="field__input w-full" id="url"
-                          value="https://uomo-crystal.myshopify.com/blogs/news/go-to-wellness-tips-for-mental-health"
-                          placeholder="Link" onclick="this.select();" readonly="">
-                      </div>
-                      <button class="share-button__copy no-js-hidden">
-                        <svg class="icon icon-clipboard inline-block mr-1" width="11" height="13" fill="none"
-                          xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" viewBox="0 0 11 13">
-                          <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M2 1a1 1 0 011-1h7a1 1 0 011 1v9a1 1 0 01-1 1V1H2zM1 2a1 1 0 00-1 1v9a1 1 0 001 1h7a1 1 0 001-1V3a1 1 0 00-1-1H1zm0 10V3h7v9H1z"
-                            fill="currentColor"></path>
-                        </svg>
-                        <span class="sr-only">Copy link</span>
-                      </button>
-                    </div>
-                  </details>
-                </share-button>
-                <script src="js/details-disclosure.js" defer="defer"></script>
-                <script src="js/share.js" defer="defer"></script>
+
               </div>
               <div class="product-single__meta-info">
                 <div class="meta-item">
@@ -680,9 +674,9 @@
                         <img loading="lazy" src="<%= productObj[key].Image[0] %>" width="330" height="400"
                           alt="Cropped Faux leather Jacket" class="pc__img">
                       </a>
-                      <button
-                        class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
-                        data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                      <a href="/product?id=<%= productObj[key]._id %>"
+                        class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium"
+                        title="Add To Cart">Add To Cart</a>
                     </div>
 
                     <div class="pc__info position-relative">
@@ -1004,60 +998,160 @@
           <!-- Internal JS -->
           <script>
             document.addEventListener('DOMContentLoaded', function () {
-              if (localStorage.getItem('showAlert') === 'true') {
+              const showAlert = localStorage.getItem('showAlert');
+              const wishlistAlert = localStorage.getItem('wishlistAlert');
+
+              if (showAlert === 'true') {
                 Swal.fire({
                   title: "Success",
                   text: "Product added to cart",
                   icon: "success",
-                  showConfirmButton:false,
-                  timer:1500
+                  showConfirmButton: false,
+                  timer: 1500
                 });
-                localStorage.removeItem('showAlert')
+                localStorage.removeItem('showAlert');
+              } else if (wishlistAlert === 'true') {
+                Swal.fire({
+                  title: "Success",
+                  text: "Added to wishlist",
+                  icon: "success",
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+                localStorage.removeItem('wishlistAlert');
               }
-              const addToCartForm = document.getElementById('addToCartForm');
+            });
+            const addToCartForm = document.getElementById('addToCartForm');
 
-              addToCartForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const formData = new FormData(addToCartForm);
-                const formObj = {};
+            addToCartForm.addEventListener('submit', function (event) {
+              event.preventDefault();
+              const formData = new FormData(addToCartForm);
+              const formObj = {};
 
-                formData.forEach((value, key) => {
-                  formObj[key] = value;
-                });
+              formData.forEach((value, key) => {
+                formObj[key] = value;
+              });
 
-                fetch('/cart/addToCart', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(formObj),
+              fetch('/cart/addToCart', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formObj),
+              })
+                .then(response => {
+                  if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                  }
+                  return response.json();
                 })
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.success) {
+                .then(data => {
+                  switch (data.success) {
+
+                    case true:
                       localStorage.setItem('showAlert', 'true')
                       window.location.reload();
+                      break;
 
-                      // Additional success handling logic here
+                    case false:
+
+                      Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: data.message,
+                      });
+                      console.error("Error adding item to cart", data.error);
+                      break;
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  // Network error handling here
+                });
+            });
+
+
+            document.getElementById('addToWishlist').addEventListener('click', (event) => {
+              const button = event.target.closest('#addToWishlist');
+              if (button.classList.contains('active')) {
+                console.log('Button is active');
+                // Perform actions when the button is already active
+              } else {
+
+                const productId = document.querySelector('input[name="productId"]').value
+
+                fetch('/wishlist/addToWishlist', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ productId })
+                }).then(response => response.json())
+                  .then((data) => {
+                    if (data.success) {
+                      localStorage.setItem('wishlistAlert', 'true')
+                      window.location.reload();
+
                     } else {
                       Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: "Something happened",
+                        text: data.message,
                       });
                       console.error("Error adding item to cart", data.error);
-                      // Error handling logic here
                     }
                   })
-                  .catch(error => {
-                    console.error('Error:', error);
-                    // Network error handling here
-                  });
-              });
+                console.log('Button is not active');
+                // Perform actions when the button is not active
+              }
+            });
 
-            })
+
           </script>
 
+          <!-- Image zoom - hover -->
+          <script>
+
+            document.addEventListener('DOMContentLoaded', function () {
+              const wrappers = document.querySelectorAll('.zoom-wrapper');
+
+              wrappers.forEach(wrapper => {
+                const image = wrapper.querySelector('.zoom-image');
+                let imageWidth, imageHeight, wrapperWidth, wrapperHeight;
+
+                function updateDimensions() {
+                  imageWidth = image.naturalWidth;
+                  imageHeight = image.naturalHeight;
+                  wrapperWidth = wrapper.offsetWidth;
+                  wrapperHeight = wrapper.offsetHeight;
+                }
+
+                image.onload = updateDimensions;
+                updateDimensions();
+                window.addEventListener('resize', updateDimensions);
+
+                wrapper.addEventListener('mousemove', (e) => {
+                  const rect = wrapper.getBoundingClientRect();
+                  const mouseX = e.clientX - rect.left;
+                  const mouseY = e.clientY - rect.top;
+
+                  const zoomFactor = 2; // Adjust this value to change zoom level
+
+                  const bgX = (mouseX / wrapperWidth) * 100;
+                  const bgY = (mouseY / wrapperHeight) * 100;
+
+                  image.style.transformOrigin = `${bgX}% ${bgY}%`;
+                  image.style.transform = `scale(${zoomFactor})`;
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                  image.style.transformOrigin = 'center center';
+                  image.style.transform = 'scale(1)';
+                });
+              });
+            });
+          </script>
 
           <!-- External JavaScripts -->
           <script src="/js/plugins/jquery.min.js"></script>
@@ -1075,3 +1169,17 @@
 </body>
 
 </html>
+
+<style>
+  .zoom-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .zoom-image {
+    transition: transform 0.1s ease-out;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

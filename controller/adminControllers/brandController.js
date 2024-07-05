@@ -6,13 +6,21 @@ const path = require('path');
 
 const getBrands = async (req, res) => {
   try {
+    let page = 1;
+    const limit = 6
+    if(req.query.page){
+      page = req.query.page;
+    }
+    const totalCount = await Brand.find().countDocuments();
+    const totalPage = Math.ceil(totalCount/limit)
+    const brandObj = await Brand.find().limit(limit).skip((page-1)*limit)
 
     const pushData = {
       adminName: req.session.adminData.Name,
-      brandObj: await Brand.find({}).limit(10),
+      brandObj,totalPage,page,
       addBrandMsg: req.flash('msg')
     }
-    res.render('brand', pushData)
+    res.render('admin/brand', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -49,7 +57,7 @@ const getEditBrand = async (req, res) => {
       brandObj: await Brand.findOne({ "_id": req.query.id }),
       addBrandMsg: req.flash('msg')
     }
-    res.render('editBrand', pushData)
+    res.render('admin/editBrand', pushData)
 
   } catch (error) {
     console.log(error)
@@ -85,7 +93,7 @@ const getAddBrand = async (req, res) => {
       adminName: req.session.adminData.Name,
       addBrandMsg: req.flash('msg')
     }
-    res.render('addBrand', pushData)
+    res.render('admin/addBrand', pushData)
   } catch (error) {
     console.log(error)
   }

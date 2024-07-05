@@ -5,6 +5,7 @@ const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Order = require('../../model/orderModel')
+const Wallet = require('../../model/walletModel')
 const UserAuth = require('../../model/userAuthModel')
 
 // Function
@@ -29,7 +30,7 @@ const getProfile = async (req, res) => {
       categoryData,
       brandData
     }
-    res.render('userProfile', pushData)
+    res.render('user/userProfile', pushData)
   } catch (error) {
     console.log(error);
   }
@@ -51,7 +52,7 @@ const getOrders = async (req, res) => {
       brandData,
       orderData,
     }
-    res.render('userOrders', pushData)
+    res.render('user/userOrders', pushData)
   } catch (error) {
     console.log(error);
   }
@@ -70,13 +71,13 @@ const getAddress = async (req, res) => {
       categoryData,
       brandData
     }
-    res.render('userAddress', pushData)
+    res.render('user/userAddress', pushData)
   } catch (error) {
     console.log(error);
   }
 }
 
-const postEditAddress = async (req, res) => {
+const putEditAddress = async (req, res) => {
   try {
     const {index,route,Fname,Lname,Housename,City,State,Pincode,Phone} = req.body;
 
@@ -94,8 +95,7 @@ const postEditAddress = async (req, res) => {
 
     userData.Address[index] = updateData;
     const result = await userData.save();
-
-    console.log(result);
+    
     if (result) {
       res.redirect(`${route}`)
     } else {
@@ -154,14 +154,36 @@ const getDeleteAddress = async (req, res) => {
   }
 }
 
+const getWallet = async(req,res)=>{
+  try {
+    const {sizeData,colorData,categoryData,brandData,userData} =await fetchData(req.session.userData._id)
+    const walletData = await Wallet.findOne({"UserId":req.session.userData._id});
+
+    const pushData = {
+      userData,
+      sizeData,
+      colorData,
+      categoryData,
+      brandData,
+      walletData
+    }
+
+    res.render('user/userWallet',pushData)
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 module.exports = {
 
   getProfile,
   getOrders,
   getAddress,
-  postEditAddress,
+  putEditAddress,
   postAddAddress,
   getDeleteAddress,
+  getWallet,
 
 }

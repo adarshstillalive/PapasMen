@@ -8,7 +8,7 @@ const dashboard = async (req, res) => {
     const pushData = {
       adminName: req.session.adminData.Name
     }
-    res.render('dashboard', pushData)
+    res.render('admin/dashboard', pushData)
   } catch (error) {
     console.log(error)
   }
@@ -26,7 +26,7 @@ const getLogout = async (req, res) => {
 const getLogin = async (req, res) => {
   try {
     const loginMessage = req.flash('msg')
-    res.render('adminLogin', { loginMessage })
+    res.render('admin/adminLogin', { loginMessage })
   } catch (error) {
     console.log(error)
   }

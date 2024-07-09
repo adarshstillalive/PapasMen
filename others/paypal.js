@@ -26,7 +26,7 @@ async function paypalCreateOrder(orderId) {
     quantity: item.Quantity,
     unit_amount: {
       currency_code: 'USD',
-      value: item.Product.Versions[0].Price
+      value: item.Product.Price
     }
   }))
 
@@ -75,7 +75,6 @@ async function paypalCreateOrder(orderId) {
 }
 
 async function capturePayment(orderId){
-  console.log(orderId);
   const accessToken = await GenerateAccessToken();
   const response = axios({
     url: process.env.PAYPAL_BASE_URL + `/v2/checkout/orders/${orderId}/capture`,

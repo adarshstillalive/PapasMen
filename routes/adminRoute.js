@@ -10,6 +10,9 @@ const brandController = require('../controller/adminControllers/brandController'
 const categoryController = require('../controller/adminControllers/categoryController');
 const productController = require('../controller/adminControllers/productController');
 const orderController = require('../controller/adminControllers/orderController');
+const offerController = require('../controller/adminControllers/offerController');
+const couponController = require('../controller/adminControllers/couponController')
+const salesController = require('../controller/adminControllers/salesController')
 
 
 // Multer configuration
@@ -78,6 +81,22 @@ adminRoute.get('/products/editProduct', Auth.isAdmin, productController.getEditP
 adminRoute.put('/products/editProduct', Auth.isAdmin,upload.array('Image',5), productController.postEditProduct);
 adminRoute.get('/products/addProduct', Auth.isAdmin, productController.getAddProduct);
 adminRoute.post('/products/addProduct', Auth.isAdmin, upload.array('Image', 5), productController.postAddProduct);
+
+adminRoute.get('/offer/productOffer',Auth.isAdmin, offerController.getProductOffer)
+adminRoute.get('/offer/categoryOffer',Auth.isAdmin, offerController.getCategoryOffer)
+adminRoute.get('/offer/addProductOffer',Auth.isAdmin, offerController.getAddProductOffer)
+adminRoute.post('/offer/addProductOffer',Auth.isAdmin, offerController.postAddProductOffer)
+adminRoute.get('/offer/addCategoryOffer',Auth.isAdmin, offerController.getAddCategoryOffer)
+adminRoute.post('/offer/addCategoryOffer',Auth.isAdmin, offerController.postAddCategoryOffer)
+
+adminRoute.get('/coupon',Auth.isAdmin, couponController.getCoupon)
+adminRoute.get('/coupon/addCoupon',Auth.isAdmin, couponController.getAddCoupon)
+adminRoute.post('/coupon/addCoupon',Auth.isAdmin, couponController.postAddCoupon)
+adminRoute.get('/coupon/deleteCoupon',Auth.isAdmin, couponController.getDeleteCoupon)
+
+adminRoute.get('/sales',Auth.isAdmin, salesController.getSales)
+adminRoute.get('/pdfDownload',Auth.isAdmin, salesController.getPdfDownload)
+adminRoute.get('/excelDownload',Auth.isAdmin, salesController.getExcelDownload)
 
 
 module.exports = adminRoute;

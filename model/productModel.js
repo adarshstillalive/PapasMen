@@ -21,6 +21,14 @@ const productSchema = mongoose.Schema({
     type: String,
     required:true
   },
+  Price:{
+    type: Number,
+    required:true
+  },
+  MRP:{
+    type:Number,
+    required:true
+  },
   isActive:{
     type:Boolean,
     default:true
@@ -38,12 +46,29 @@ const productSchema = mongoose.Schema({
       type:Number,
       required:true,
       min:0
-    },
-    Price:{
-      type:Number,
-      required:true
     }
-  }]
+  }],
+  Offer:{
+    OfferName:{
+      type:String,
+    },
+    Description:{
+      type:String
+    },
+    Start:{
+      type:Date,
+    },
+    End:{
+      type:Date,
+    },
+    Percentage:{
+      type:Number,
+    }
+  },
+  OfferExpiry:{
+    type:Boolean,
+    default:false
+  }
   
 },{timestamps:true})
 

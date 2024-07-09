@@ -111,6 +111,32 @@
                             </div>
                           </div>
                         </div>
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="Price">MRP</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
+                              </div>
+                              <input type="number" class="form-control" value="<%= productObj.MRP %>" id="Price" name="MRP" aria-label="Price" required>
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="Price">Price</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
+                              </div>
+                              <input type="number" class="form-control" value="<%= productObj.Price %>" id="Price" name="Price" aria-label="Price" required>
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <div class="mb-3">
                           <label class="form-label">Description</label>
                           <textarea class="form-control h-200" rows="1" name="Description"
@@ -175,22 +201,6 @@
                                       <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="button"
                                           onclick="changeQuantity('plus', <%= key %>)">+</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="col">
-                                    <label class="form-label" for="Price">Price</label>
-                                    <div class="input-group">
-                                      <div class="input-group-prepend">
-                                        <button class="btn btn-outline-secondary" type="button"
-                                          onclick="changePrice('minus', <%= key %>)">-</button>
-                                      </div>
-                                      <input type="number" class="form-control"
-                                        value="<%= productObj.Versions[key].Price %>" id="price<%= key %>"
-                                        name="existingVersions[<%= key %>].Price" aria-label="Price" required>
-                                      <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button"
-                                          onclick="changePrice('plus', <%= key %>)">+</button>
                                       </div>
                                     </div>
                                   </div>
@@ -273,8 +283,8 @@
       }
     }
 
-    function changePrice(action, index) {
-      const priceInput = document.getElementById(`price${index}`);
+    function changePrice(action) {
+      const priceInput = document.getElementById(`Price`);
       let currentValue = parseFloat(priceInput.value);
       if (action === 'minus' && currentValue > 0) {
         priceInput.value = (currentValue - 1).toFixed(2);
@@ -354,18 +364,6 @@
             <input type="number" class="form-control" value="0" id="quantity${versionCount}" name="newVersions[${versionCount}].Quantity" aria-label="Quantity" required>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity('plus', ${versionCount})">+</button>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <label class="form-label" for="Price">Price</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus', ${versionCount})">-</button>
-            </div>
-            <input type="number" class="form-control" value="0" id="price${versionCount}" name="newVersions[${versionCount}].Price" aria-label="Price" required>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus', ${versionCount})">+</button>
             </div>
           </div>
         </div>

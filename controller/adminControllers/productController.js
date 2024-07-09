@@ -116,7 +116,7 @@ const postEditProduct = async (req, res) => {
         deletedVersions,
       };
     };
-    const {productId,Name,BrandId,CategoryId,Description,removedImages} = req.body
+    const {productId,Name,BrandId,CategoryId,Description,MRP,Price,removedImages} = req.body
     const {existingVersions,newVersions,deletedVersions} = parseProductData(req.body);
 
 
@@ -151,7 +151,6 @@ const postEditProduct = async (req, res) => {
         version.Color = ev.Color;
         version.Size = ev.Size;
         version.Quantity = ev.Quantity;
-        version.Price = ev.Price;
       }
     });
 
@@ -161,7 +160,6 @@ const postEditProduct = async (req, res) => {
         Color: nv.Color,
         Size: nv.Size,
         Quantity: nv.Quantity,
-        Price: nv.Price
       });
     });
 
@@ -171,6 +169,8 @@ const postEditProduct = async (req, res) => {
     product.Brand = BrandId.trim();
     product.Category = CategoryId.trim();
     product.Description = Description.trim();
+    product.Price = Price;
+    product.MRP = MRP;
 
     // Save the updated product
     const savedProduct = await product.save();
@@ -213,11 +213,11 @@ const postAddProduct = async (req, res) => {
   try {
 
     const versions = [];
-    const {Name,BrandId,CategoryId,Description} = req.body;
+    const {Name,BrandId,CategoryId,Description,Price,MRP} = req.body;
     // Iterate through req.body to find versions data
     Object.keys(req.body).forEach(key => {
       if (key.startsWith('Versions[')) {
-        const match = key.match(/\[(\d+)\]\.(Color|Size|Quantity|Price)$/);
+        const match = key.match(/\[(\d+)\]\.(Color|Size|Quantity)$/);
         if (match) {
           const index = match[1];
           const field = match[2];
@@ -244,6 +244,8 @@ const postAddProduct = async (req, res) => {
       Brand: BrandId.trim(),
       Category: CategoryId.trim(),
       Description: Description.trim(),
+      Price:Price,
+      MRP:MRP,
       Image: imageUrls,
       Versions: versions
     }

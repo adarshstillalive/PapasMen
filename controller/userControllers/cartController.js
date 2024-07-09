@@ -4,6 +4,7 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
+const Coupon = require('../../model/couponModel')
 const UserAuth = require('../../model/userAuthModel')
 
 // FUNCTIONS
@@ -177,12 +178,47 @@ const getCheckout = async(req,res)=>{
 
       return cartItem.toObject();
     }));
+    
+    let couponData;
+    if(req.session.coupon){
+      couponData = req.session.coupon
+    }
 
     const pushData = {
-       sizeData, colorData, categoryData, brandData,userData,userCartData
+       sizeData, colorData, categoryData, brandData,userData,userCartData, couponData,
     }
 
     res.render('user/checkout',pushData)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const postApplyCoupon = async(req,res)=>{
+  try {
+
+    const {Name} = req.body;
+    const name = Name.trim().toUpperCase();
+    const fetchCoupon = await Coupon.findOne({"Name":name});
+
+    if(fetchCoupon.Limit>0){
+      req.session.coupon = fetchCoupon.Name;
+      res.json({success:true, message:fetchCoupon.Name,value:fetchCoupon.Value})
+    }else{
+      res.json({success:false,message: 'Coupon invalid/expired' })
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getRemoveCoupon = async(req,res)=>{
+  try {
+    const fetchCoupon = await Coupon.findOne({"Name":req.session.coupon});
+    const value = fetchCoupon.Value
+    req.session.coupon = {};
+    res.json({success:true, message:'Coupon removed',value:value})
+
   } catch (error) {
     console.log(error);
   }
@@ -196,4 +232,6 @@ module.exports = {
   postAddToCart,
   getCheckout,
   getRemoveProduct,
+  postApplyCoupon,
+  getRemoveCoupon,
 }

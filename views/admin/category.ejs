@@ -69,7 +69,6 @@
                   <table class="table table-striped table-hover">
                     <thead>
                       <tr>
-
                         <th>Sl No.</th>
                         <th>Name</th>
                         <th>Status</th>
@@ -77,34 +76,51 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% Object.keys(categoryObj).forEach((key, index)=> { %>
+                      <% Object.keys(categoryObj).forEach((key, index) => { %>
                         <tr>
                           <td>
-                            <%= ((page-1)*6) + index + 1 %>
+                            <%= ((page - 1) * 6) + index + 1 %>
                           </td>
                           <td>
                             <%= categoryObj[key].Name %>
                           </td>
-                          <% if(categoryObj[key].isActive){%>
+                          <% if (categoryObj[key].isActive) { %>
                             <td>Active</td>
                             <td class="text-right">
-                              <a href="/admin/categories/editCategory?id=<%=categoryObj[key]._id%>"
-                                class="btn btn-warning">Edit</a>
-                              <a href="#deleteCategory<%=categoryObj[key]._id%>" class="btn btn-danger"
-                                data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                              <div class="d-flex flex-column align-items-end">
+                                <div class="mb-1">
+                                  <a href="/admin/categories/editCategory?id=<%= categoryObj[key]._id %>" class="btn btn-warning m-1">Edit</a>
+                                  <a href="#deleteCategory<%= categoryObj[key]._id %>" class="btn btn-danger m-1" data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                                </div>
+                                <div>
+                                  <% if(categoryObj[key].Offer.OfferName){%>
+                                  <a href="/admin/offer/addCategoryOffer?id=<%= categoryObj[key]._id %>" class="btn btn-success m-1">Edit offer</a>
+                                  <%}else{%>
+                                    <a href="/admin/offer/addCategoryOffer?id=<%= categoryObj[key]._id %>" class="btn btn-success m-1">Add offer</a>
+                                    <%}%>
+                                </div>
+                              </div>
                             </td>
-                            <%}else{%>
-                              <td>Inactive</td>
-                              <td class="text-right">
-                                <a href="/admin/categories/editCategory?id=<%=categoryObj[key]._id%>"
-                                  class="btn btn-warning">Edit</a>
-                                <a href="/admin/categories/unblock?id=<%=categoryObj[key]._id%>"
-                                  class="btn btn-danger">UnBlock</a>
-                              </td>
+                          <% } else { %>
+                            <td>Inactive</td>
+                            <td class="text-right">
+                              <div class="d-flex flex-column align-items-end">
+                                <div class="mb-1">
+                                  <a href="/admin/categories/editCategory?id=<%= categoryObj[key]._id %>" class="btn btn-warning m-1">Edit</a>
+                                  <a href="/admin/categories/unblock?id=<%= categoryObj[key]._id %>" class="btn btn-danger m-1">UnBlock</a>
+                                </div>
+                                <div>
+                                  <% if(categoryObj[key].Offer.OfferName){%>
+                                  <a href="/admin/offer/addCategoryOffer?id=<%= categoryObj[key]._id %>" class="btn btn-success m-1">Edit offer</a>
+                                  <%}else{%>
+                                    <a href="/admin/offer/addCategoryOffer?id=<%= categoryObj[key]._id %>" class="btn btn-success m-1">Add offer</a>
+                                    <%}%>
+                                </div>
+                              </div>
+                            </td>
+                          <% } %>
                         </tr>
-                        <%}%>
-                          <% }); %>
-
+                      <% }); %>
                     </tbody>
                   </table>
                 </div>

@@ -23,10 +23,10 @@ const getSortCategory = async (req, res) => {
         // Placeholder for sorting by popularity
         break;
       case "2":
-        sortCriteria = { "Versions.Price": 1 };
+        sortCriteria = { "Price": 1 };
         break;
       case "3":
-        sortCriteria = { "Versions.Price": -1 };
+        sortCriteria = { "Price": -1 };
         break;
       case "4":
         // Placeholder for sorting by average ratings

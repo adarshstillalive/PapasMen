@@ -6,6 +6,7 @@ const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Order = require('../../model/orderModel')
 const Wallet = require('../../model/walletModel')
+const Coupon = require('../../model/couponModel')
 const UserAuth = require('../../model/userAuthModel')
 const Paypal = require('../../others/paypal')
 
@@ -84,6 +85,16 @@ const postCreateOrder = async (req, res) => {
     const orderId = generateOrderId();
     const userData = await User.findById({ "_id": req.session.userData._id })
     const { checkoutAddress, orderNotes, totalAmount, paymentMethod } = req.body;
+    let coupon;
+    if (req.session.coupon) {
+      const fetchCoupon = await Coupon.findOne({ "Name": req.session.coupon });
+      if (fetchCoupon) {
+
+        coupon = fetchCoupon.Name;
+        fetchCoupon.Limit -= 1;
+        await fetchCoupon.save()
+      }
+    }
 
     const addressDoc = await User.findOne(
       { 'Address._id': checkoutAddress },
@@ -116,7 +127,8 @@ const postCreateOrder = async (req, res) => {
                 "TotalAmount": totalAmount,
                 "PaymentMethod": paymentMethod,
                 "OrderNotes": orderNotes,
-                "OrderId": orderId
+                "OrderId": orderId,
+                "Coupon": coupon
               });
 
               await newOrder.save();
@@ -134,14 +146,15 @@ const postCreateOrder = async (req, res) => {
                 "PaymentMethod": paymentMethod,
                 "Orderstatus": 'Payment failed',
                 "OrderNotes": orderNotes,
-                "OrderId": orderId
+                "OrderId": orderId,
+                "Coupon": coupon 
               });
 
               await newOrder.save();
               userData.Cart = [];
               await userData.save();
               req.session.orderId = orderId;
-              const url =await Paypal.paypalCreateOrder(orderId)
+              const url = await Paypal.paypalCreateOrder(orderId)
               res.redirect(url)
             }
           }
@@ -161,21 +174,49 @@ const postCreateOrder = async (req, res) => {
   }
 }
 
-const postCancelOrder = async(req,res)=>{
+const postCancelOrder = async (req, res) => {
   try {
-    const {orderId, cancellingReason} = req.body;
+    const { orderId, cancellingReason } = req.body;
 
-    const orderData = await Order.findOne({"OrderId":orderId})
+    const orderData = await Order.findOne({ "OrderId": orderId })
 
-    if(orderData.PaymentMethod==='Paypal' && orderData.Orderstatus!=='Payment failed'){
-      const updateWallet = await Wallet.updateOne({"UserId":req.session.userData._id},{$set:{"Balance":orderData.TotalAmount,"Transaction.Type":'Refund',"Transaction.Amount":orderData.TotalAmount}},{upsert:true});
-      if(updateWallet){
+    if (orderData.Coupon) {
+      const fetchCoupon = await Coupon.findOne({ "Name": orderData.Coupon });
+      if (fetchCoupon) {
+        fetchCoupon.Limit += 1;
+        await fetchCoupon.save()
+      }
+    }
+
+
+    if (orderData.PaymentMethod === 'Paypal' && orderData.Orderstatus !== 'Payment failed') {
+      const updateWallet = await Wallet.updateOne(
+        { "UserId": req.session.userData._id },
+        {
+          $inc: { "Balance": orderData.TotalAmount }, // Increment the balance
+          $push: {
+            "Transaction": {
+              Type: 'Refund',
+              Amount: orderData.TotalAmount,
+              Date: new Date() // Assuming you want to record the date of the transaction
+            }
+          }
+        },
+        { upsert: true }
+      );
+      if (updateWallet) {
         orderData.cancellingReason = cancellingReason;
         orderData.Orderstatus = 'Cancelled';
         orderData.CancelledDate = Date.now()
         await orderData.save();
         res.redirect(`/orderDetails?id=${orderId}`)
       }
+    } else {
+      orderData.cancellingReason = cancellingReason;
+      orderData.Orderstatus = 'Cancelled';
+      orderData.CancelledDate = Date.now()
+      await orderData.save();
+      res.redirect(`/orderDetails?id=${orderId}`)
     }
 
 
@@ -184,18 +225,69 @@ const postCancelOrder = async(req,res)=>{
   }
 }
 
-const paypalOrderComplete = async(req,res)=>{
+const postReturnOrder = async (req, res) => {
+  try {
+    const { orderId, returningReason } = req.body;
+
+    const orderData = await Order.findOne({ "OrderId": orderId })
+
+    if (orderData.Coupon) {
+      const fetchCoupon = await Coupon.findOne({ "Name": orderData.Coupon });
+      if (fetchCoupon) {
+        fetchCoupon.Limit += 1;
+        await fetchCoupon.save()
+      }
+    }
+
+
+    if (orderData.Orderstatus === 'Delivered') {
+      const updateWallet = await Wallet.updateOne(
+        { "UserId": req.session.userData._id },
+        {
+          $inc: { "Balance": orderData.TotalAmount }, // Increment the balance
+          $push: {
+            "Transaction": {
+              Type: 'Refund',
+              Amount: orderData.TotalAmount,
+              Date: new Date() // Assuming you want to record the date of the transaction
+            }
+          }
+        },
+        { upsert: true }
+      );
+      if (updateWallet) {
+        orderData.ReturningReason = returningReason;
+        orderData.Orderstatus = 'Returned';
+        orderData.ReturnedDate = Date.now()
+        await orderData.save();
+        res.redirect(`/orderDetails?id=${orderId}`)
+      }
+    } else {
+      orderData.ReturningReason = returningReason;
+      orderData.Orderstatus = 'Returned';
+      orderData.CancelledDate = Date.now()
+      await orderData.save();
+      res.redirect(`/orderDetails?id=${orderId}`)
+    }
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const paypalOrderComplete = async (req, res) => {
   try {
 
     const result = await Paypal.capturePayment(req.query.token);
-      const orderData = await Order.updateOne({"OrderId":req.session.orderId},{$set:{"Orderstatus":'Order Placed'}})
-      if(orderData){
+    const orderData = await Order.updateOne({ "OrderId": req.session.orderId }, { $set: { "Orderstatus": 'Order Placed' } })
+    if (orderData) {
 
-        res.redirect(`/orderDetails?id=${req.session.orderId}`);
+      res.redirect(`/orderDetails?id=${req.session.orderId}`);
 
-        req.session.orderId = '';
-      }
-    
+      req.session.orderId = '';
+    }
+
   } catch (error) {
     console.log(error);
   }
@@ -226,6 +318,7 @@ const getOrderDetails = async (req, res) => {
 module.exports = {
   postCreateOrder,
   postCancelOrder,
+  postReturnOrder,
   getOrderDetails,
   paypalOrderComplete,
 }

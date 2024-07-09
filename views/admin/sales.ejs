@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Sales Report | Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description" />
+  <meta content="Coderthemes" name="author" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+  <style>
+    .disabled-page {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    .filter-form {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="wrapper">
+    <%- include('header') %>
+    <%- include('sidebar') %>
+
+    <div class="content-page">
+      <div class="content">
+        <div class="container-fluid">
+          <nav aria-label="breadcrumb" class="mt-3">
+            <ol class="breadcrumb bg-light p-2">
+              <li class="breadcrumb-item"><a href="/admin" class="text-uppercase fw-medium">Home</a></li>
+              <li class="breadcrumb-item active text-uppercase fw-medium" aria-current="page">Sales Report</li>
+            </ol>
+          </nav>
+
+          <div class="row">
+            <div class="col-12">
+              <h4 class="mb-4">Sales Report</h4>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="filter-form">
+                    <h5 class="text-center mb-4">Filter Sales Report</h5>
+                    <form id="filterForm">
+                      <div class="row">
+                        <div class="col-md-4 mb-3">
+                          <label for="period" class="form-label">Period:</label>
+                          <select id="period" name="period" class="form-control">
+                            <option value="">Default</option>
+                            <option value="daily">Last 1 Day</option>
+                            <option value="weekly">Last 1 Week</option>
+                            <option value="monthly">Last 1 Month</option>
+                            <option value="yearly">Last 1 Year</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label for="startDate" class="form-label">Start Date:</label>
+                          <input type="date" id="startDate" name="start" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label for="endDate" class="form-label">End Date:</label>
+                          <input type="date" id="endDate" name="end" class="form-control">
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <a id="genReport" href="#" class="btn btn-primary">Generate Report</a>
+                      </div>
+                    </form>
+                    <% if (startDate && endDate) { %>
+                      <div class="text-center mt-3">
+                        <a href="/admin/pdfDownload?startDate=<%= startDate %>&endDate=<%= endDate %>" id="downloadPDF" class="btn btn-secondary">Download PDF</a>
+                        <a href="/admin/excelDownload?startDate=<%= startDate %>&endDate=<%= endDate %>" id="downloadExcel" class="btn btn-secondary">Download Excel</a>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Report Summary</h5>
+                  <div id="reportContainer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Sales Details</h5>
+                  <div class="d-flex justify-content-between">
+                    <% if (orderObj.length>0) { %>
+                      <div class="col-sm-4 g-mb-30 p-5 border">
+                        <div class="g-bg-lightred text-center rounded g-px-20 g-py-30">
+                          <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">
+                            <%= orderObj.length %>
+                          </h3>
+                          <h4 class="d-block g-color-white-opacity-0_8">Overall sales count</h4>
+                        </div>
+                      </div>
+                    <% } %>
+                    <% if (orderObj.length>0) { %>
+                      <div class="col-sm-4 g-mb-30 p-5 border">
+                        <div class="g-bg-lightred text-center rounded g-px-20 g-py-30">
+                          <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹<%= orderObj.reduce((acc,curr)=>acc+=curr.TotalAmount,0) %></h3>
+                          <h4 class="d-block g-color-white-opacity-0_8">Overall order amount</h4>
+                        </div>
+                      </div>
+                    <% } %>
+                    <% if (orderObj.length>0) { %>
+                      <div class="col-sm-4 g-mb-30 p-5 border">
+                        <div class="g-bg-lightred text-center rounded g-px-20 g-py-30">
+                          <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">
+                            <%= orderObj.reduce((acc, curr) => {
+                              const totalMRP = curr.Products.reduce((acc1, curr1) => {
+                                const mrp = parseFloat(curr1.Product.MRP);
+                                const quantity = parseInt(curr1.Quantity);
+                                return acc1 + (mrp * quantity);
+                              }, 0);
+                              const totalAmount = parseFloat(curr.TotalAmount);
+                              const deliveryCharge = 70; // Assuming a fixed delivery charge
+                              if (totalMRP > 0 && !isNaN(totalAmount)) {
+                                const discountPercentage = (((totalMRP - totalAmount + deliveryCharge) * 100) / totalMRP).toFixed(2);
+                                return acc + parseFloat(discountPercentage);
+                              }
+                              return acc;
+                            }, 0).toFixed(2) %>%
+                          </h3>
+                          <h4 class="d-block g-color-white-opacity-0_8">Overall discount</h4>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div id="salesReportDetailsTable" class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Date</th>
+                          <th>Order ID</th>
+                          <th>Product</th>
+                          <th>Quantity</th>
+                          <th>Coupon</th>
+                          <th>Discount</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="salesDetails">
+                        <% if(orderObj){ %>
+                          <% for(let key=0; key < orderObj.length; key++){ %>
+                            <tr>
+                              <td>
+                                <%= new Date(orderObj[key].createdAt).toLocaleDateString('default', {
+                                  day: 'numeric' , month: 'long' , year: 'numeric' }) %>
+                              </td>
+                              <td>
+                                <%= orderObj[key].OrderId %>
+                              </td>
+                              <td>
+                                <% for(let i=0; i < orderObj[key].Products.length; i++) { %>
+                                  <%= orderObj[key].Products[i].Product.Name %><br>
+                                <% } %>
+                              </td>
+                              <td>
+                                <% for(let i=0; i < orderObj[key].Products.length; i++) { %>
+                                  <%= orderObj[key].Products[i].Quantity %><br>
+                                <% } %>
+                              </td>
+                              <td>
+                                <% if(orderObj[key].Coupon!=="NIL" || !orderObj[key].Coupon){ %>
+                                  <%= (orderObj[key].Coupon) %>
+                                <%}%>
+                              </td>
+                              <td>
+                                <%= ( ( (orderObj[key].Products.reduce((acc, curr)=> acc += (curr.Product.MRP * curr.Quantity), 0) -
+                                orderObj[key].TotalAmount+70) * 100) / orderObj[key].Products.reduce((acc, curr) => acc += (curr.Product.MRP *
+                                curr.Quantity), 0)).toFixed(2) %>%
+                              </td>
+                              <td>
+                                <%= orderObj[key].TotalAmount %>
+                              </td>
+                            </tr>
+                          <% } %>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            2023 &copy;<a href="">PapasMen</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="rightbar-overlay"></div>
+
+  <script>
+    const genReport = document.getElementById('genReport')
+    genReport.addEventListener('click', () => {
+      const period = document.getElementById('period').value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+
+      if ((period === 'daily' || period === 'weekly' || period === 'monthly' || period === 'yearly') && !startDate && !endDate) {
+        const { startDate: newStartDate, endDate: newEndDate } = getDateRange(period);
+        genReport.href = `/admin/sales?startDate=${newStartDate}&endDate=${newEndDate}`;
+        genReport.click();
+      } else if (period === '' && startDate && endDate) {
+        genReport.href = `/admin/sales?startDate=${startDate}&endDate=${endDate}`;
+        genReport.click();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Wrong selection",
+          text: "Please set a valid period or provide both start and end dates.",
+        });
+      }
+
+      function getDateRange(period) {
+        const endDate = new Date();
+        let startDate = new Date();
+
+        switch (period) {
+          case 'daily':
+            startDate.setDate(startDate.getDate() - 1);
+            break;
+          case 'weekly':
+            startDate.setDate(startDate.getDate() - 7);
+            break;
+          case 'monthly':
+            startDate.setMonth(startDate.getMonth() - 1);
+            break;
+          case 'yearly':
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            break;
+          default:
+            break;
+        }
+
+        const startDateString = startDate.toISOString().slice(0, 10);
+        const endDateString = endDate.toISOString().slice(0, 10);
+
+        return { startDate: startDateString, endDate: endDateString };
+      }
+    })
+  </script>
+
+  <!-- Pdf Download -->
+  
+  <script src="/assets/js/vendor.min.js"></script>
+  <script src="/assets/libs/morris-js/morris.min.js"></script>
+  <script src="/assets/libs/raphael/raphael.min.js"></script>
+  <script src="/assets/js/pages/dashboard.init.js"></script>
+  <script src="/assets/js/app.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
+ 
+</body>
+
+</html>

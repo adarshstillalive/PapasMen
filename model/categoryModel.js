@@ -9,6 +9,27 @@ const categorySchema = mongoose.Schema({
   isActive:{
     type:Boolean,
     required:true
+  },
+  Offer:{
+    OfferName:{
+      type:String,
+    },
+    Description:{
+      type:String
+    },
+    Start:{
+      type:Date,
+    },
+    End:{
+      type:Date,
+    },
+    Percentage:{
+      type:Number,
+    }
+  },
+  OfferExpiry:{
+    type:Boolean,
+    default:false
   }
 })
 

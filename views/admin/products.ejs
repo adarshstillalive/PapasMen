@@ -86,69 +86,81 @@
                               
                             </tbody>
                           </table> -->
-                <table class="table table-striped table-hover">
-                  <thead>
-                    <tr>
-
-                      <th>Sl No.</th>
-                      <th>Name</th>
-                      <th>Category</th>
-                      <th>Brand</th>
-                      <th>Version-QTY</th>
-                      <th>Price</th>
-                      <th>Status</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% Object.keys(productObj).forEach((key, index)=> { %>
-                      <tr>
-                        <td>
-                          <%= ((page-1)*6) + index + 1 %>
-                        </td>
-                        <td>
-                          <%= productObj[key].Name %>
-                        </td>
-                        <td>
-                          <%= productObj[key].Category.Name %>
-                        </td>
-                        <td>
-                          <%= productObj[key].Brand.Name %>
-                        </td>
-                        <td>
-                          <% for(i=0;i<productObj[key].Versions.length;i++){%>
-                          Version <%=i+1%> = <%= productObj[key].Versions[i].Quantity %><br>
-                          <%}%>
-                          <h6>Total</h6>
-                          <h5><%= productObj[key].Versions.reduce((acc,curr)=>acc+=curr.Quantity,0) %></h5>
-                        </td>
-                        <td>
-                          <% for(i=0;i<productObj[key].Versions.length;i++){%>
-                          <%= productObj[key].Versions[i].Price %><br>
-                            <%}%>
-                        </td>
-                        <% if(productObj[key].isActive){%>
-                          <td>Active</td>
-                          <td class="text-right">
-                            <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>"
-                              class="btn btn-warning">Edit</a>
-                            <a href="#deleteUser<%=productObj[key]._id%>" class="btn btn-danger"
-                              data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
-                          </td>
-                          <%}else{%>
-                            <td>Blocked</td>
-                            <td class="text-right">
-                              <a href="/admin/products/editProduct?id=<%=productObj[key]._id%>"
-                                class="btn btn-warning">Edit</a>
-                              <a href="/admin/products/unblock?id=<%=productObj[key]._id%>"
-                                class="btn btn-danger">UnBlock</a>
-                            </td>
-                      </tr>
-                      <%}%>
-                        <% }); %>
-
-                  </tbody>
-                </table>
+                          <table class="table table-striped table-hover">
+                            <thead>
+                              <tr>
+                                <th>Sl No.</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Brand</th>
+                                <th>Version-QTY</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% Object.keys(productObj).forEach((key, index) => { %>
+                                <tr>
+                                  <td>
+                                    <%= ((page - 1) * 6) + index + 1 %>
+                                  </td>
+                                  <td>
+                                    <%= productObj[key].Name %>
+                                  </td>
+                                  <td>
+                                    <%= productObj[key].Category.Name %>
+                                  </td>
+                                  <td>
+                                    <%= productObj[key].Brand.Name %>
+                                  </td>
+                                  <td>
+                                    <% for(i = 0; i < productObj[key].Versions.length; i++) { %>
+                                      Version <%= i + 1 %> = <%= productObj[key].Versions[i].Quantity %><br>
+                                    <% } %>
+                                    <h6>Total</h6>
+                                    <h5><%= productObj[key].Versions.reduce((acc, curr) => acc += curr.Quantity, 0) %></h5>
+                                  </td>
+                                  <td>
+                                    ₹<%= productObj[key].Price %><br>
+                                  </td>
+                                  <% if (productObj[key].isActive) { %>
+                                    <td>Active</td>
+                                    <td class="text-right">
+                                      <div class="d-flex flex-column align-items-end">
+                                        <div class="mb-1">
+                                          <a href="/admin/products/editProduct?id=<%= productObj[key]._id %>" class="btn btn-warning m-1">Edit</a>
+                                          <a href="#deleteUser<%= productObj[key]._id %>" class="btn btn-danger m-1" data-toggle="modal">&nbsp;&nbsp;Block&nbsp;&nbsp;&nbsp;</a>
+                                        </div>
+                                        <% if(productObj[key].Offer.OfferName){ %>
+                                          <a href="/admin/offer/addProductOffer?id=<%= productObj[key]._id %>" class="btn btn-success m-1">Edit offer</a>
+                                          <%}else{%>
+                                            <a href="/admin/offer/addProductOffer?id=<%= productObj[key]._id %>" class="btn btn-success m-1">Add offer</a>
+                                            <%}%>
+                                      </div>
+                                    </td>
+                                  <% } else { %>
+                                    <td>Blocked</td>
+                                    <td class="text-right">
+                                      <div class="d-flex flex-column align-items-end">
+                                        <div class="mb-1">
+                                          <a href="/admin/products/editProduct?id=<%= productObj[key]._id %>" class="btn btn-warning m-1">Edit</a>
+                                          <a href="/admin/products/unblock?id=<%= productObj[key]._id %>" class="btn btn-danger m-1">UnBlock</a>
+                                        </div>
+                                        <div>
+                                          <% if(productObj[key].Offer.OfferName){ %>
+                                          <a href="/admin/offer/addProductOffer?id=<%= productObj[key]._id %>" class="btn btn-success m-1">Edit offer</a>
+                                          <%}else{%>
+                                            <a href="/admin/offer/addProductOffer?id=<%= productObj[key]._id %>" class="btn btn-success m-1">Add offer</a>
+                                            <%}%>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  <% } %>
+                                </tr>
+                              <% }); %>
+                            </tbody>
+                          </table>
               </div>
               <!--end row -->
 

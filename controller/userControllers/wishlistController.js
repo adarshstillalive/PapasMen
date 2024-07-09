@@ -21,10 +21,9 @@ const getWishlist = async (req,res)=>{
     const { sizeData, colorData, categoryData, brandData } = await fetchData()
     const wishlistData = await Wishlist.findOne({"UserId": req.session.userData._id}).populate('Products.Product')
     .populate({ path: 'Products', populate: {path: 'Product', populate:[{path:'Brand',ref:'Brand'},{path:'Category',ref:'Category'}]}});
-    const userData = await User.findById(req.session.userData._id)
-
+    const userData = await User.findById(req.session.userData._id);
     const pushData = {
-      sizeData, 
+      sizeData,  
       colorData, 
       categoryData, 
       brandData, 

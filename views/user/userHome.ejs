@@ -561,10 +561,20 @@
                           <h6 class="pc__title"><a href="/product?id=<%= productObj[key]._id %>">
                               <%=productObj[key].Name%>/<%=productObj[key].Brand.Name%>
                             </a></h6>
-                          <div class="product-card__price d-flex align-items-center">
-                            <!-- <span class="money price-old">$39</span> -->
-                            <span class="money price text-secondary">₹<%=productObj[key].Versions[0].Price%></span>
-                          </div>
+                            <% if(productObj[key].Price===productObj[key].MRP){%>
+                              <div class="product-card__price d-flex align-items-center">
+                                <span class="money price text-secondary">
+                                  &#8377;<%= productObj[key].Price %>
+                                </span>
+                              </div>
+                              <%}else{%>
+                                <div class="product-card__price d-flex align-items-center">
+                                  <span class="money price text-secondary">
+                                    &#8377;<s><%= productObj[key].MRP %></s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%= Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP) %>%)
+                                  </span>
+                                </div>
+                                <%}%>
+                          
 
                           <div
                             class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
@@ -620,11 +630,19 @@
                     <h6 class="pc__title"><a href="/product?id=<%= productObj[key]._id %>">
                         <%= productObj[key].Name %>/<%=productObj[key].Brand.Name%>
                       </a></h6>
+                      <% if(productObj[key].Price===productObj[key].MRP){%>
                     <div class="product-card__price d-flex align-items-center">
                       <span class="money price text-secondary">
-                        &#8377;<%= productObj[key].Versions[0].Price %>
+                        &#8377;<%= productObj[key].Price %>
                       </span>
                     </div>
+                    <%}else{%>
+                      <div class="product-card__price d-flex align-items-center">
+                        <span class="money price text-secondary">
+                          &#8377;<s><%= productObj[key].MRP %></s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%= Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP) %>%)
+                        </span>
+                      </div>
+                      <%}%>
 
                     <div
                       class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
@@ -766,7 +784,7 @@
                         <%=productObj[key].Name%>
                       </h1>
                       <div class="product-single__price">
-                        <span class="current-price">₹<%=productObj[key].Versions[0].Price%></span>
+                        <span class="current-price"><s>₹<%=productObj[key].Price%></s></span>
                       </div>
                       <div class="product-single__short-desc">
                         <p>

@@ -156,11 +156,11 @@
                                     <div><%=orderData.Products[key].Product.Brand.Name %> </div>
                                   </a>
                                 </td>
-                                <td> ₹<%= orderData.Products[key].Version.Price %> </td>
+                                <td> ₹<%= orderData.Products[key].Product.Price %> </td>
                                 <td> <%= orderData.Products[key].Version.Color.Name %> </td>
                                 <td> <%= orderData.Products[key].Version.Size.Name %> </td>
                                 <td> <%= orderData.Products[key].Quantity %> </td>
-                                <td class="text-end"> ₹<%= (orderData.Products[key].Quantity * orderData.Products[key].Version.Price) %> </td>
+                                <td class="text-end"> ₹<%= (orderData.Products[key].Quantity * orderData.Products[key].Product.Price) %> </td>
                               </tr>
                               <%}%>
                               <tr>
@@ -205,7 +205,7 @@
                           <div class="mb-3 border">
                             <label>Order notes</label>
                             <textarea class="form-control" name="notes"  id="notes"
-                              placeholder="Type some note" readonly><%= orderData.OrderNotes %></textarea>
+                              placeholder="NIL" readonly><%= orderData.OrderNotes %></textarea>
                           </div>
                         </div>
                       </div> <!-- col// -->

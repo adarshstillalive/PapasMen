@@ -47,6 +47,10 @@ const orderSchema = mongoose.Schema({
     type: Number,
     required: true
   },
+  Coupon:{
+    type:String,
+    default:'NIL'
+  },
   OrderNotes: {
     type: String,
 
@@ -66,6 +70,9 @@ const orderSchema = mongoose.Schema({
     default:'Cash On Delivery'
   },
   CancellingReason : {
+    type:String,
+  },
+  ReturningReason : {
     type:String,
   },
   CancelledDate : { 

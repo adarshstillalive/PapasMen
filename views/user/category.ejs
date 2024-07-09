@@ -636,10 +636,10 @@
                 sortOption = event.target.value;
                 currentPage = 1; // Reset to first page on sorting
                 const checkBoxes = document.querySelectorAll('.category-checkbox:checked');
-                  const checkedValues = Array.from(checkBoxes).map(checkbox => checkbox.value);
-                  const conditionValue = checkedValues.join(',');
+                const checkedValues = Array.from(checkBoxes).map(checkbox => checkbox.value);
+                const conditionValue = checkedValues.join(',');
 
-                  await fetchAndRenderProducts(conditionValue);
+                await fetchAndRenderProducts(conditionValue);
               });
 
               document.querySelector('.shop-pages').addEventListener('click', async function (event) {
@@ -659,8 +659,8 @@
 
                   const checkBoxes = document.querySelectorAll('.category-checkbox:checked');
                   const checkedValues = Array.from(checkBoxes).map(checkbox => checkbox.value);
-                  if(checkedValues){const conditionValue = checkedValues.join(',');}
-                  
+                  if (checkedValues) { const conditionValue = checkedValues.join(','); }
+
 
                   await fetchAndRenderProducts(conditionValue);
                 }
@@ -710,7 +710,11 @@
                           <p class="pc__category">${product.Category.Name}</p>
                           <h6 class="pc__title"><a href="/product?id=${product._id}">${product.Name}/${product.Brand.Name}</a></h6>
                           <div class="product-card__price d-flex">
-                            <span class="money price">₹${product.Versions[0].Price}</span>
+                            ${product.Price === product.MRP ? `
+                              <span class="money price">₹${product.Price}</span>
+                              ` : `
+                              <span class="money price"><s>₹${product.MRP}</s> &emsp; ₹${product.Price}</span>
+                            `}
                           </div>
                           <div class="product-card__review d-flex align-items-center">
                             <div class="reviews-group d-flex">

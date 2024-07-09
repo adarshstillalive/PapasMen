@@ -339,7 +339,7 @@
                                 <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>
                               </td>
                               <td>
-                                ₹<%=( orderData.Products[key].Version.Price * orderData.Products[key].Quantity )%>
+                                ₹<%=( orderData.Products[key].Product.Price * orderData.Products[key].Quantity )%>
                               </td>
                             </tr>
                             <%}%>
@@ -354,7 +354,13 @@
                           </tr>
                           <tr>
                             <th>COUPON</th>
-                            <td>NIL</td>
+                            <% if(orderData.Coupon){%>
+                              <td style="color:green">
+                                <%= (orderData.Coupon) %>
+                              </td>
+                              <%}else{%>
+                                <td>NIL</td>
+                                <%}%>
                           </tr>
                           <tr>
                             <th>DELIVERY</th>
@@ -372,34 +378,59 @@
             <% if(orderData.Orderstatus=='Order Placed' || orderData.Orderstatus=='Shipped' ){%>
               <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#cancelOrder">Cancel order</a>
               <%}else if(orderData.Orderstatus=='Delivered' ){%>
-                <a href="#" class="btn btn-primary w-25">Return order</a>
+                <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#returnOrder">Return order</a>
                 <%}%>
           </div>
         </section>
       </main>
 
-      <div class="modal fade" id="cancelOrder" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-body p-5">
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              <div class="edit-address">
-                <h2 class="edit-address__title">Reason for cancel</h2>
-                <form name="edit-address-form" action="/cancelOrder" method="post">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <textarea name="cancellingReason" cols="115" rows="4"></textarea>
-                      <input type="hidden" name="orderId" value="<%= orderData.OrderId %>">
-                      <div class="pb-3"></div>
-                      <button type="submit" class="btn btn-primary">Submit</button>
-                      </div>
-                </form>
+       <!-- Cancel Order Modal -->
+  <div class="modal fade" id="cancelOrder" tabindex="-1" aria-labelledby="cancelOrderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body p-5">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="edit-address">
+            <h2 class="edit-address__title">Reason for cancel</h2>
+            <form name="edit-address-form" id="myForm1" action="/cancelOrder" method="post">
+              <div class="row">
+                <div class="col-md-6">
+                  <textarea name="cancellingReason" id="cancellingReason" cols="115" rows="4" required></textarea>
+                  <input type="hidden" name="orderId" value="<%= orderData.OrderId %>">
+                  <div class="pb-3"></div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
               </div>
-            </div>
-
+            </form>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Return Order Modal -->
+  <div class="modal fade" id="returnOrder" tabindex="-1" aria-labelledby="returnOrderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body p-5">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="edit-address">
+            <h2 class="edit-address__title">Reason for return</h2>
+            <form name="edit-address-form" id="myForm2" action="/returnOrder" method="post">
+              <div class="row">
+                <div class="col-md-6">
+                  <textarea name="returningReason" id="returningReason" cols="115" rows="4" required></textarea>
+                  <input type="hidden" name="orderId" value="<%= orderData.OrderId %>">
+                  <div class="pb-3"></div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
       <div class="mb-5 pb-xl-5"></div>
 
@@ -417,8 +448,40 @@
           <!-- Go To Top -->
           <div id="scrollTop" class="visually-hidden end-0"></div>
 
-          <!-- Page Overlay -->
-          <div class="page-overlay"></div><!-- /.page-overlay -->
+
+
+          <!-- Internal js -->
+          <script>
+            document.getElementById('myForm1').addEventListener('submit', function (event) {
+              const textarea = document.getElementById('cancellingReason').value;
+              const minAlphabets = 10;
+              const alphabeticCharacters = textarea.match(/[a-zA-Z]/g) || [];
+
+              if (alphabeticCharacters.length < minAlphabets) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Enter a reason",
+                });
+                event.preventDefault();
+              }
+            });
+
+            document.getElementById('myForm2').addEventListener('submit', function (event) {
+              const textarea = document.getElementById('returningReason').value;
+              const minAlphabets = 10;
+              const alphabeticCharacters = textarea.match(/[a-zA-Z]/g) || [];
+
+              if (alphabeticCharacters.length < minAlphabets) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Enter a reason",
+                });
+                event.preventDefault();
+              }
+            });
+          </script>
 
           <!-- External JavaScripts -->
           <script src="/js/plugins/jquery.min.js"></script>
@@ -428,6 +491,7 @@
           <script src="/js/plugins/swiper.min.js"></script>
           <script src="/js/plugins/countdown.js"></script>
           <script src="/js/plugins/jquery.fancybox.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
           <!-- Footer Scripts -->
           <script src="/js/theme.js"></script>

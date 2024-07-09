@@ -335,7 +335,11 @@
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
               <div class="product-single__price">
-                <span class="current-price">₹<%=productData.Versions[0].Price%></span>&emsp;&emsp;
+                <% if(productData.Price===productData.MRP){%>
+                <span class="current-price">₹<%=productData.Price%></span>&emsp;&emsp;
+                <%}else{%>
+                  <span class="current-price"><s>₹<%=productData.MRP%></s></span>&emsp;₹<%=productData.Price%> (-<%= Math.ceil(((productData.MRP-productData.Price)*100)/productData.MRP) %>%)
+                  <%}%>
                 <% const quantity=productData.Versions.reduce((acc,curr)=>acc+=curr.Quantity,0) %>
                   <% if(quantity<=5 && quantity>0){ %>
                     <span style="color:red">HURRY, Only <%= quantity %> left</span>
@@ -687,7 +691,7 @@
                           <%= productObj[key].Name %>/<%= productObj[key].Brand.Name %>
                         </a></h6>
                       <div class="product-card__price d-flex">
-                        <span class="money price">₹<%= productObj[key].Versions[0].Price %></span>
+                        <span class="money price">₹<%= productObj[key].Price %></span>
                       </div>
 
                       <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description" />
+  <meta content="Coderthemes" name="author" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- App favicon -->
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <!-- App css -->
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+</head>
+
+<body>
+  <!-- Begin page -->
+  <div id="wrapper">
+    <!-- Topbar Start -->
+    <%- include('header') %>
+    <!-- end Topbar -->
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <%- include('sidebar') %>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start Page Content here -->
+    <!-- ============================================================== -->
+    <div class="content-page">
+      <div class="content">
+        <!-- Start container-fluid -->
+        <div class="container-fluid">
+          <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
+            <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+            <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+            <a class="menu-link menu-link_us-s text-uppercase fw-medium">Coupons</a>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Coupons</span>
+                <% if (addCouponMsg && addCouponMsg.length > 0) { %>
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong><%= addCouponMsg[0] %></strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                <% } %>
+                <a href="/admin/coupon/addCoupon" class="btn btn-success"><span>Add Coupon</span></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- end row -->
+
+          <div class="row container-fluid border">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Sl No.</th>
+                  <th>Name</th>
+                  <th>Limit</th>
+                  <th>Value</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% Object.keys(couponObj).forEach((key, index) => { %>
+                  <tr>
+                    <td><%= ((page-1)*6) + index + 1 %></td>
+                    <td><%= couponObj[key].Name %></td>
+                    <td><%= couponObj[key].Limit %></td>
+                    <td><%= couponObj[key].Value %></td>
+                      <td class="text-right">
+                        <a href="/admin/coupon/addCoupon?id=<%= couponObj[key]._id %>" class="btn btn-warning">Edit</a>
+                        <a href="#deleteCoupon<%= couponObj[key]._id %>" class="btn btn-danger" data-toggle="modal">&nbsp;&nbsp;Delete&nbsp;&nbsp;&nbsp;</a>
+                      </td>
+                  </tr>
+                  <%})%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- end content -->
+        <div class="pb-3"></div>
+        <nav aria-label="Page navigation example align-items-center">
+          <ul class="pagination pagination justify-content-center">
+            <li class="page-item <% if (Number(page) === 1) { %> disabled-page <% } %>">
+              <a class="page-link" href="/admin/coupon?page=<%= Number(page)-1 %>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <% for (i = 0; i < totalPage; i++) { %>
+              <li class="page-item <% if (Number(page) === i+1) { %> disabled-page <% } %>">
+                <a class="page-link" href="/admin/coupon?page=<%= i+1 %>"><%= i+1 %></a>
+              </li>
+            <% } %>
+            <li class="page-item <% if (Number(page) === totalPage) { %> disabled-page <% } %>">
+              <a class="page-link" href="/admin/coupon?page=<%= Number(page)+1 %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <!-- END content-page -->
+    </div>
+    <!-- END wrapper -->
+    <% Object.keys(couponObj).forEach((key) => { %>
+      <div id="deleteCoupon<%= couponObj[key]._id %>" class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form>
+              <div class="modal-header">
+                <h4 class="modal-title">Delete Coupon</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              </div>
+              <div class="modal-body">
+                <h3>Are you sure you want to delete this coupon?</h3>
+              </div>
+              <div class="modal-footer">
+                <a type="button" class="btn border-secondary text-secondary" data-dismiss="modal">Cancel</a>
+                <a href="/admin/coupon/deleteCoupon?id=<%= couponObj[key]._id %>" class="btn btn-danger">Delete</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <!-- Vendor js -->
+    <script src="/assets/js/vendor.min.js"></script>
+
+    <script src="/assets/libs/morris-js/morris.min.js"></script>
+    <script src="/assets/libs/raphael/raphael.min.js"></script>
+
+    <script src="/assets/js/pages/dashboard.init.js"></script>
+
+    <!-- App js -->
+    <script src="/assets/js/app.min.js"></script>
+  </div>
+</body>
+
+</html>
+
+<style>
+  .disabled-page {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+</style>

@@ -305,8 +305,9 @@
                       <div class="my-account__address-list" style="display: flex; flex-wrap: wrap;">
                         <% for(key=0;key<userData.Address.length;key++){%>
                           <div class="my-account__address-item border p-5">
-                            <input class="form-check-input form-check-input_fill border-3" type="radio" value="<%= userData.Address[key]._id %>"
-                              name="checkoutAddress" id="checkoutAddress<%= key %>" required>
+                            <input class="form-check-input form-check-input_fill border-3" type="radio"
+                              value="<%= userData.Address[key]._id %>" name="checkoutAddress"
+                              id="checkoutAddress<%= key %>" required>
                             <div class="my-account__address-item__title">
                               <h5>Address <%=key+1%>
                               </h5>
@@ -345,10 +346,12 @@
                 </div>
                 <div class="col-md-12">
                   <div class="mt-3">
-                    <textarea class="form-control form-control_gray" name="orderNotes" placeholder="Order Notes (optional)" cols="30"
-                      rows="8"></textarea>
+                    <textarea class="form-control form-control_gray" name="orderNotes"
+                      placeholder="Order Notes (optional)" cols="30" rows="8"></textarea>
                   </div>
                 </div>
+                <div class="pb-3"></div>
+
               </div>
               <div class="checkout__totals-wrapper">
                 <div class="sticky-content">
@@ -368,7 +371,7 @@
                               <%=userCartData[key].Product.Name%> x <%=userCartData[key].Quantity%>
                             </td>
                             <td>
-                              ₹<%=(userCartData[key].Version.Price * userCartData[key].Quantity)%>
+                              ₹<%=(userCartData[key].Product.Price * userCartData[key].Quantity)%>
                             </td>
                           </tr>
                           <%}%>
@@ -378,20 +381,21 @@
                       <tbody>
                         <tr>
                           <th>SUBTOTAL</th>
-                          <td>₹<%= userCartData.reduce((acc,val)=>acc+=(val.Version.Price * val.Quantity),0) %></td>
+                          <td>₹<%= userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),0) %></td>
                         </tr>
                         <tr>
-                          <th>Coupon</th>
-                          <td>NIL</td>
+                          <th>COUPON</th>
+                          <td id="couponStatus">NIL</td>
                         </tr>
                         <tr>
                           <th>DELIVERY</th>
                           <td>₹70</td>
                         </tr>
                         <tr>
-                          <input type="hidden" name="totalAmount" value="<%= userCartData.reduce((acc,val)=>acc+=(val.Version.Price * val.Quantity),70) %>">
+                          <input id="totalAmount" type="hidden" name="totalAmount"
+                            value="<%= userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),70) %>">
                           <th>TOTAL</th>
-                          <td>₹<%= userCartData.reduce((acc,val)=>acc+=(val.Version.Price * val.Quantity),70) %></td>
+                          <td id="totalAmountDisplay">₹<%= userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),70) %></td>
                         </tr>
                       </tbody>
                     </table>
@@ -399,18 +403,7 @@
                   <div class="checkout__payment-methods">
                     <div class="form-check">
                       <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
-                        id="checkout_payment_method_1" value="DBT" checked>
-                      <label class="form-check-label" for="checkout_payment_method_1">
-                        Direct bank transfer
-                        <span class="option-detail d-block">
-                          Make your payment directly into our bank account. Please use your Order ID as the payment
-                          reference.Your order will not be shipped until the funds have cleared in our account.
-                        </span>
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
-                       value="Cash On Delivery" id="checkout_payment_method_3">
+                        value="Cash On Delivery" id="checkout_payment_method_3">
                       <label class="form-check-label" for="checkout_payment_method_3">
                         Cash on delivery
                         <span class="option-detail d-block">
@@ -441,7 +434,14 @@
               </div>
             </div>
           </form>
+          <div class="cart-table-footer col-md-6">
+            <form id="couponForm" class="bg-body">
+              <input class="form-control m-2 w-50" id="couponInput" type="text" name="Name" placeholder="Coupon Code">
+              <button class="btn btn-primary m-2" id="submitCouponForm">APPLY COUPON</button>
+            </form>
+          </div>
         </section>
+
       </main>
 
       <div class="mb-5 pb-xl-5"></div>
@@ -598,6 +598,99 @@
 
               <!-- Internal JS -->
               <script>
+                document.addEventListener('click', function (event) {
+                  if (event.target && event.target.id === 'submitCouponForm') {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    const form = document.getElementById('couponForm');
+                    const formData = new FormData(form);
+
+                    fetch('/cart/applyCoupon', {
+                      method: 'POST',
+                      body: formData
+                    }).then(response => response.json())
+                      .then((data) => {
+                        if (data.success) {
+                          const couponStatus = document.getElementById('couponStatus');
+                          if (couponStatus) {
+                            couponStatus.innerHTML = data.message || 'NIL'; // Ensure data.message is not undefined
+                          }
+                          const couponInput = document.getElementById('couponInput')
+                          couponInput.value = data.message;
+                          couponInput.setAttribute('readonly', 'readonly');
+                          event.target.innerHTML = 'Remove coupon';
+                          event.target.id = 'removeCouponForm';
+                          updateTotalAmount(-data.value);
+                          Swal.fire({
+                            title: "Success",
+                            text: `${data.message} Applied`,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: data.message,
+                          });
+                        }
+                      }).catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                          icon: "error",
+                          title: "Error",
+                          text: "An error occurred while applying the coupon. Please try again.",
+                        });
+                      });
+                  } else if (event.target && event.target.id === 'removeCouponForm') {
+                    event.preventDefault();
+
+                    fetch('/cart/removeCoupon', {
+                      method: 'GET',
+                    }).then(response => response.json())
+                      .then((data) => {
+                        if (data.success) {
+                          const couponInput = document.getElementById('couponInput');
+                          couponInput.value = '';
+                          couponInput.removeAttribute('readonly');
+                          event.target.innerHTML = 'Add coupon';
+                          event.target.id = 'submitCouponForm';
+                          updateTotalAmount(data.value);
+                          Swal.fire({
+                            title: "Success",
+                            text: data.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: data.message,
+                          });
+                        }
+                      }).catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                          icon: "error",
+                          title: "Error",
+                          text: "An error occurred while removing the coupon. Please try again.",
+                        });
+                      });
+                  }
+                });
+                function updateTotalAmount(amount) {
+                  const totalDisplay = document.getElementById('totalAmountDisplay');
+                  const totalValueInput = document.getElementById('totalAmount');
+                  const currentTotal = parseFloat(totalValueInput.value);
+                  const newTotal = currentTotal + amount;
+                  totalDisplay.innerText = `₹${newTotal}`;
+                  totalValueInput.value = newTotal;
+                }
+              </script>
+              <script>
                 document.querySelectorAll('.my-account__address-item').forEach((item, index) => {
                   item.addEventListener('click', () => {
                     const radio = document.getElementById(`checkoutAddress${index}`)
@@ -615,6 +708,7 @@
               <script src="/js/plugins/swiper.min.js"></script>
               <script src="/js/plugins/countdown.js"></script>
               <script src="/js/plugins/jquery.fancybox.js"></script>
+              <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
               <!-- Footer Scripts -->
               <script src="/js/theme.js"></script>

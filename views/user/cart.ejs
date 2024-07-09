@@ -329,7 +329,7 @@
                             </div>
                           </td>
                           <td>
-                            <span class="shopping-cart__product-price">₹<%= userCartData[key].Version.Price.toFixed(2)
+                            <span class="shopping-cart__product-price">₹<%= userCartData[key].Product.Price.toFixed(2)
                                 %>
                             </span>
                           </td>
@@ -339,7 +339,7 @@
                               <input type="number" readonly name="quantity[<%= key %>]"
                                 value="<%= userCartData[key].Quantity %>" min="1"
                                 class="qty-control__number text-center" data-key="<%= key %>"
-                                data-price="<%= userCartData[key].Version.Price %>"
+                                data-price="<%= userCartData[key].Product.Price %>"
                                 data-max="<%= userCartData[key].Version.Quantity %>">
                               <div class="qty-control__increase" data-key="<%= key %>">+</div>
                             </div>
@@ -362,13 +362,7 @@
                         <% } %>
                     </tbody>
                   </table>
-                  <div class="cart-table-footer">
-                    <form action="#" class="position-relative bg-body">
-                      <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
-                      <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type=""
-                        value="APPLY COUPON">
-                    </form>
-                  </div>
+                  
                 </div>
                 <div class="shopping-cart__totals-wrapper">
                   <div class="sticky-content">
@@ -378,23 +372,18 @@
                         <tbody>
                           <tr>
                             <th>Subtotal</th>
-                            <td id="cart-subtotal">₹<%= userCartData.reduce((total, item)=> total + (item.Version.Price
+                            <td id="cart-subtotal">₹<%= userCartData.reduce((total, item)=> total + (item.Product.Price
                                 *
                                 item.Quantity), 0).toFixed(2) %></td>
                           </tr>
-                          <tr>
-                            <th>Coupon</th>
-                            <td>
-                              NIL
-                            </td>
-                          </tr>
+                         
                           <tr>
                             <th>Delivery</th>
                             <td>₹70</td>
                           </tr>
                           <tr>
                             <th>Total</th>
-                            <td id="cart-total">₹<%= userCartData.reduce((total, item)=> total + (item.Version.Price *
+                            <td id="cart-total">₹<%= userCartData.reduce((total, item)=> total + (item.Product.Price *
                                 item.Quantity), 70).toFixed(2) %></td>
                           </tr>
                         </tbody>
@@ -488,7 +477,7 @@
               function updateCart() {
                 let subtotal = 0;
                 userCartData.forEach((item, key) => {
-                  const price = item.Version.Price;
+                  const price = item.Product.Price;
                   const quantity = item.Quantity;
                   const subtotalPerItem = price * quantity;
                   subtotal += subtotalPerItem;

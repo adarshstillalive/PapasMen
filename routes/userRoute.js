@@ -3,6 +3,7 @@ const userRoute = express.Router(); // Use express.Router() for a sub-router
 const session = require('express-session');
 const flash = require('connect-flash');
 const Auth = require('../middlewares/userAuth');
+const OfferCheck = require('../middlewares/offerExpiry')
 const multer = require('multer')
 const methodOverride = require('method-override')
 const passport = require('passport');
@@ -51,7 +52,7 @@ userRoute.use((req, res, next) => {
 });
 
 //User Routes
-userRoute.get('/', authController.getHome);
+userRoute.get('/', OfferCheck.updateOffer, authController.getHome);
 userRoute.get('/signin', Auth.notUser, authController.getSignin);
 userRoute.post('/signin', Auth.notUser, authController.postSignin);
 userRoute.get('/signup', Auth.notUser, authController.getSignup);
@@ -68,8 +69,8 @@ userRoute.get('/auth/google/success', authController.getAuthSuccess);
 userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-userRoute.get('/product', productController.getProduct);
-userRoute.get('/searchProduct',productController.getSearchProduct)
+userRoute.get('/product', OfferCheck.updateOffer, productController.getProduct);
+userRoute.get('/searchProduct', OfferCheck.updateOffer, productController.getSearchProduct)
 
 userRoute.get('/profile',Auth.isUser,profileController.getProfile);
 userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
@@ -79,23 +80,26 @@ userRoute.post('/profile/addAddress',Auth.isUser, profileController.postAddAddre
 userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAddress);
 userRoute.get('/profile/wallet',Auth.isUser,profileController.getWallet)
 
-userRoute.get('/category',productController.getCategory)
-userRoute.get('/sort',sortingController.getSortCategory)
+userRoute.get('/category', OfferCheck.updateOffer, productController.getCategory)
+userRoute.get('/sort', OfferCheck.updateOffer, sortingController.getSortCategory)
 
-userRoute.get('/cart',Auth.isUser,cartController.getCart)
+userRoute.get('/cart',Auth.isUser, OfferCheck.updateOffer, cartController.getCart)
 userRoute.post('/cart',Auth.isUser,cartController.postCart)
 userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
 userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
 userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
+userRoute.post('/cart/applyCoupon',Auth.isUser, upload.none(),cartController.postApplyCoupon)
+userRoute.get('/cart/removeCoupon',Auth.isUser, upload.none(),cartController.getRemoveCoupon)
 
 userRoute.post('/createOrder',Auth.isUser,orderController.postCreateOrder)
 userRoute.post('/cancelOrder',Auth.isUser,orderController.postCancelOrder)
+userRoute.post('/returnOrder',Auth.isUser,orderController.postReturnOrder)
 userRoute.get('/orderDetails',Auth.isUser,orderController.getOrderDetails)
 userRoute.get('/paypal/orderComplete',Auth.isUser,orderController.paypalOrderComplete)
 
-userRoute.get('/wishlist', Auth.isUser, wishlistController.getWishlist)
+userRoute.get('/wishlist', Auth.isUser, OfferCheck.updateOffer, wishlistController.getWishlist)
 userRoute.post('/wishlist/addToWishlist',upload.none(), wishlistController.postAddToWishlist)
-userRoute.get('/wishlist/removeProduct',Auth.isUser, wishlistController.getRemoveFromWishlist)
+userRoute.get('/wishlist/removeProduct',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveFromWishlist)
 
 
 

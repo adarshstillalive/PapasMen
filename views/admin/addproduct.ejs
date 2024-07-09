@@ -97,9 +97,36 @@
                         </div>
                       </div>
                     </div>
-                    <div>
+                    <div class="row mb-3">
+                      <div class="col">
+                        <label class="form-label" for="Price">MRP</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
+                          </div>
+                          <input type="number" class="form-control" value="1" id="Price" name="MRP" aria-label="Price" required>
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col">
+                        <label class="form-label" for="Price">Price</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
+                          </div>
+                          <input type="number" class="form-control" value="1" id="Price" name="Price" aria-label="Price" required>
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
                       <label class="form-label">Description</label>
-                      <textarea class="form-control h-200" rows="1" name="Description" placeholder="Enter description" required></textarea>
+                    <textarea class="form-control h-200" rows="1" name="Description" placeholder="Enter description" required></textarea>
                     </div>
                     <div class="card mb-4 mt-4">
                       <div class="card-header d-flex justify-content-between align-items-center">
@@ -166,8 +193,8 @@
         quantityInput.value = currentValue + 1;
       }
     }
-    function changePrice(action, index) {
-      const priceInput = document.getElementById(`price${index}`);
+    function changePrice(action) {
+      const priceInput = document.getElementById('Price');
       let currentValue = parseInt(priceInput.value);
       if (action === 'minus' && currentValue > 1) {
         priceInput.value = currentValue - 1;
@@ -249,18 +276,6 @@
               </div>
             </div>
           </div>
-          <div class="col">
-            <label class="form-label" for="Price">Price</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus', ${versionCount})">-</button>
-              </div>
-              <input type="number" class="form-control" value="1" id="price${versionCount}" name="Versions[${versionCount}].Price" aria-label="Price" required>
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus', ${versionCount})">+</button>
-              </div>
-            </div>
-          </div>
         </div>
       `;
       versionsContainer.appendChild(newVersion);
@@ -303,7 +318,6 @@
         const sizeName = container.querySelector('.version-size-name').value;
         const sizeId = container.querySelector('.version-size').value;
         const quantity = container.querySelector('.version-quantity').value;
-        const price = container.querySelector('.version-price').value;
 
         versions.push({
           ColorName: colorName,
@@ -311,7 +325,6 @@
           SizeName: sizeName,
           Size: sizeId,
           Quantity: quantity,
-          Price: price
         });
       });
 
@@ -332,7 +345,6 @@
         formData.append(`Versions[${index}].SizeName`, version.SizeName);
         formData.append(`Versions[${index}].Size`, version.Size);
         formData.append(`Versions[${index}].Quantity`, version.Quantity);
-        formData.append(`Versions[${index}].Price`, version.Price);
       });
 
       try {

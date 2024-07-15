@@ -276,7 +276,7 @@
                 <div class="col-sm-4 g-mb-30 p-5 border">
                   <div class="g-bg-lightred text-center rounded g-px-20 g-py-30">
                     <% if(walletData){%>
-                    <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹<%= walletData.Balance %>.00</h3>
+                    <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹<%= walletData.Balance.toFixed(2) %></h3>
                     <%}else{%>
                       <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹0.00</h3>
                       <%}%>
@@ -303,7 +303,7 @@
                       </thead>
                       <tbody>
                         <%if(walletData){%>
-                        <% for(key=0;key<walletData.Transaction.length;key++){ %>
+                        <% for(key=walletData.Transaction.length-1;key>=0;key--){ %>
                           <tr>
                             <%if(walletData.Transaction[key].Type === 'Debit'){%>
                             <td style="color:red"><%= walletData.Transaction[key].Type %></td>
@@ -314,7 +314,11 @@
                             <% const timestamp= walletData.Transaction[key].Date;
                              const date=new Date(timestamp); const formattedDate=date.toISOString().split('T')[0]; %>
                             <td><%= formattedDate %></td>
-                            <td>₹<%= walletData.Transaction[key].Amount %>.00</td>
+                            <%if(walletData.Transaction[key].Type === 'Debit'){%>
+                              <td style="color:red">-<%= walletData.Transaction[key].Amount.toFixed(2) %></td>
+                              <%}else{%>
+                                <td style="color:green">+<%= walletData.Transaction[key].Amount.toFixed(2) %></td>
+                                <%}%>
                           </tr>
                           <%}}%>
                       </tbody>

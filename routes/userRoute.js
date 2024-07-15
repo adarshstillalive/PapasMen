@@ -3,7 +3,8 @@ const userRoute = express.Router(); // Use express.Router() for a sub-router
 const session = require('express-session');
 const flash = require('connect-flash');
 const Auth = require('../middlewares/userAuth');
-const OfferCheck = require('../middlewares/offerExpiry')
+const OfferCheck = require('../middlewares/offerExpiry');
+const Checkout = require('../middlewares/checkCart')
 const multer = require('multer')
 const methodOverride = require('method-override')
 const passport = require('passport');
@@ -60,6 +61,7 @@ userRoute.post('/signup', Auth.notUser, authController.postSignup);
 userRoute.post('/signup/sendOtp', Auth.notUser, authController.postSendOtp);
 userRoute.post('/signup/validateOtp', Auth.notUser, upload.none(), authController.postValidateOtp);
 userRoute.get('/signout',authController.getSignout);
+userRoute.get('/referralCheck',authController.getReferralCheck)
 
 userRoute.get('/forgotPassword',Auth.notUser,authController.getForgotPassword);
 userRoute.put('/forgotPassword',Auth.notUser,authController.putForgotPassword);
@@ -70,7 +72,11 @@ userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 userRoute.get('/product', OfferCheck.updateOffer, productController.getProduct);
+userRoute.post('/product/review',Auth.isUser, productController.postProductReview)
+userRoute.get('/product/color',productController.getColorWithSize);
+userRoute.get('/product/size',productController.getSizeWithQuantity);
 userRoute.get('/searchProduct', OfferCheck.updateOffer, productController.getSearchProduct)
+
 
 userRoute.get('/profile',Auth.isUser,profileController.getProfile);
 userRoute.get('/profile/orders',Auth.isUser,profileController.getOrders);
@@ -87,14 +93,17 @@ userRoute.get('/cart',Auth.isUser, OfferCheck.updateOffer, cartController.getCar
 userRoute.post('/cart',Auth.isUser,cartController.postCart)
 userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
 userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
-userRoute.get('/cart/checkout',Auth.isUser,cartController.getCheckout)
+userRoute.get('/cart/checkout',Auth.isUser, Checkout.checkCart,cartController.getCheckout)
 userRoute.post('/cart/applyCoupon',Auth.isUser, upload.none(),cartController.postApplyCoupon)
-userRoute.get('/cart/removeCoupon',Auth.isUser, upload.none(),cartController.getRemoveCoupon)
+userRoute.get('/cart/removeCoupon',Auth.isUser, upload.none(),cartController.getRemoveCoupon);
+userRoute.get('/cart/quantityCheck',Auth.isUser, cartController.getQuantityCheck)
 
 userRoute.post('/createOrder',Auth.isUser,orderController.postCreateOrder)
+userRoute.get('/paypalPayment',Auth.isUser,orderController.getPaypalPayment)
 userRoute.post('/cancelOrder',Auth.isUser,orderController.postCancelOrder)
 userRoute.post('/returnOrder',Auth.isUser,orderController.postReturnOrder)
 userRoute.get('/orderDetails',Auth.isUser,orderController.getOrderDetails)
+userRoute.get('/orderDetails/invoice',Auth.isUser,orderController.getInvoice)
 userRoute.get('/paypal/orderComplete',Auth.isUser,orderController.paypalOrderComplete)
 
 userRoute.get('/wishlist', Auth.isUser, OfferCheck.updateOffer, wishlistController.getWishlist)

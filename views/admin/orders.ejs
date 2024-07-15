@@ -119,7 +119,7 @@
                           <%= orderObj[key].Orderstatus %>
                         </td>
                         <td>
-                          ₹<%= orderObj[key].TotalAmount %> for <%= orderObj[key].Products.length %> items
+                          ₹<%= orderObj[key].TotalAmount.toFixed(2) %> for <%= orderObj[key].Products.length %> items
                         </td>
                           <td class="text-right">
                             <a href="/admin/viewOrder?id=<%=orderObj[key]._id%>"

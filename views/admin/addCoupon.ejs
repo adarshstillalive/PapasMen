@@ -61,13 +61,20 @@
                     </div>
 
                     <div class="mb-3">
-                      <label class="form-label" for="limit">Limit</label>
-                      <input type="number" class="form-control" id="limit" name="Limit" min="1" aria-label="Limit" value="<%= couponData ? couponData.Limit : '' %>" required>
+                      <label class="form-label" for="date-checkout">Expiry</label>
+                      <input type="date" id="date-checkout" class="form-control" name="End"
+                        value="<%= couponData ? new Date(couponData.End).toISOString().split('T')[0] : '' %>"
+                        required>
                     </div>
 
                     <div class="mb-3">
                       <label class="form-label" for="value">Value</label>
                       <input type="number" class="form-control" id="value" name="Value" min="0" aria-label="Value" value="<%= couponData ? couponData.Value : '' %>" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label" for="value">Minimum purchase</label>
+                      <input type="number" class="form-control" id="value" name="MinPurchase" min="0" aria-label="MinPurchase" value="<%= couponData ? couponData.MinPurchase : '' %>" required>
                     </div>
 
                     <div class="text-center">

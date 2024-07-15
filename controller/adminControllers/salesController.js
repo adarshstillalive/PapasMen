@@ -25,7 +25,7 @@ const getSales = async (req, res) => {
       res.render('admin/sales', pushData)
     } else {
       const { startDate, endDate } = req.query;
-      const orderObj = await Order.find({ $and: [{ "createdAt": { $gte: startDate } }, { "createdAt": { $lte: endDate } }, { "Orderstatus": { $ne: "Cancelled" } }] })
+      const orderObj = await Order.find({ $and: [{ "createdAt": { $gte: startDate } }, { "createdAt": { $lte: endDate } }, { "Orderstatus": "Delivered" }] })
         .populate('UserId').populate({ path: 'Products', populate: { path: 'Product', ref: 'Product' } }).sort({ "createdAt": -1 });
 
       const pushData = {
@@ -53,7 +53,7 @@ const getPdfDownload = async (req, res) => {
       $and: [
         { "createdAt": { $gte: startDate } },
         { "createdAt": { $lte: endDate } },
-        { "Orderstatus": { $ne: "Cancelled" } }
+        { "Orderstatus":  "Delivered"  }
       ]
     })
       .populate('UserId')

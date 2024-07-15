@@ -65,8 +65,9 @@
                 <tr>
                   <th>Sl No.</th>
                   <th>Name</th>
-                  <th>Limit</th>
+                  <th>Expiry</th>
                   <th>Value</th>
+                  <th>Minimum<br>purchase</th>
                   <th></th>
                 </tr>
               </thead>
@@ -75,8 +76,9 @@
                   <tr>
                     <td><%= ((page-1)*6) + index + 1 %></td>
                     <td><%= couponObj[key].Name %></td>
-                    <td><%= couponObj[key].Limit %></td>
+                    <td><%= new Date(couponObj[key].End).toISOString().split('T')[0] %></td>
                     <td><%= couponObj[key].Value %></td>
+                    <td><%= couponObj[key].MinPurchase %></td>
                       <td class="text-right">
                         <a href="/admin/coupon/addCoupon?id=<%= couponObj[key]._id %>" class="btn btn-warning">Edit</a>
                         <a href="#deleteCoupon<%= couponObj[key]._id %>" class="btn btn-danger" data-toggle="modal">&nbsp;&nbsp;Delete&nbsp;&nbsp;&nbsp;</a>

@@ -289,7 +289,7 @@
               </span>
             </a>
           </div>
-          <form name="checkout-form" action="/createOrder" method="post">
+          <form name="checkout-form" id="checkoutForm" action="/createOrder" method="post">
             <input type="hidden" name="userCartData" value="<%= userCartData %>">
             <div class="checkout-form">
               <div class="billing-info__wrapper">
@@ -305,8 +305,8 @@
                       <div class="my-account__address-list" style="display: flex; flex-wrap: wrap;">
                         <% for(key=0;key<userData.Address.length;key++){%>
                           <div class="my-account__address-item border p-5">
-                            <input class="form-check-input form-check-input_fill border-3" type="radio"
-                              value="<%= userData.Address[key]._id %>" name="checkoutAddress"
+                            <input class="form-check-input form-check-input_fill border-3" class="checkoutAddress"
+                              type="radio" value="<%= userData.Address[key]._id %>" name="checkoutAddress"
                               id="checkoutAddress<%= key %>" required>
                             <div class="my-account__address-item__title">
                               <h5>Address <%=key+1%>
@@ -392,30 +392,45 @@
                           <td>₹70</td>
                         </tr>
                         <tr>
+                          <% const totalAmount = userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),70) %>
                           <input id="totalAmount" type="hidden" name="totalAmount"
-                            value="<%= userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),70) %>">
+                            value="<%= totalAmount %>">
                           <th>TOTAL</th>
-                          <td id="totalAmountDisplay">₹<%= userCartData.reduce((acc,val)=>acc+=(val.Product.Price * val.Quantity),70) %></td>
+                          <td id="totalAmountDisplay">₹<%= totalAmount %></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div class="checkout__payment-methods">
-                    <div class="form-check">
+                    <% if(totalAmount>5000){ %>
+                    <div id="COD" class="form-check disabled-tr">
                       <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
-                        value="Cash On Delivery" id="checkout_payment_method_3">
-                      <label class="form-check-label" for="checkout_payment_method_3">
-                        Cash on delivery
+                        value="Cash On Delivery" id="checkout_payment_method_1">
+                      <label class="form-check-label" for="checkout_payment_method_1">
+                        Cash on delivery <br><span style="color:red">Only available for orders below 5000</span>
                         <span class="option-detail d-block">
                           Pay with cash upon receiving your order. Please ensure you have the exact amount as our
                           delivery personnel may not have change.
                         </span>
                       </label>
                     </div>
+                    <%}else{%>
+                      <div id="COD" class="form-check">
+                        <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
+                          value="Cash On Delivery" id="checkout_payment_method_1">
+                        <label class="form-check-label" for="checkout_payment_method_1">
+                          Cash on delivery
+                          <span class="option-detail d-block">
+                            Pay with cash upon receiving your order. Please ensure you have the exact amount as our
+                            delivery personnel may not have change.
+                          </span>
+                        </label>
+                      </div>
+                      <%}%>
                     <div class="form-check">
                       <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
-                        value="Paypal" id="checkout_payment_method_4">
-                      <label class="form-check-label" for="checkout_payment_method_4">
+                        value="Paypal" id="checkout_payment_method_2">
+                      <label class="form-check-label" for="checkout_payment_method_2">
                         Paypal
                         <span class="option-detail d-block">
                           Pay securely using your PayPal account. It's quick and easy, with instant payment confirmation
@@ -423,13 +438,28 @@
                         </span>
                       </label>
                     </div>
-                    <div class="policy-text">
-                      Your personal data will be used to process your order, support your experience throughout this
-                      website, and for other purposes described in our <a href="terms.html" target="_blank">privacy
-                        policy</a>.
-                    </div>
+                    <% if (walletData && walletData.Transaction.reduce((acc, curr)=> acc + curr.Amount,0)>=userCartData.reduce((acc, val) => acc + (val.Product.Price * val.Quantity), 0)) { %>
+                        <div class="form-check">
+                          <input class="form-check-input form-check-input_fill" type="radio" name="paymentMethod"
+                            value="Wallet" id="checkout_payment_method_3">
+                          <label class="form-check-label" for="checkout_payment_method_3">
+                            Wallet
+                            <span class="option-detail d-block">
+                              Pay using wallet. It's quick and easy, with instant payment confirmation
+                              so we can process your order immediately.
+                            </span>
+                          </label>
+                        </div>
+                        <%}%>
+                          <div class="policy-text">
+                            Your personal data will be used to process your order, support your experience throughout
+                            this
+                            website, and for other purposes described in our <a href="terms.html"
+                              target="_blank">privacy
+                              policy</a>.
+                          </div>
                   </div>
-                  <button class="btn btn-primary btn-checkout" type="submit">PLACE ORDER</button>
+                  <button type="button" class="btn btn-primary btn-checkout" id="formSubmit">PLACE ORDER</button>
                 </div>
               </div>
             </div>
@@ -437,6 +467,8 @@
           <div class="cart-table-footer col-md-6">
             <form id="couponForm" class="bg-body">
               <input class="form-control m-2 w-50" id="couponInput" type="text" name="Name" placeholder="Coupon Code">
+              <input type="hidden" name="totalCartAmount"
+                value="<%=userCartData.reduce((acc, val) => acc + (val.Product.Price * val.Quantity), 0)%>">
               <button class="btn btn-primary m-2" id="submitCouponForm">APPLY COUPON</button>
             </form>
           </div>
@@ -470,49 +502,49 @@
                               <input type="hidden" name="index" value="<%=key%>">
                               <input type="hidden" name="route" value="/cart/checkout">
                               <label for="firstName" class="form-label">First Name</label>
-                              <input type="text" class="form-control" id="firstName" name="Fname"
+                              <input type="text" class="form-control" id="firstName<%=key%>" name="Fname"
                                 value="<%=userData.Address[key].Fname%>" required>
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
                               <label for="lastName" class="form-label">Last Name</label>
-                              <input type="text" class="form-control" id="lastName" name="Lname"
+                              <input type="text" class="form-control" id="lastName<%=key%>" name="Lname"
                                 value="<%=userData.Address[key].Lname%>" required>
                             </div>
                           </div>
                         </div>
                         <div class="form-group">
                           <label for="housename" class="form-label">House Name / Building Name</label>
-                          <input type="text" class="form-control" id="housename" name="Housename"
+                          <input type="text" class="form-control" id="housename<%=key%>" name="Housename"
                             value="<%=userData.Address[key].Housename%>" required>
                         </div>
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">
                               <label for="city" class="form-label">City</label>
-                              <input type="text" class="form-control" id="city" name="City"
+                              <input type="text" class="form-control" id="city<%=key%>" name="City"
                                 value="<%=userData.Address[key].City%>" required>
                             </div>
                           </div>
                           <div class="col-md-3">
                             <div class="form-group">
                               <label for="state" class="form-label">State</label>
-                              <input type="text" class="form-control" id="state" name="State"
+                              <input type="text" class="form-control" id="state<%=key%>" name="State"
                                 value="<%=userData.Address[key].State%>" required>
                             </div>
                           </div>
                           <div class="col-md-3">
                             <div class="form-group">
                               <label for="pincode" class="form-label">Pincode</label>
-                              <input type="text" class="form-control" id="pincode" name="Pincode" maxlength="6"
+                              <input type="text" class="form-control" id="pincode<%=key%>" name="Pincode" maxlength="6"
                                 value="<%=userData.Address[key].Pincode%>" required>
                             </div>
                           </div>
                         </div>
                         <div class="form-group">
                           <label for="phone" class="form-label">Phone Number</label>
-                          <input type="tel" class="form-control" id="phone" name="Phone"
+                          <input type="tel" class="form-control" id="phone<%=key%>" name="Phone"
                             value="<%=userData.Address[key].Phone%>" required>
                         </div>
                         <div class="pb-3"></div>
@@ -540,44 +572,43 @@
                               <div class="form-group">
                                 <input type="hidden" name="route" value="/cart/checkout">
                                 <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" name="Fname" required>
+                                <input type="text" class="form-control" name="Fname" required>
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" name="Lname" required>
+                                <input type="text" class="form-control" name="Lname" required>
                               </div>
                             </div>
                           </div>
                           <div class="form-group">
                             <label for="housename" class="form-label">House Name / Building Name</label>
-                            <input type="text" class="form-control" id="housename" name="Housename" required>
+                            <input type="text" class="form-control" name="Housename" required>
                           </div>
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label for="city" class="form-label">City</label>
-                                <input type="text" class="form-control" id="city" name="City" required>
+                                <input type="text" class="form-control" name="City" required>
                               </div>
                             </div>
                             <div class="col-md-3">
                               <div class="form-group">
                                 <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="State" required>
+                                <input type="text" class="form-control" name="State" required>
                               </div>
                             </div>
                             <div class="col-md-3">
                               <div class="form-group">
                                 <label for="pincode" class="form-label">Pincode</label>
-                                <input type="text" class="form-control" id="pincode" name="Pincode" maxlength="6"
-                                  required>
+                                <input type="text" class="form-control" name="Pincode" maxlength="6" required>
                               </div>
                             </div>
                           </div>
                           <div class="form-group">
                             <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" name="Phone" required>
+                            <input type="tel" class="form-control" name="Phone" required>
                           </div>
                           <div class="pb-3"></div>
                           <button type="submit" class="btn btn-primary">Save Address</button>
@@ -651,6 +682,10 @@
                     }).then(response => response.json())
                       .then((data) => {
                         if (data.success) {
+                          const couponStatus = document.getElementById('couponStatus');
+                          if (couponStatus) {
+                            couponStatus.innerHTML = 'NIL'; // Ensure data.message is not undefined
+                          }
                           const couponInput = document.getElementById('couponInput');
                           couponInput.value = '';
                           couponInput.removeAttribute('readonly');
@@ -700,6 +735,55 @@
                 })
               </script>
 
+              <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                  const formSubmit = document.getElementById('formSubmit');
+                  const checkoutForm = document.getElementById('checkoutForm');
+
+                  formSubmit.addEventListener('click', function (event) {
+                    // Get the selected address
+                    const checkoutAddress = document.querySelector('input[name="checkoutAddress"]:checked');
+                    // Get the selected payment method
+                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+                    if (!checkoutAddress || !paymentMethod) {
+                      event.preventDefault();
+                      Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Make sure address and payment method are selected",
+                      });
+                    } else {
+                      // If both are selected, submit the form
+                      checkoutForm.submit();
+                    }
+                  });
+                });
+              </script>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                const targetNode = document.getElementById('totalAmountDisplay');
+                const observer = new MutationObserver((mutations) => {
+                  mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                      const COD = document.getElementById('COD');
+                      const value = targetNode.textContent.trim()
+                      const cleanedValue = value.replace(/[^0-9.]/g, '');
+                      if(Number(cleanedValue)>4540){
+                        COD.classList.add('disabled-tr')
+                      }else{
+                        COD.classList.remove('disabled-tr')
+                      }
+                    }
+                  });
+                });
+
+                const config = { childList: true, characterData: true, subtree: true };
+                observer.observe(targetNode, config);
+                })
+              </script>
+
               <!-- External JavaScripts -->
               <script src="/js/plugins/jquery.min.js"></script>
               <script src="/js/plugins/bootstrap.bundle.min.js"></script>
@@ -716,3 +800,11 @@
 </body>
 
 </html>
+<style>
+
+  .disabled-tr {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+    user-select: none !important;
+  }
+</style>

@@ -5,21 +5,23 @@ const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Coupon = require('../../model/couponModel')
-const UserAuth = require('../../model/userAuthModel')
+const Wallet = require('../../model/walletModel')
+const Order = require('../../model/orderModel')
+const UserAuth = require('../../model/userAuthModel');
 
 // FUNCTIONS
-async function fetchData(){
-  const dataCollection = [Size.find(),Color.find(),Category.find(),Brand.find()]
-  const [sizeData,colorData,categoryData,brandData] = await Promise.all(dataCollection)
-  const fetchedData = {sizeData,colorData,categoryData,brandData}
+async function fetchData() {
+  const dataCollection = [Size.find(), Color.find(), Category.find(), Brand.find()]
+  const [sizeData, colorData, categoryData, brandData] = await Promise.all(dataCollection)
+  const fetchedData = { sizeData, colorData, categoryData, brandData }
   return fetchedData;
 }
 
 
-const getCart = async(req,res)=>{
+const getCart = async (req, res) => {
   try {
 
-    const {sizeData,colorData,categoryData,brandData} = await fetchData()
+    const { sizeData, colorData, categoryData, brandData } = await fetchData()
     // Fetch user data and populate cart products with nested fields
     const userData = await User.findById(req.session.userData._id)
       .populate({
@@ -60,7 +62,7 @@ const getCart = async(req,res)=>{
     }));
 
     // Prepare data to be rendered in the view
-    const pushData = { sizeData, categoryData, colorData, brandData, userCartData,userData };
+    const pushData = { sizeData, categoryData, colorData, brandData, userCartData, userData };
 
     // Render the 'cart' view with the populated data
     res.render('user/cart', pushData);
@@ -69,14 +71,14 @@ const getCart = async(req,res)=>{
   }
 }
 
-const postCart = async (req,res)=>{
+const postCart = async (req, res) => {
   try {
-    const userData = await User.findOne({"_id":req.session.userData._id});
-    for(let i=0;i<userData.Cart.length;i++){
+    const userData = await User.findOne({ "_id": req.session.userData._id });
+    for (let i = 0; i < userData.Cart.length; i++) {
       userData.Cart[i].Quantity = req.body.quantity[i]
     };
     await userData.save();
-     
+
     res.redirect('/cart/checkout');
   } catch (error) {
     console.log(error);
@@ -86,51 +88,82 @@ const postCart = async (req,res)=>{
 
 const postAddToCart = async (req, res) => {
   try {
-    if(!req.session.userData){
-      return res.status(302).redirect('/signin')
+    if (!req.session.userData) {
+      return res.status(302).redirect('/signin');
     }
-       
-    const productData = await Product.findOne({ "_id": req.body.ProductId });
+
+    const { Size, Color, Quantity, ProductId } = req.body;
+
+    // Fetch user data and populate the cart products
+    const user = await User.findOne({ _id: req.session.userData._id })
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Fetch the product data
+    const product = await Product.findOne({ _id: ProductId });
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
     let flag = false;
 
-    for (i = 0; i < productData.Versions.length; i++) {
-      if (productData.Versions[i].Size == req.body.Size && productData.Versions[i].Color == req.body.Color && productData.Versions[i].Quantity >= req.body.Quantity) {
-
-        const updateCart = {
-          Product: productData._id,
-          Version: productData.Versions[i]._id,
-          Quantity: req.body.Quantity
-        }
-
-        const userData = await User.updateOne({ "_id": req.session.userData._id }, { $push: { "Cart": updateCart } })
-        if (userData) {
-          flag = true;
+    // Check if the product and version already exist in the user's cart
+    for (let i = 0; i < user.Cart.length; i++) {
+      if (user.Cart[i].Product.equals(ProductId)) {
+        for (let j = 0; j < product.Versions.length; j++) {
+          if (product.Versions[j].Size.equals(Size) && product.Versions[j].Color.equals(Color) && product.Versions[j].Quantity >= Quantity) {
+            if (user.Cart[i].Version.equals(product.Versions[j]._id)) {
+              user.Cart[i].Quantity += parseInt(Quantity, 10);
+              await user.save();
+              flag = true;
+              break;
+            }
+          }
         }
       }
-
+      if (flag) break;
     }
+
+    // If the product version is not in the cart, add it
+    if (!flag) {
+      for (let i = 0; i < product.Versions.length; i++) {
+        if (product.Versions[i].Size.equals(Size) && product.Versions[i].Color.equals(Color) && product.Versions[i].Quantity >= Quantity) {
+          const updateCart = {
+            Product: product._id,
+            Version: product.Versions[i]._id,
+            Quantity: parseInt(Quantity, 10)
+          };
+          user.Cart.push(updateCart);
+          await user.save();
+          flag = true;
+          break;
+        }
+      }
+    }
+
     if (flag) {
-      res.json({ success: true })
+      res.json({ success: true });
     } else {
-      res.json({ success: false, message:'Adding to cart failed, try again' })
+      res.json({ success: false, message: 'Adding to cart failed, try again' });
     }
-
-
-   
   } catch (error) {
-    console.log(error);
+    console.error('Error adding to cart:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
-}
+};
 
-const getRemoveProduct = async(req,res)=>{
+
+const getRemoveProduct = async (req, res) => {
   try {
     const productId = req.query.id;
-    const removeProduct = await User.updateOne({"_id":req.session.userData._id},{$pull:{"Cart":{"_id":productId}}});
-    if(removeProduct){
-      req.flash('msg','Product removed successfully');
+    const removeProduct = await User.updateOne({ "_id": req.session.userData._id }, { $pull: { "Cart": { "_id": productId } } });
+    if (removeProduct) {
+      req.flash('msg', 'Product removed successfully');
       res.redirect('/cart')
-    }else{
-      req.flash('msg','Product removing failed, Try again')
+    } else {
+      req.flash('msg', 'Product removing failed, Try again')
       res.redirect('/cart')
     }
   } catch (error) {
@@ -138,9 +171,11 @@ const getRemoveProduct = async(req,res)=>{
   }
 }
 
-const getCheckout = async(req,res)=>{
+const getCheckout = async (req, res) => {
   try {
-    const {sizeData,colorData,categoryData,brandData} = await fetchData()
+    const { sizeData, colorData, categoryData, brandData } = await fetchData()
+    const walletData = await Wallet.findOne({ "UserId": req.session.userData._id, "Transaction.Type": "Refund" })
+
     // Fetch user data and populate cart products with nested fields
     const userData = await User.findById(req.session.userData._id)
       .populate({
@@ -178,47 +213,91 @@ const getCheckout = async(req,res)=>{
 
       return cartItem.toObject();
     }));
-    
+
     let couponData;
-    if(req.session.coupon){
+    if (req.session.coupon) {
       couponData = req.session.coupon
     }
 
     const pushData = {
-       sizeData, colorData, categoryData, brandData,userData,userCartData, couponData,
+      sizeData, colorData, categoryData, brandData, userData, userCartData, couponData, walletData
     }
 
-    res.render('user/checkout',pushData)
+    res.render('user/checkout', pushData)
   } catch (error) {
     console.log(error);
   }
 }
 
-const postApplyCoupon = async(req,res)=>{
+const postApplyCoupon = async (req, res) => {
   try {
 
-    const {Name} = req.body;
+    const { Name, totalCartAmount } = req.body;
     const name = Name.trim().toUpperCase();
-    const fetchCoupon = await Coupon.findOne({"Name":name});
-
-    if(fetchCoupon.Limit>0){
-      req.session.coupon = fetchCoupon.Name;
-      res.json({success:true, message:fetchCoupon.Name,value:fetchCoupon.Value})
-    }else{
-      res.json({success:false,message: 'Coupon invalid/expired' })
+    const couponObj = await Coupon.find();
+    let flag = false;
+    for (coupon of couponObj) {
+      if (coupon.Name === name) {
+        flag = true;
+        break;
+      }
     }
+    if (flag) {
+
+      const fetchCoupon = await Coupon.findOne({ "Name": name });
+      const orderObj = await Order.find({ "UserId": req.session.userData._id, "Coupon": fetchCoupon.Name });
+      if (orderObj.length === 0) {
+        const current = new Date()
+
+        if (fetchCoupon.End > current) {
+          if(fetchCoupon.MinPurchase<=totalCartAmount){
+            req.session.coupon = fetchCoupon.Name;
+          res.json({ success: true, message: fetchCoupon.Name, value: fetchCoupon.Value })
+          }else{
+            res.json({ success: false, message: `Minimum cart value should be greater than ${fetchCoupon.MinPurchase}` })
+          }
+          
+        } else {
+          res.json({ success: false, message: 'Coupon expired' })
+        }
+      }else{
+        res.json({ success: false, message: 'Coupon already claimed' })
+      }
+
+    } else {
+      res.json({ success: false, message: 'Coupon invalid' })
+    }
+
   } catch (error) {
     console.log(error);
   }
 }
 
-const getRemoveCoupon = async(req,res)=>{
+const getRemoveCoupon = async (req, res) => {
   try {
-    const fetchCoupon = await Coupon.findOne({"Name":req.session.coupon});
+    const fetchCoupon = await Coupon.findOne({ "Name": req.session.coupon });
     const value = fetchCoupon.Value
     req.session.coupon = {};
-    res.json({success:true, message:'Coupon removed',value:value})
+    res.json({ success: true, message: 'Coupon removed', value: value })
 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getQuantityCheck = async(req,res)=>{
+  try {
+    const {versionId, inputValue} = req.query;
+    const versionsData = await Product.findOne({"Versions._id":versionId},{Versions:1});
+    for(version of versionsData.Versions){
+      if(version._id.equals(versionId)){
+        if((Number(inputValue)===version.Quantity-1)){
+          res.json({success:false})
+        }else{
+          res.json({success:true})
+        }
+      }
+    }
   } catch (error) {
     console.log(error);
   }
@@ -234,4 +313,5 @@ module.exports = {
   getRemoveProduct,
   postApplyCoupon,
   getRemoveCoupon,
+  getQuantityCheck,
 }

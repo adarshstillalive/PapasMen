@@ -47,6 +47,7 @@ adminRoute.use('/uploads', express.static('uploads'));
 
 // Defined routes
 adminRoute.get('/', Auth.isAdmin, commonController.dashboard);
+adminRoute.get('/dashboardChart/:timeframe', Auth.isAdmin, commonController.getDashboardChart);
 adminRoute.get('/signout', Auth.isAdmin, commonController.getLogout);
 adminRoute.get('/signin', Auth.notAdmin, commonController.getLogin);
 adminRoute.post('/signin', Auth.notAdmin, commonController.postLogin);
@@ -88,6 +89,8 @@ adminRoute.get('/offer/addProductOffer',Auth.isAdmin, offerController.getAddProd
 adminRoute.post('/offer/addProductOffer',Auth.isAdmin, offerController.postAddProductOffer)
 adminRoute.get('/offer/addCategoryOffer',Auth.isAdmin, offerController.getAddCategoryOffer)
 adminRoute.post('/offer/addCategoryOffer',Auth.isAdmin, offerController.postAddCategoryOffer)
+adminRoute.get('/offer/referral',Auth.isAdmin, offerController.getReferral)
+adminRoute.post('/offer/referral',Auth.isAdmin, offerController.postReferral)
 
 adminRoute.get('/coupon',Auth.isAdmin, couponController.getCoupon)
 adminRoute.get('/coupon/addCoupon',Auth.isAdmin, couponController.getAddCoupon)

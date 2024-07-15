@@ -43,6 +43,41 @@ const getProduct = async (req, res) => {
   }
 }
 
+const postProductReview = async(req,res)=>{
+  try {
+    const {review, rating, productId} = req.body;
+
+    const addReview = await Product.updateOne(
+      { "_id": productId },
+      {
+        $push: {
+          "Reviews": {
+            Review: review,
+            UserId: req.session.userData._id,
+            UserName: req.session.userData.Name,
+            Rating: rating
+          }
+        }
+      }
+    );
+
+    if(addReview.modifiedCount>0){
+      const updateUser = await User.updateOne(
+        { 
+          "_id": req.session.userData._id,
+          "PurchasedProducts.ProductId": productId
+        },
+        { 
+          "$set": { "PurchasedProducts.$.Reviewed": true }
+        }
+      );
+    }
+    res.redirect(`/product?id=${productId}`)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const getCategory = async (req, res) => {
   try {
     const categoryId = req.query.id;
@@ -60,6 +95,42 @@ const getCategory = async (req, res) => {
     }
 
     res.render('user/category', pushData)
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+const getColorWithSize = async(req,res)=>{
+  try {
+    const {colorId, productId} = req.query;
+    let sizeId = []
+    const productData = await Product.findOne({"_id":productId});
+    productData.Versions.forEach((version)=>{
+      if(version.Color.equals(colorId)){
+        sizeId.push(version.Size)
+      }
+    })
+
+    res.json({sizeId})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+const getSizeWithQuantity = async(req,res)=>{
+  try {
+    const {colorId, sizeId, productId} = req.query;
+
+    const productData = await Product.findOne({"_id":productId});
+    productData.Versions.forEach((version)=>{
+      if(version.Color.equals(colorId) && version.Size.equals(sizeId)){
+        const quantity = version.Quantity
+        res.json({quantity})
+      }
+    })
 
   } catch (error) {
     console.log(error);
@@ -95,7 +166,10 @@ const getSearchProduct = async (req, res) => {
 module.exports = {
 
   getProduct,
+  postProductReview,
   getCategory,
+  getColorWithSize,
+  getSizeWithQuantity,
   getSearchProduct,
 
 }

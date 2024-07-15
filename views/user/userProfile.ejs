@@ -194,7 +194,8 @@
         <div class="col-lg-9">
           <div class="page-content my-account__dashboard">
             <h2>Hello, <strong><%=userData.Name.toUpperCase()%></strong></h2>
-            <p>From your account dashboard you can view your <a class="unerline-link" href="account_orders.html">recent orders</a>, manage your <a class="unerline-link" href="account_edit_address.html">shipping and billing addresses</a>, and <a class="unerline-link" href="account_edit.html">edit your password and account details.</a></p>
+            <p>From your account dashboard you can view your <a class="unerline-link" href="/profile/orders">recent orders</a>, manage your <a class="unerline-link" href="/profile/address">shipping and billing addresses</a></p>
+            <h2>Referral id : <strong><%= userData.Referral %></strong></h2>
           </div>
         </div>
       </div>

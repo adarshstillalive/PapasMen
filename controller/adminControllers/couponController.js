@@ -11,7 +11,7 @@ const getCoupon = async(req,res)=>{
 
     const totalCount = await Coupon.find().countDocuments()
     const totalPage = Math.ceil(totalCount/limit)
-    const couponObj = await Coupon.find().limit(limit).skip((page - 1) * limit);
+    const couponObj = await Coupon.find().limit(limit).skip((page - 1) * limit).sort({"createdAt":-1});
 
     const pushData = {
       adminName: req.session.adminData.Name,
@@ -44,13 +44,14 @@ const getAddCoupon = async(req,res)=>{
 const postAddCoupon = async (req, res) => {
   try {
     console.log(req.body);
-    const { Name, Description, Limit, Value, _id } = req.body;
+    const { Name, Description, End, Value,MinPurchase, _id } = req.body;
     let flag = false;
     const setData = {
       Name:Name.toUpperCase(),
       Description,
-      Limit,
-      Value
+      End,
+      Value,
+      MinPurchase,
     };
 
     if (_id) {

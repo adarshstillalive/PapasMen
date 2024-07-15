@@ -9,16 +9,22 @@ const couponSchema = mongoose.Schema({
   Description:{
     type:String
   },
-  Limit:{
-    type:Number,
-    required:true
+  End:{
+    type: Date
   },
   Value:{
     type:Number,
     required:true
+  },
+  MinPurchase:{
+    type:Number,
+    default:0,
   }
 
 
+},
+{
+  timestamps: true
 })
 
 

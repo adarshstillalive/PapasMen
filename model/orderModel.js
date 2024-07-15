@@ -18,6 +18,14 @@ const orderSchema = mongoose.Schema({
     Quantity: {
       type: Number,
       required: true
+    },
+    Price: {
+      type: Number,
+      required:true
+    },
+    Returned:{
+      type: Boolean,
+      default:false
     }
   }],
   Address: [{

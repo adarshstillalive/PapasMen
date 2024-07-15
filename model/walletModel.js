@@ -14,7 +14,7 @@ const walletSchema = mongoose.Schema({
   Transaction:[{
     Type:{
       type:String,
-      enum:['Debit','Credit','Refund'],
+      enum:['Debit','Credit','Refund','Referral'],
       required:true,
     },
     Amount:{

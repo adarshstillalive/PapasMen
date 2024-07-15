@@ -15,6 +15,9 @@ const wishlistSchema = mongoose.Schema({
     }
   }]
 
+},
+{
+  timestamps: true
 })
 
 

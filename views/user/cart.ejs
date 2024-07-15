@@ -336,12 +336,13 @@
                           <td>
                             <div class="qty-control position-relative">
                               <div class="qty-control__reduce" data-key="<%= key %>">-</div>
+                              <input id="versionId<%=key%>" type="hidden" value="<%= userCartData[key].Version._id %>">
                               <input type="number" readonly name="quantity[<%= key %>]"
                                 value="<%= userCartData[key].Quantity %>" min="1"
                                 class="qty-control__number text-center" data-key="<%= key %>"
                                 data-price="<%= userCartData[key].Product.Price %>"
                                 data-max="<%= userCartData[key].Version.Quantity %>">
-                              <div class="qty-control__increase" data-key="<%= key %>">+</div>
+                              <div class="qty-control__increase" id="incrementButton<%=key%>" data-key="<%= key %>">+</div>
                             </div>
                           </td>
                           <td>
@@ -470,7 +471,7 @@
                 const newSubtotal = quantity * price;
                 const subtotalElement = document.getElementById(`subtotal_${key}`);
                 subtotalElement.innerText = `₹${newSubtotal.toFixed(2)}`;
-                return newSubtotal;
+                // return newSubtotal;
               }
 
               // Function to update cart subtotal and total
@@ -498,11 +499,10 @@
               function handleIncrease(key) {
                 const item = userCartData[key];
                 const input = document.querySelector(`input[data-key="${key}"]`);
-                const max = parseInt(input.dataset.max);
                 let quantity = parseInt(input.value);
 
-                if (quantity < max && quantity <= 4) {
-                  quantity++;
+                if (quantity ) {
+                  quantity;
                   item.Quantity = quantity;
                   updateSubtotal(quantity, item.Version.Price, key);
                   updateCart();
@@ -511,6 +511,8 @@
 
               // Function to handle quantity decrease
               function handleDecrease(key) {
+                incrementButton = document.getElementById(`incrementButton${key}`)
+                incrementButton.classList.remove('disabled-tr')
                 const item = userCartData[key];
                 const input = document.querySelector(`input[data-key="${key}"]`);
                 let quantity = parseInt(input.value);
@@ -527,7 +529,26 @@
               document.querySelectorAll('.qty-control__increase').forEach(button => {
                 button.addEventListener('click', function () {
                   const key = parseInt(this.dataset.key);
-                  handleIncrease(key);
+                  const input = document.querySelector(`input[data-key="${key}"]`).value;
+                  const versionId = document.getElementById(`versionId${key}`).value
+                  
+                  fetch(`/cart/quantityCheck?versionId=${versionId}&inputValue=${input}`,()=>{
+                    method:'GET'
+                  }).then(response=>response.json())
+                  .then((data)=>{
+                    if(data.success){
+                      handleIncrease(key);
+                    }else{
+                      handleIncrease(key);
+                      this.classList.add('disabled-tr');
+                      Swal.fire({
+                            icon: "info",
+                            title: "Important",
+                            text: "Stock limited",
+                          });
+                          
+                    }
+                  })
                 });
               });
 
@@ -560,7 +581,8 @@
 </html>
 <style>
   .disabled-tr {
-    pointer-events: none; 
-    opacity: 0.5;          
+    pointer-events: none!important; 
+    opacity: 0.5!important;
+    user-select: none!important;          
   }
 </style>

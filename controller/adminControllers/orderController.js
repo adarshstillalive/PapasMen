@@ -4,6 +4,7 @@ const Brand = require('../../model/brandModel')
 const Size = require('../../model/sizeModel')
 const Color = require('../../model/colorModel')
 const Order = require('../../model/orderModel')
+const User = require('../../model/userModel')
 
 
 async function orderProductData(orderId) {
@@ -67,7 +68,7 @@ const getOrders = async (req,res)=>{
     const totalCount = await Order.find().countDocuments();
     const totalPage = Math.ceil(totalCount/limit)
 
-    const orderObj = await Order.find().populate('UserId').limit(limit).skip((page-1)*limit)
+    const orderObj = await Order.find().populate('UserId').limit(limit).skip((page-1)*limit).sort({"createdAt":-1})
     const adminName = req.session.adminData.Name
     addProductMsg = req.flash('msg');
     const pushData = {
@@ -118,6 +119,15 @@ const postUpdateOrderStatus = async(req,res)=>{
       default :
         values = {"Orderstatus":orderStatus};
         break;
+    }
+    if(orderStatus==='Delivered'){
+      const orderData = await Order.findOne({"_id":orderId});
+      const userData = await User.findOne({"_id":orderData.UserId});
+      for (let product of orderData.Products) {
+        if (userData.PurchasedProducts && !userData.PurchasedProducts.some(p => p.ProductId.equals(product.Product))) {
+          userData.PurchasedProducts.push({ "ProductId": product.Product });
+        }
+      }await userData.save()
     }
 
     const updateStatus = await Order.updateOne({"_id":orderId},{$set:values});

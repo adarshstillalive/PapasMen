@@ -3,6 +3,7 @@ const Product = require('../../model/productModel')
 const Brand = require('../../model/brandModel')
 const Size = require('../../model/sizeModel')
 const Color = require('../../model/colorModel')
+const Referral = require('../../model/referralModel')
 
 const fs = require('fs');
 const path = require('path');
@@ -181,6 +182,35 @@ const postAddCategoryOffer = async(req,res)=>{
   }
 }
 
+const getReferral = async(req,res)=>{
+  try {
+    const referralData = await Referral.findOne();
+    const adminName = req.session.adminData.Name;
+    const pushData = {
+      referralData,
+      adminName,
+      addOfferMsg: req.flash('msg')
+    }
+    res.render('admin/referralEdit',pushData)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const postReferral = async(req,res)=>{
+  try {
+    const {ReferralAmount, isActive} = req.body;
+    const updateReferral = await Referral.updateOne({"Name":'Referral'},{$set:{"Amount":ReferralAmount,"isActive":isActive}});
+
+    if(updateReferral.modifiedCount>0){
+      req.flash('msg','Referral updated successfully');
+      res.redirect('/admin/offer/referral')
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 module.exports = {
   getProductOffer,
@@ -189,4 +219,6 @@ module.exports = {
   postAddProductOffer,
   getAddCategoryOffer,
   postAddCategoryOffer,
+  getReferral,
+  postReferral,
 }

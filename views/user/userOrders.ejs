@@ -281,7 +281,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% for(key=0;key<orderData.length;key++){%>
+                      <% for(key=orderData.length-1;key>=0;key--){%>
                         <tr>
                           <td>
                             <%= orderData[key].OrderId %>
@@ -296,7 +296,7 @@
                                 <span style="color:green"><%= orderData[key].Orderstatus %></span>
                                 <%}%>
                             </td>
-                            <td>₹<%= orderData[key].TotalAmount %> for <%= orderData[key].Products.length %> items</td>
+                            <td>₹<%= orderData[key].TotalAmount.toFixed(2) %> for <%= orderData[key].Products.length %> items</td>
                             <td><a href="/orderDetails?id=<%= orderData[key].OrderId %>" class="btn btn-primary">VIEW</a></td>
                         </tr>
                         <%}%>

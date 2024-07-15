@@ -4,10 +4,24 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
+const Referral = require('../../model/referralModel')
+const Wallet = require('../../model/walletModel')
 const UserAuth = require('../../model/userAuthModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 require('dotenv').config()
+
+
+// Functions
+function generateReferralCode(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let referralCode = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    referralCode += characters[randomIndex];
+  }
+  return referralCode;
+}
 
 
 const getHome = async (req, res) => {
@@ -15,16 +29,16 @@ const getHome = async (req, res) => {
     const productObj = await Product.find({ "isActive": true }).populate('Brand').populate('Category')
       .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] })
     let userData;
-      if(req.session.userData){
-        userData = await User.findById({"_id":req.session.userData._id})
-      }
-    
-    const fetchArray = [Size.find(),Color.find(),Category.find(),Brand.find()]
-    const [ sizeData, colorData, categoryData, brandData] = await Promise.all(fetchArray)
+    if (req.session.userData) {
+      userData = await User.findById({ "_id": req.session.userData._id })
+    }
+
+    const fetchArray = [Size.find(), Color.find(), Category.find(), Brand.find()]
+    const [sizeData, colorData, categoryData, brandData] = await Promise.all(fetchArray)
 
     const pushData = {
       loginMessage: req.flash('msg'),
-      productObj, sizeData, colorData, categoryData, brandData,userData
+      productObj, sizeData, colorData, categoryData, brandData, userData
     }
     res.render('user/userHome', pushData)
   } catch (error) {
@@ -86,20 +100,46 @@ const getSignup = async (req, res) => {
 
 const postSignup = async (req, res) => {
   try {
-    console.log('first');
-    console.log(req.session.otp)
 
-
-    const { Name, Email, Contact, Password } = req.body;
+    const { Name, Email, Contact, ReferralId, Password } = req.body;
+    const capsReferralId = ReferralId.toUpperCase()
+    const docCount = await User.find().countDocuments();
+    const referralPart1 = generateReferralCode(5);
+    const referralCode = String(`${referralPart1}${docCount + 1}`);
+    let userData;
     const checkEmail = await User.findOne({ "Email": Email });
     if (checkEmail) {
       req.flash('msg', 'User exists');
       res.redirect('/signup')
     } else {
       hashedPassword = await bcrypt.hash(Password, 10)
-      const userData = await User.create({ "Email": Email, "Name": Name, "Contact": Contact, "Password": hashedPassword })
+      if (capsReferralId) {
+        const userReferralCheck = await User.findOne({ "Referral": capsReferralId });
+        const referralCheck = await Referral.findOne();
+        if (userReferralCheck && referralCheck.isActive) {
+          const updateWallet = await Wallet.updateOne(
+            { "UserId": userReferralCheck._id },
+            {
+              $inc: { "Balance": referralCheck.Amount }, // Increment the balance
+              $push: {
+                "Transaction": {
+                  Type: 'Referral',
+                  Amount: referralCheck.Amount,
+                  Date: new Date() // Record the date of the transaction
+                }
+              }
+            },
+            { upsert: true }
+          )
+
+
+          userData = await User.create({ "Email": Email, "Name": Name, "Contact": Contact, "Referral": referralCode, "Referred": capsReferralId, "Password": hashedPassword })
+        }
+      } else {
+        userData = await User.create({ "Email": Email, "Name": Name, "Contact": Contact, "Referral": referralCode, "Password": hashedPassword })
+      }
+
       if (userData) {
-        console.log(userData);
         req.session.userData = userData
         res.status(200).redirect('/')
       }
@@ -189,6 +229,21 @@ const getSignout = async (req, res) => {
   try {
     req.session.destroy();
     res.redirect('/signin')
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getReferralCheck = async (req, res) => {
+  try {
+    const { referralInput } = req.query;
+    const referralSearch = await User.findOne({ "Referral": referralInput });
+
+    if (referralSearch) {
+      res.json({ success: true })
+    } else {
+      res.json({ success: false })
+    }
   } catch (error) {
     console.log(error);
   }
@@ -313,6 +368,7 @@ module.exports = {
   postSendOtp,
   postValidateOtp,
   getSignout,
+  getReferralCheck,
   getForgotPassword,
   putForgotPassword,
   postForgotSendOtp,

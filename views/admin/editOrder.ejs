@@ -152,7 +152,11 @@
                                       <img src="<%= orderData.Products[key].Product.Image[0] %>" width="40" height="40" class="img-xs"
                                         alt="Item">
                                     </div>
-                                    <div><%= orderData.Products[key].Product.Name %> </div>
+                                    <% if(orderData.Products[key].Returned){ %>
+                                    <div><%= orderData.Products[key].Product.Name %> &emsp; <span style="color:red">Returned</span></div>
+                                    <%}else{%>
+                                      <div><%= orderData.Products[key].Product.Name %> </div>
+                                      <%}%>
                                     <div><%=orderData.Products[key].Product.Brand.Name %> </div>
                                   </a>
                                 </td>
@@ -168,7 +172,7 @@
                                   <article class="float-end">
                                     <dl class="dlist">
                                       <dt>Subtotal:</dt>
-                                      <dd>₹<%= orderData.TotalAmount %></dd>
+                                      <dd>₹<%= orderData.TotalAmount.toFixed(2) %></dd>
                                     </dl>
                                     <dl class="dlist">
                                       <dt>Shipping cost:</dt>
@@ -176,7 +180,7 @@
                                     </dl>
                                     <dl class="dlist">
                                       <dt>Grand total:</dt>
-                                      <dd> <b class="h5">₹<%= (orderData.TotalAmount + 70) %></b> </dd>
+                                      <dd> <b class="h5">₹<%= (orderData.TotalAmount.toFixed(2)) %></b> </dd>
                                     </dl>
                                     <dl class="dlist">
                                       <dt class="text-muted">Status:</dt>

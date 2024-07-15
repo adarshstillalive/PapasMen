@@ -273,6 +273,10 @@
               </span>
             </a>
           </div>
+          <div class="pb-3"></div>
+          <% if(orderData.Orderstatus !=="Payment failed"){ %>
+          <a href="/orderDetails/invoice?orderId=<%= orderData.OrderId %>" class="btn btn-primary">Download invoice</a>
+          <%}%>
           <div class="order-complete">
             <div class="order-complete__message">
               <% if(orderData.Orderstatus !=="Payment failed" && orderData.Orderstatus !=="Cancelled" ){ %>
@@ -304,7 +308,7 @@
               </div>
               <div class="order-info__item">
                 <label>Total</label>
-                <span>₹<%= orderData.TotalAmount %></span>
+                <span>₹<%= orderData.TotalAmount.toFixed(2) %></span>
               </div>
               <div class="order-info__item">
                 <label>Payment Method</label>
@@ -334,14 +338,25 @@
                         </thead>
                         <tbody>
                           <% for(key=0;key<orderData.Products.length;key++){ %>
+                            <% if(orderData.Products[key].Returned){ %>
+                              <tr>
+                                <td>
+                                  <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>&emsp; <span style="color:red">Returned</span>
+                                </td>
+                                <td>
+                                  ₹<%=( orderData.Products[key].Price * orderData.Products[key].Quantity )%>
+                                </td>
+                              </tr>
+                            <%}else{%>
                             <tr>
                               <td>
                                 <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>
                               </td>
                               <td>
-                                ₹<%=( orderData.Products[key].Product.Price * orderData.Products[key].Quantity )%>
+                                ₹<%=( orderData.Products[key].Price * orderData.Products[key].Quantity )%>
                               </td>
                             </tr>
+                            <%}%>
                             <%}%>
                         </tbody>
                       </table>
@@ -349,7 +364,7 @@
                         <tbody>
                           <tr>
                             <th>SUBTOTAL</th>
-                            <td>₹<%= (orderData.TotalAmount - 70) %>
+                            <td>₹<%= (orderData.TotalAmount.toFixed(2)  - 70) %>
                             </td>
                           </tr>
                           <tr>
@@ -368,18 +383,25 @@
                           </tr>
                           <tr>
                             <th>TOTAL</th>
-                            <td>₹<%= orderData.TotalAmount %>
+                            <td>₹<%= orderData.TotalAmount.toFixed(2)  %>
                             </td>
                           </tr>
                         </tbody>
                       </table>
               </div>
             </div>
-            <% if(orderData.Orderstatus=='Order Placed' || orderData.Orderstatus=='Shipped' ){%>
+            <% if(orderData.Orderstatus==='Payment failed' && orderData.PaymentMethod==='Paypal'){ %>
+              <div class="d-flex justify-content-center">
+                <a href="/paypalPayment?orderId=<%= orderData.OrderId %>" class="btn btn-primary">Pay</a>
+              </div>
+              <%}%>
+            <% if(orderData.Orderstatus === 'Order Placed' || orderData.Orderstatus === 'Shipped') { %>
               <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#cancelOrder">Cancel order</a>
-              <%}else if(orderData.Orderstatus=='Delivered' ){%>
-                <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#returnOrder">Return order</a>
-                <%}%>
+            <% } else if(orderData.Orderstatus === 'Delivered') { %>
+              <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#returnOrder">Return order</a>
+            <% } else if(orderData.Orderstatus === 'Returned' && orderData.Products.some(product => !product.Returned)) { %>
+              <a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#returnOrder">Return order</a>
+            <% } %>
           </div>
         </section>
       </main>
@@ -415,16 +437,32 @@
         <div class="modal-body p-5">
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <div class="edit-address">
-            <h2 class="edit-address__title">Reason for return</h2>
+            <h2 class="edit-address__title">Return</h2>
             <form name="edit-address-form" id="myForm2" action="/returnOrder" method="post">
               <div class="row">
                 <div class="col-md-6">
+                  <h4 class="edit-address__title">Select products to return</h4>
+                  <% for(key=0;key<orderData.Products.length;key++){ %>
+                    <%if(!orderData.Products[key].Returned){%>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="returnedProducts" value="<%= orderData.Products[key]._id %>" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      <%= orderData.Products[key].Product.Name %> x <%= orderData.Products[key].Quantity %>
+                    </label>
+                  </div>
+                  <%}%>
+                  <%}%>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <h4 class="edit-address__title">Reason for return</h4>
                   <textarea name="returningReason" id="returningReason" cols="115" rows="4" required></textarea>
                   <input type="hidden" name="orderId" value="<%= orderData.OrderId %>">
                   <div class="pb-3"></div>
-                  <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
         </div>

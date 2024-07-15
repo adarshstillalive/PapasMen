@@ -33,6 +33,24 @@ const productSchema = mongoose.Schema({
     type:Boolean,
     default:true
   },
+  Reviews: [{
+    UserId:{
+      type: mongoose.Schema.Types.ObjectId
+    },
+    UserName:{
+      type: String,
+    },
+    Date: {
+      type: Date,
+      default: new Date()
+    },
+    Review: {
+      type: String
+    },
+    Rating: {
+      type: Number
+    }
+  }],
   Versions:[{
     Color:{
       type:mongoose.Schema.Types.ObjectId,

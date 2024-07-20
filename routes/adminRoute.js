@@ -38,9 +38,6 @@ adminRoute.use(session({
 
 adminRoute.use(flash());
 
-// view engine and views path
-// adminRoute.set('view engine', 'ejs');
-// adminRoute.set('views', 'views/admin');
 
 // Static file serving
 adminRoute.use('/uploads', express.static('uploads'));

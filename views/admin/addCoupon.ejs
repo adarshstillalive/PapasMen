@@ -74,11 +74,11 @@
 
                     <div class="mb-3">
                       <label class="form-label" for="value">Minimum purchase</label>
-                      <input type="number" class="form-control" id="value" name="MinPurchase" min="0" aria-label="MinPurchase" value="<%= couponData ? couponData.MinPurchase : '' %>" required>
+                      <input type="number" class="form-control" id="minPurchase" name="MinPurchase" min="0" aria-label="MinPurchase" value="<%= couponData ? couponData.MinPurchase : '' %>" required>
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-success">Save</button>
+                      <button id="saveCoupon" type="submit" class="btn btn-success">Save</button>
                     </div>
                   </form>
                 </div>
@@ -87,6 +87,23 @@
           </div>
         </div>
         <div class="rightbar-overlay"></div>
+
+        <!-- inner JS -->
+         <script>
+          const couponForm = document.getElementById('coupon-form')
+          couponForm.addEventListener('submit',(event)=>{
+            event.preventDefault();
+
+            const minPurchase = document.getElementById('minPurchase').value
+            const value = document.getElementById('value').value;
+            
+            if(value>minPurchase){
+              alert('odipack')
+            }else{
+              couponForm.submit()
+            }
+          })
+         </script>
 
         <script src="/assets/js/vendor.min.js"></script>
         <script src="/assets/libs/morris-js/morris.min.js"></script>

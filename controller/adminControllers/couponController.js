@@ -43,7 +43,7 @@ const getAddCoupon = async(req,res)=>{
 
 const postAddCoupon = async (req, res) => {
   try {
-    console.log(req.body);
+    
     const { Name, Description, End, Value,MinPurchase, _id } = req.body;
     let flag = false;
     const setData = {

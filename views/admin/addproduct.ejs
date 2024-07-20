@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Dashboard | Simple - Responsive Bootstrap 4 Admin Dashboard</title>
@@ -9,157 +10,201 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" href="/assets/images/favicon.ico">
   <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
   <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css">
   <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet">
 </head>
+
 <body>
   <div id="wrapper">
     <%-include('header') %>
-    <%-include('sidebar') %>
-    <div class="content-page">
-      <div class="content">
-        <div class="container-fluid">
-          <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
-            <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
-            <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-            <a href="/admin/products" class="menu-link menu-link_us-s text-uppercase fw-medium">Products</a>
-            <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-            <a class="menu-link menu-link_us-s text-uppercase fw-medium">Add product</a>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+      <%-include('sidebar') %>
+        <div class="content-page">
+          <div class="content">
+            <div class="container-fluid">
+              <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1" style="background-color: transparent;">
+                <a href="/admin" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a href="/admin/products" class="menu-link menu-link_us-s text-uppercase fw-medium">Products</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a class="menu-link menu-link_us-s text-uppercase fw-medium">Add product</a>
               </div>
-            </div>
-          </div>
-          <div class="row justify-content-center align-items-center">
-            <div class="col-12 col-lg-8">
-              <div class="card mb-4">
-                <div class="card-header">
-                  <h5 class="card-title mb-0">Product information</h5>
-                  <% if (addProductMsg && addProductMsg.length > 0) { %>
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                      <strong><%= addProductMsg[0] %></strong>
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                  <% } %>
+              <div class="row">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="mb-3" style="font-size: 1.25rem; font-weight: bold;">Products</span>
+                  </div>
                 </div>
-                <div class="card-body">
-                  <form action="/admin/products/addProduct" enctype="multipart/form-data" method="POST" id="product-form">
-                    <div class="mb-3">
-                      <label class="form-label" for="ecommerce-product-name">Name</label>
-                      <input type="text" class="form-control" id="name" placeholder="Product title" name="Name" aria-label="Product title" required>
-                    </div>
-                    <div class="row mb-3">
-                      <div class="col">
-                        <label class="form-label" for="brand">Brand</label>
-                        <div class="input-group">
-                          <input type="text" class="form-control" id="selectedBrand" name="Brand" readonly required>
-                          <input type="hidden" class="form-control" id="selectedBrandId" name="BrandId" readonly required>
-                          <div class="input-group-append">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Brand
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <% if (brandsData) { %>
-                                <% Object.keys(brandsData).forEach(key => { %>
-                                  <button class="dropdown-item" type="button" onclick="selectBrand('<%= brandsData[key]._id %>', '<%= brandsData[key].Name %>')">
-                                    <%= brandsData[key].Name %>
-                                  </button>
-                                <% }) %>
-                              <% } %>
-                            </div>
-                          </div>
+              </div>
+              <div class="row justify-content-center align-items-center">
+                <div class="col-12 col-lg-8">
+                  <div class="card mb-4">
+                    <div class="card-header">
+                      <h5 class="card-title mb-0">Product information</h5>
+                      <% if (addProductMsg && addProductMsg.length> 0) { %>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          <strong>
+                            <%= addProductMsg[0] %>
+                          </strong>
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
-                      </div>
-                      <div class="col">
-                        <label class="form-label" for="category">Category</label>
-                        <div class="input-group">
-                          <input type="text" class="form-control" id="selectedCategory" name="Category" readonly required>
-                          <input type="hidden" class="form-control" id="selectedCategoryId" name="CategoryId" readonly required>
-                          <div class="input-group-append">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Category
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <% if (categoriesData) { %>
-                                <% Object.keys(categoriesData).forEach(key => { %>
-                                  <button class="dropdown-item" type="button" onclick="selectCategory('<%= categoriesData[key]._id %>', '<%= categoriesData[key].Name %>')">
-                                    <%= categoriesData[key].Name %>
-                                  </button>
-                                <% }) %>
-                              <% } %>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                        <% } %>
                     </div>
-                    <div class="row mb-3">
-                      <div class="col">
-                        <label class="form-label" for="Price">MRP</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
-                          </div>
-                          <input type="number" class="form-control" value="1" id="Price" name="MRP" aria-label="Price" required>
-                          <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col">
-                        <label class="form-label" for="Price">Price</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('minus')">-</button>
-                          </div>
-                          <input type="number" class="form-control" value="1" id="Price" name="Price" aria-label="Price" required>
-                          <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="changePrice('plus')">+</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <label class="form-label">Description</label>
-                    <textarea class="form-control h-200" rows="1" name="Description" placeholder="Enter description" required></textarea>
-                    </div>
-                    <div class="card mb-4 mt-4">
-                      <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 card-title">Versions</h5>
-                        <button type="button" class="btn btn-secondary" onclick="addVersion()">Add Version</button>
-                      </div>
-                      <div class="card-body" id="versions-container">
-                        <!-- Versions will be dynamically added here -->
-                      </div>
-                    </div>
-                    <div class="card mb-4">
-                      <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 card-title">Images</h5>
-                      </div>
-                      <div class="card-body">
+                    <div class="card-body">
+                      <form action="/admin/products/addProduct" enctype="multipart/form-data" method="POST"
+                        id="product-form">
                         <div class="mb-3">
-                          <input type="file" name="Image" class="form-control" id="image-upload" accept="image/png" multiple required>
+                          <label class="form-label" for="ecommerce-product-name">Name</label>
+                          <input type="text" class="form-control" id="name" placeholder="Product title" name="Name"
+                            aria-label="Product title" required>
                         </div>
-                        <div id="selected-images-preview" class="d-flex flex-wrap"></div>
-                      </div>
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="brand">Brand</label>
+                            <div class="input-group">
+                              <input type="text" class="form-control" id="selectedBrand" name="Brand" readonly required>
+                              <input type="hidden" class="form-control" id="selectedBrandId" name="BrandId" readonly
+                                required>
+                              <div class="input-group-append">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Select Brand
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <% if (brandsData) { %>
+                                    <% Object.keys(brandsData).forEach(key=> { %>
+                                      <button class="dropdown-item" type="button"
+                                        onclick="selectBrand('<%= brandsData[key]._id %>', '<%= brandsData[key].Name %>')">
+                                        <%= brandsData[key].Name %>
+                                      </button>
+                                      <% }) %>
+                                        <% } %>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <label class="form-label" for="category">Category</label>
+                            <div class="input-group">
+                              <input type="text" class="form-control" id="selectedCategory" name="Category" readonly
+                                required>
+                              <input type="hidden" class="form-control" id="selectedCategoryId" name="CategoryId"
+                                readonly required>
+                              <div class="input-group-append">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Select Category
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <% if (categoriesData) { %>
+                                    <% Object.keys(categoriesData).forEach(key=> { %>
+                                      <button class="dropdown-item" type="button"
+                                        onclick="selectCategory('<%= categoriesData[key]._id %>', '<%= categoriesData[key].Name %>')">
+                                        <%= categoriesData[key].Name %>
+                                      </button>
+                                      <% }) %>
+                                        <% } %>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col">
+                            <label class="form-label" for="Price">MRP</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button"
+                                  onclick="changePrice('minus')">-</button>
+                              </div>
+                              <input type="number" class="form-control" value="1" id="Price" name="MRP"
+                                aria-label="Price" required>
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"
+                                  onclick="changePrice('plus')">+</button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col">
+                            <label class="form-label" for="Price">Price</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button"
+                                  onclick="changePrice('minus')">-</button>
+                              </div>
+                              <input type="number" class="form-control" value="1" id="Price" name="Price"
+                                aria-label="Price" required>
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"
+                                  onclick="changePrice('plus')">+</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <label class="form-label">Description</label>
+                          <textarea class="form-control h-200" rows="1" name="Description"
+                            placeholder="Enter description" required></textarea>
+                        </div>
+                        <div class="card mb-4 mt-4">
+                          <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 card-title">Versions</h5>
+                            <button type="button" class="btn btn-secondary" onclick="addVersion()">Add Version</button>
+                          </div>
+                          <div class="card-body" id="versions-container">
+                            <!-- Versions will be dynamically added here -->
+                          </div>
+                        </div>
+                        <div class="card mb-4">
+                          <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 card-title">Images</h5>
+                          </div>
+                          <div class="card-body">
+                            <div class="mb-3">
+                              <input type="file" name="Image" class="form-control" id="image-upload" accept="image/png"
+                                multiple required>
+                            </div>
+                            <h2 id="croppingMessage"></h2>
+                            <div id="selected-images-preview" class="d-flex flex-wrap"></div>
+                          </div>
+                        </div>
+                        <div class="text-center">
+                          <button type="submit" class="btn btn-success">Add Product</button>
+                        </div>
+                      </form>
                     </div>
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-success">Add Product</button>
-                    </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="rightbar-overlay"></div>
+        <div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="img-container bg-light">
+                  <img id="imageToCrop" src="" alt="Image to Crop">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="cropImageBtn">Crop</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rightbar-overlay"></div>
   </div>
   <script>
     let versionCount = 0;
@@ -287,24 +332,95 @@
       versionToRemove.remove();
     }
 
-    document.getElementById("image-upload").addEventListener("change", function(event) {
+    let cropper;
+    let croppedImages = [];
+
+    document.getElementById("image-upload").addEventListener("change", function (event) {
       const files = event.target.files;
+      document.getElementById('croppingMessage').innerHTML = 'Click the image to crop'
       const selectedImagesPreview = document.getElementById("selected-images-preview");
       selectedImagesPreview.innerHTML = ""; // Clear previous previews
+      croppedImages = []; // Clear previous cropped images
+
       for (let i = 0; i < files.length; i++) {
         if (files[i].type.startsWith("image/")) {
-          const imgContainer = document.createElement("div");
-          imgContainer.classList.add("rounded", "bg-light", "p-2", "m-1", "d-flex", "align-items-center");
-          const img = document.createElement("img");
-          img.classList.add("img-fluid");
-          img.src = URL.createObjectURL(files[i]);
-          img.style.width = "100px";
-          img.style.height = "100px";
-          imgContainer.appendChild(img);
-          selectedImagesPreview.appendChild(imgContainer);
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.onload = function () {
+              const imgContainer = document.createElement("div");
+              imgContainer.classList.add("rounded", "bg-light", "p-2", "m-1", "d-flex", "align-items-center");
+              const previewImg = document.createElement("img");
+              previewImg.classList.add("img-fluid");
+              previewImg.src = e.target.result;
+              previewImg.style.width = "100px";
+              previewImg.style.height = "100px";
+              previewImg.dataset.index = i;
+              previewImg.addEventListener("click", function () {
+                showCropper(this.src, this.dataset.index);
+              });
+              imgContainer.appendChild(previewImg);
+              selectedImagesPreview.appendChild(imgContainer);
+            };
+          };
+          reader.readAsDataURL(files[i]);
         }
       }
     });
+
+    function showCropper(imageSrc, index) {
+      const image = document.getElementById('imageToCrop');
+      image.src = imageSrc;
+
+      $('#cropperModal').modal('show');
+
+      $('#cropperModal').on('shown.bs.modal', function () {
+        if (cropper) {
+          cropper.destroy();
+        }
+        cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 1,
+          background: false,  // Disable the built-in background
+          modal: false,  // Disable the dark modal overlay
+          ready: function () {
+            // Force white background after cropper is ready
+            const canvas = this.cropper.containerEl.querySelector('.cropper-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Re-draw the image on top of the white background
+            const img = new Image();
+            img.onload = function () {
+              ctx.drawImage(img, 0, 0);
+            };
+            img.src = imageSrc;
+          }
+        });
+      });
+
+      document.getElementById('cropImageBtn').onclick = function () {
+        const croppedCanvas = cropper.getCroppedCanvas({ fillColor: 'white' });
+        croppedCanvas.toBlob(function (blob) {
+          const croppedImage = new File([blob], `cropped_image_${index}.png`, { type: 'image/png' });
+          croppedImages[index] = croppedImage;
+          updatePreview(index, URL.createObjectURL(croppedImage));
+          $('#cropperModal').modal('hide');
+        }, 'image/png');
+      };
+    }
+
+    function updatePreview(index, src) {
+      const previews = document.getElementById("selected-images-preview").getElementsByTagName('img');
+      for (let preview of previews) {
+        if (preview.dataset.index == index) {
+          preview.src = src;
+          break;
+        }
+      }
+    }
 
     function collectVersionsData() {
       const versions = [];
@@ -332,7 +448,7 @@
     }
 
     // Function to handle form submission
-    document.getElementById('product-form').addEventListener('submit', async function(event) {
+    document.getElementById('product-form').addEventListener('submit', async function (event) {
       event.preventDefault();
 
       const formData = new FormData(this);
@@ -345,6 +461,13 @@
         formData.append(`Versions[${index}].SizeName`, version.SizeName);
         formData.append(`Versions[${index}].Size`, version.Size);
         formData.append(`Versions[${index}].Quantity`, version.Quantity);
+      });
+
+      formData.delete('Image');
+      croppedImages.forEach((image, index) => {
+        if (image) {
+          formData.append('Image', image, `cropped_image_${index}.png`);
+        }
       });
 
       try {
@@ -364,6 +487,30 @@
     });
   </script>
   <script src="/assets/js/vendor.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
   <script src="/assets/js/app.min.js"></script>
 </body>
+
 </html>
+
+<style>
+  #cropperModal .modal-content,
+  #cropperModal .modal-body,
+  #cropperModal .img-container,
+  .cropper-container,
+  .cropper-canvas,
+  .cropper-view-box,
+  .cropper-face {
+    background-color: white !important;
+  }
+
+  .cropper-bg {
+    background-image: none !important;
+    background-color: white !important;
+  }
+
+  .cropper-view-box,
+  .cropper-face {
+    outline-color: rgba(0, 0, 0, 0.2) !important;
+  }
+</style>

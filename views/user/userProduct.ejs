@@ -611,16 +611,19 @@
                       <h6 class="pc__title"><a href="/product?id=<%= productObj[key]._id %>">
                           <%= productObj[key].Name %>/<%= productObj[key].Brand.Name %>
                         </a></h6>
+                        <% if(productObj[key].MRP===productObj[key].Price){ %>
                       <div class="product-card__price d-flex">
                         <span class="money price">₹<%= productObj[key].Price %></span>
                       </div>
-
-                      <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                        title="Add To Wishlist">
-                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_heart" />
-                        </svg>
-                      </button>
+                      <% }else{ %>
+                        <div class="product-card__price d-flex">
+                          <span class="money price">&#8377;<s>
+                            <%= productObj[key].MRP %>
+                          </s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%=
+                              Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP)
+                              %>%)</span>
+                        </div>
+                        <%}%>
                     </div>
                   </div>
                   <%}%>

@@ -278,7 +278,7 @@
             <div class="swiper-slide">
               <div class="overflow-hidden position-relative h-100">
                 <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                  <img loading="lazy" src="<%= productObj[1].Image[0]%>" width="542" height="733" alt="Product Image"
+                  <img loading="lazy" src="<%= productObj[6].Image[0]%>" width="542" height="733" alt="Product Image"
                     class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto">
                   <div class="character_markup type2">
                     <p
@@ -292,9 +292,9 @@
                     New Arrivals</h6>
                   <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Casual or formal</h2>
                   <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">
-                    <%=productObj[1].Category.Name%>
+                    <%=productObj[6].Category.Name%>
                   </h2>
-                  <a href="shop1.html"
+                  <a href="/product?id=<%= productObj[6]._id %>"
                     class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                     Now</a>
                 </div>
@@ -304,7 +304,7 @@
             <div class="swiper-slide">
               <div class="overflow-hidden position-relative h-100">
                 <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                  <img loading="lazy" src="<%= productObj[3].Image[0]%>" width="400" height="733" alt="Product Image"
+                  <img loading="lazy" src="<%= productObj[7].Image[0]%>" width="400" height="733" alt="Product Image"
                     class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto">
                   <div class="character_markup">
                     <p class="text-uppercase font-sofia fw-bold animate animate_fade animate_rtl animate_delay-10">
@@ -318,9 +318,9 @@
                   <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">New collection on
                   </h2>
                   <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">
-                    <%=productObj[3].Category.Name%>
+                    <%=productObj[7].Category.Name%>
                   </h2>
-                  <a href="shop1.html"
+                  <a href="/product?id=<%= productObj[7]._id %>"
                     class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                     Now</a>
                 </div>
@@ -330,7 +330,7 @@
             <div class="swiper-slide">
               <div class="overflow-hidden position-relative h-100">
                 <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                  <img loading="lazy" src="<%= productObj[2].Image[0]%>" width="400" height="690" alt="Product Image"
+                  <img loading="lazy" src="<%= productObj[5].Image[0]%>" width="400" height="690" alt="Product Image"
                     class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto">
                 </div>
                 <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
@@ -340,9 +340,9 @@
                   <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Nothing but comfort
                   </h2>
                   <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">
-                    <%=productObj[3].Category.Name%>
+                    <%=productObj[5].Category.Name%>
                   </h2>
-                  <a href="shop1.html"
+                  <a href="/product?id=<%= productObj[5]._id %>"
                     class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                     Now</a>
                 </div>
@@ -358,121 +358,7 @@
           </div><!-- /.container -->
         </section><!-- /.slideshow -->
 
-        <!-- <div class="container mw-1620 bg-white border-radius-10">
-          <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
-          <section class="category-carousel container">
-            <h2 class="section-title text-center mb-3 pb-xl-2 mb-xl-4">You Might Like</h2>
-
-            <div class="position-relative">
-              <div class="swiper-container js-swiper-slider" data-settings='{
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": 8,
-              "slidesPerGroup": 1,
-              "effect": "none",
-              "loop": true,
-              "navigation": {
-                "nextEl": ".products-carousel__next-1",
-                "prevEl": ".products-carousel__prev-1"
-              },
-              "breakpoints": {
-                "320": {
-                  "slidesPerView": 2,
-                  "slidesPerGroup": 2,
-                  "spaceBetween": 15
-                },
-                "768": {
-                  "slidesPerView": 4,
-                  "slidesPerGroup": 4,
-                  "spaceBetween": 30
-                },
-                "992": {
-                  "slidesPerView": 6,
-                  "slidesPerGroup": 1,
-                  "spaceBetween": 45,
-                  "pagination": false
-                },
-                "1200": {
-                  "slidesPerView": 8,
-                  "slidesPerGroup": 1,
-                  "spaceBetween": 60,
-                  "pagination": false
-                }
-              }
-            }'>
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_1.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Women<br>Tops</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_2.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Women<br>Pants</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_3.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Women<br>Clothes</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_4.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Men<br>Jeans</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_5.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Men<br>Shirts</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_6.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Men<br>Shoes</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_7.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Women<br>Dresses</a>
-                    </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <img loading="lazy" class="w-100 h-auto mb-3" src="../images/home/demo3/category_8.png" width="124"
-                      height="124" alt="">
-                    <div class="text-center">
-                      <a href="#" class="menu-link fw-medium">Kids<br>Tops</a>
-                    </div>
-                  </div>
-                </div> /.swiper-wrapper -->
-        </div><!-- /.swiper-container js-swiper-slider -->
-
-        <div
-          class="products-carousel__prev products-carousel__prev-1 position-absolute top-50 d-flex align-items-center justify-content-center">
-          <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_prev_md" />
-          </svg>
-        </div><!-- /.products-carousel__prev -->
-        <div
-          class="products-carousel__next products-carousel__next-1 position-absolute top-50 d-flex align-items-center justify-content-center">
-          <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_next_md" />
-          </svg>
-        </div><!-- /.products-carousel__next -->
+      
         </div><!-- /.position-relative -->
         </section>
 
@@ -561,41 +447,31 @@
                           <h6 class="pc__title"><a href="/product?id=<%= productObj[key]._id %>">
                               <%=productObj[key].Name%>/<%=productObj[key].Brand.Name%>
                             </a></h6>
-                            <% if(productObj[key].Price===productObj[key].MRP){%>
+                          <% if(productObj[key].Price===productObj[key].MRP){%>
+                            <div class="product-card__price d-flex align-items-center">
+                              <span class="money price text-secondary">
+                                &#8377;<%= productObj[key].Price %>
+                              </span>
+                            </div>
+                            <%}else{%>
                               <div class="product-card__price d-flex align-items-center">
                                 <span class="money price text-secondary">
-                                  &#8377;<%= productObj[key].Price %>
+                                  &#8377;<s>
+                                    <%= productObj[key].MRP %>
+                                  </s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%=
+                                      Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP)
+                                      %>%)
                                 </span>
                               </div>
-                              <%}else{%>
-                                <div class="product-card__price d-flex align-items-center">
-                                  <span class="money price text-secondary">
-                                    &#8377;<s><%= productObj[key].MRP %></s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%= Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP) %>%)
-                                  </span>
-                                </div>
-                                <%}%>
-                          
+                              <%}%>
 
-                          <div
-                            class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
-                              data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                              data-bs-toggle="modal" data-bs-target="#<%= productObj[key].Name.replace(/\s+/g, '_') %>"
-                              title="Quick view">
-                              <span class="d-none d-xxl-block">Quick View</span>
-                              <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18"
-                                  fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <use href="#icon_view" />
-                                </svg></span>
-                            </button>
-                            <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_heart" />
-                              </svg>
-                            </button>
-                          </div>
+
+                                <div
+                                  class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+                                  <a
+                                    class="btn-link btn-link_lg me-4 text-uppercase fw-medium" href="/product?id=<%= productObj[key]._id %>"
+                                     title="Add To Cart">Add To Cart</a>
+                                </div>
                         </div>
                       </div>
                       <%}%>
@@ -630,39 +506,28 @@
                     <h6 class="pc__title"><a href="/product?id=<%= productObj[key]._id %>">
                         <%= productObj[key].Name %>/<%=productObj[key].Brand.Name%>
                       </a></h6>
-                      <% if(productObj[key].Price===productObj[key].MRP){%>
-                    <div class="product-card__price d-flex align-items-center">
-                      <span class="money price text-secondary">
-                        &#8377;<%= productObj[key].Price %>
-                      </span>
-                    </div>
-                    <%}else{%>
+                    <% if(productObj[key].Price===productObj[key].MRP){%>
                       <div class="product-card__price d-flex align-items-center">
                         <span class="money price text-secondary">
-                          &#8377;<s><%= productObj[key].MRP %></s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%= Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP) %>%)
+                          &#8377;<%= productObj[key].Price %>
                         </span>
                       </div>
-                      <%}%>
+                      <%}else{%>
+                        <div class="product-card__price d-flex align-items-center">
+                          <span class="money price text-secondary">
+                            &#8377;<s>
+                              <%= productObj[key].MRP %>
+                            </s>&nbsp;&nbsp;&#8377;<%= productObj[key].Price %> (-<%=
+                                Math.ceil(((productObj[key].MRP-productObj[key].Price)*100)/productObj[key].MRP) %>%)
+                          </span>
+                        </div>
+                        <%}%>
 
-                    <div
-                      class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                      <a class="btn-link btn-link_lg me-4 text-uppercase fw-medium "
-                        href="/product?id=<%= productObj[key]._id %>" title="Add To Cart">Add To Cart</a>
-                      <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                        data-bs-toggle="modal" data-bs-target="#<%= productObj[key].Name.replace(/\s+/g, '_') %>"
-                        title="Quick view">
-                        <span class="d-none d-xxl-block">Quick View</span>
-                        <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <use href="#icon_view" />
-                          </svg></span>
-                      </button>
-                      <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <use href="#icon_heart" />
-                        </svg>
-                      </button>
-                    </div>
+                          <div
+                            class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+                            <a class="btn-link btn-link_lg me-4 text-uppercase fw-medium "
+                              href="/product?id=<%= productObj[key]._id %>" title="Add To Cart">Add To Cart</a>
+                          </div>
                   </div>
                 </div>
               </div>
@@ -738,246 +603,6 @@
         <!-- Mobile Fixed Footer -->
         <!-- /.footer-mobile container position-fixed d-md-none bottom-0 -->
         <%-include('footer-mob')%>
-
-
-          <!-- Quick View -->
-          <% Object.keys(productObj).forEach((key)=> { %>
-            <div class="modal fade" id="<%= productObj[key].Name.replace(/\s+/g, '_') %>" tabindex="-1">
-              <div class="modal-dialog quick-view modal-dialog-centered">
-                <div class="modal-content">
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  <div class="product-single">
-                    <div class="product-single__media m-0">
-                      <div class="product-single__image position-relative w-100">
-                        <div class="swiper-container js-swiper-slider" data-settings='{
-                    "slidesPerView": 1,
-                    "slidesPerGroup": 1,
-                    "effect": "none",
-                    "loop": false,
-                    "navigation": {
-                      "nextEl": ".modal-dialog.quick-view .product-single__media .swiper-button-next",
-                      "prevEl": ".modal-dialog.quick-view .product-single__media .swiper-button-prev"
-                    }
-                  }'>
-                          <div class="swiper-wrapper">
-                            <% for(i in productObj[key].Image){ %>
-                              <div class="swiper-slide product-single__image-item">
-                                <img src="/<%= productObj[key].Image[i] %>" alt="Product Image">
-                              </div>
-                              <%}%>
-                          </div>
-                          <div class="swiper-button-prev">
-                            <svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                              <use href="#icon_prev_sm" />
-                            </svg>
-                          </div>
-                          <div class="swiper-button-next">
-                            <svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-                              <use href="#icon_next_sm" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="product-single__detail">
-                      <h1 class="product-single__name">
-                        <%=productObj[key].Name%>
-                      </h1>
-                      <div class="product-single__price">
-                        <span class="current-price"><s>₹<%=productObj[key].Price%></s></span>
-                      </div>
-                      <div class="product-single__short-desc">
-                        <p>
-                          <%=productObj[key].Description%>
-                        </p>
-                      </div>
-                      <form name="addtocart-form" id="addToCartForm" method="post">
-                        <input type="hidden" name="ProductId" value="<%= productObj[key]._id %>">
-                        <div class="product-single__swatches">
-                          <div class="product-swatch text-swatches">
-                            <label>Sizes</label>
-                            <div class="swatch-list">
-                              <% const uniqueSize=new Set() %>
-                                <% for(i=0;i<productObj[key].Versions.length;i++){%>
-                                  <% if(!uniqueSize.has(productObj[key].Versions[i].Size.Name)){ %>
-                                    <% uniqueSize.add(productObj[key].Versions[i].Size.Name)%>
-                                      <input type="radio" name="Size" id="swatch-<%=i%>"
-                                        value="<%= productObj[key].Versions[i].Size._id %>">
-                                      <label class="swatch js-swatch" for="swatch-<%=i%>" aria-label="Extra Small"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="6">
-                                        <%= productObj[key].Versions[i].Size.Name %>
-                                      </label>
-                                      <%}}%>
-                            </div>
-                            <!-- <a href="#" class="sizeguide-link" data-bs-toggle="modal" data-bs-target="#sizeGuide">Size Guide</a> -->
-                          </div>
-                          <div class="product-swatch color-swatches">
-                            <label>Color</label>
-                            <div class="swatch-list  bg-light">
-                              <% const uniqueColor=new Set() %>
-                                <% for(i=0;i<productObj[key].Versions.length;i++){%>
-                                  <% if(!uniqueColor.has(productObj[key].Versions[i].Color.Name)){ %>
-                                    <% uniqueColor.add(productObj[key].Versions[i].Color.Name)%>
-                                      <input type="radio" name="Color" id="swatch-1<%=i%>"
-                                        value="<%= productObj[key].Versions[i].Color._id%>">
-                                      <label class="swatch swatch-color js-swatch" for="swatch-1<%=i%>"
-                                        aria-label="<%= productObj[key].Versions[i].Color.Name %>" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="<%= productObj[key].Versions[i].Color.Name %>"
-                                        style="color: <%= productObj[key].Versions[i].Color.Name %>"></label>
-                                      <%}}%>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="product-single__addtocart">
-                          <div class="qty-control position-relative">
-                            <input type="number" name="Quantity" value="1" min="1"
-                              class="qty-control__number text-center">
-                            <div class="qty-control__reduce">-</div>
-                            <div class="qty-control__increase">+</div>
-                          </div><!-- .qty-control -->
-                          <a id="openMiniCart" class="js-open-aside" data-aside="cartDrawer"></a>
-                          <button type="submit" class="btn btn-primary btn-addtocart ">Add
-                            to Cart</button>
-                        </div>
-                      </form>
-                      <div class="product-single__addtolinks">
-                        <a href="#" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16" height="16"
-                            viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <use href="#icon_heart" />
-                          </svg><span>Add to Wishlist</span></a>
-                        <share-button class="share-button">
-                          <button
-                            class="menu-link menu-link_us-s to-share border-0 bg-transparent d-flex align-items-center">
-                            <svg width="16" height="19" viewBox="0 0 16 19" fill="none"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <use href="#icon_sharing" />
-                            </svg>
-                          </button>
-                          <details id="Details-share-template__main" class="m-1 xl:m-1.5" hidden="">
-                            <summary class="btn-solid m-1 xl:m-1.5 pt-3.5 pb-3 px-5">+</summary>
-                            <div id="Article-share-template__main"
-                              class="share-button__fallback flex items-center absolute top-full left-0 w-full px-2 py-4 bg-container shadow-theme border-t z-10">
-                              <div class="field grow mr-4">
-                                <label class="field__label sr-only" for="url">Link</label>
-                                <input type="text" class="field__input w-full" id="url"
-                                  value="https://uomo-crystal.myshopify.com/blogs/news/go-to-wellness-tips-for-mental-health"
-                                  placeholder="Link" onclick="this.select();" readonly="">
-                              </div>
-                              <button class="share-button__copy no-js-hidden">
-                                <svg class="icon icon-clipboard inline-block mr-1" width="11" height="13" fill="none"
-                                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
-                                  viewBox="0 0 11 13">
-                                  <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M2 1a1 1 0 011-1h7a1 1 0 011 1v9a1 1 0 01-1 1V1H2zM1 2a1 1 0 00-1 1v9a1 1 0 001 1h7a1 1 0 001-1V3a1 1 0 00-1-1H1zm0 10V3h7v9H1z"
-                                    fill="currentColor"></path>
-                                </svg>
-                                <span class="sr-only">Copy link</span>
-                              </button>
-                            </div>
-                          </details>
-                        </share-button>
-                        <script src="/js/details-disclosure.js" defer="defer"></script>
-                        <script src="/js/share.js" defer="defer"></script>
-                      </div>
-                      <div class="product-single__meta-info mb-0">
-                        <div class="meta-item">
-                          <label>SKU:</label>
-                          <span>N/A</span>
-                        </div>
-                        <div class="meta-item">
-                          <label>Categories:</label>
-                          <span>
-                            <%= productObj[key].Category.Name %>, Men
-                          </span>
-                        </div>
-                        <div class="meta-item">
-                          <label>Tags:</label>
-                          <span>biker, black, bomber, leather</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div><!-- /.modal-dialog -->
-            </div><!-- /.quickview position-fixed -->
-            <% }) %>
-
-              <!-- <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                  var modals = document.querySelectorAll('.modal');
-                  modals.forEach(function (modal) {
-                    modal.addEventListener('shown.bs.modal', function () {
-                      var swiperContainers = modal.querySelectorAll('.swiper-container');
-                      swiperContainers.forEach(function (container) {
-                        var swiperSettings = JSON.parse(container.getAttribute('data-settings'));
-                        var swiper = new Swiper(container, swiperSettings);
-                        swiper.update(); // Ensure swiper is updated and displayed correctly
-                      });
-                    });
-                  });
-                });
-              </script> -->
-
-              <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                  var modals = document.querySelectorAll('.modal');
-                  modals.forEach(function (modal) {
-                    modal.addEventListener('shown.bs.modal', function () {
-                      var swiperContainers = modal.querySelectorAll('.swiper-container');
-                      swiperContainers.forEach(function (container) {
-                        var swiperSettings = JSON.parse(container.getAttribute('data-settings'));
-                        var swiper = new Swiper(container, swiperSettings);
-                        swiper.update(); // Ensure swiper is updated and displayed correctly
-                      });
-                    });
-                  });
-                  const addToCartForm = document.getElementById('addToCartForm');
-
-                  addToCartForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    const formData = new FormData(addToCartForm);
-                    const formObj = {};
-
-                    formData.forEach((value, key) => {
-                      formObj[key] = value;
-                    });
-
-                    fetch('/cart/addToCart', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify(formObj),
-                    })
-                      .then(response => response.json())
-                      .then(data => {
-                        if (data.success) {
-                          console.log("Item added to cart successfully");
-
-                          window.location.reload(() => {
-                            setTimeout(() => {
-                              document.getElementById('openMiniCart').click();
-                            }, 500);
-                          });
-
-                          // Additional success handling logic here
-                        } else {
-                          console.error("Error adding item to cart", data.error);
-                          // Error handling logic here
-                        }
-                      })
-                      .catch(error => {
-                        console.error('Error:', error);
-                        // Network error handling here
-                      });
-                  });
-
-                })
-              </script>
-
-
-
-
 
 
               <!-- Go To Top -->

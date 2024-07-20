@@ -713,7 +713,9 @@
                             ${product.Price === product.MRP ? `
                               <span class="money price">₹${product.Price}</span>
                               ` : `
-                              <span class="money price"><s>₹${product.MRP}</s> &emsp; ₹${product.Price}</span>
+                              <span class="money price"><s>₹${product.MRP.toFixed(2)}</s> &emsp; ₹${product.Price.toFixed(2)} (-${
+                              Math.ceil(((product.MRP-product.Price)*100)/product.MRP)
+                              }%)</span>
                             `}
                           </div>
                           <div class="product-card__review d-flex align-items-center">
@@ -726,9 +728,6 @@
                             </div>
                             <span class="reviews-note text-lowercase text-secondary ms-1">${product.Reviews} reviews</span>
                           </div>
-                          <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_heart" /></svg>
-                          </button>
                         </div>
                       </div>
                     </div>

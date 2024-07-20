@@ -24,8 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(nocache());
 app.use('/uploads', express.static('uploads'));
 
-// app.use( express.static('public/user'));
-// app.use('/admin', express.static('public'));
+
 
 
 // Routes

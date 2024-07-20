@@ -376,7 +376,7 @@ const getInvoice = async(req,res)=>{
   
       // Add the "ORDER STATUS" and "ORDER DETAILS" sections
       doc.fontSize(12).text(`ORDER STATUS : `, 50, 250, { continued: true })
-        .fillColor('green').text('ORDER PLACED')
+        .fillColor('green').text(order.Orderstatus)
         .fillColor('black');
       doc.text('ORDER DETAILS', 50, 270);
   

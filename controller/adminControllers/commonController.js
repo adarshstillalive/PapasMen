@@ -13,11 +13,13 @@ const dashboard = async (req, res) => {
   try {
     //Top 10 products
     const topProductsPipeline = [
-      {
-        $match: { Orderstatus: { $ne: 'Returned' } }
+      { 
+        $match: { 
+          Orderstatus: { $ne: 'Returned' } 
+        } 
       },
-      {
-        $unwind: '$Products'
+      { 
+        $unwind: '$Products' 
       },
       {
         $group: {
@@ -26,20 +28,29 @@ const dashboard = async (req, res) => {
         }
       },
       {
-        $lookup:{
-          from:'products',localField:'_id',foreignField:'_id',as:'Product'
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'Product'
         }
       },
       {
         $addFields: {
-          Product: { $arrayElemAt: ['$Product', 0] }
+          Product: {
+            $cond: {
+              if: { $eq: [{ $size: '$Product' }, 0] },
+              then: { Name: 'Unknown Product' },
+              else: { $arrayElemAt: ['$Product', 0] }
+            }
+          }
         }
       },
-      {
-        $sort: { totalQuantity: -1 }
+      { 
+        $sort: { totalQuantity: -1 } 
       },
-      {
-        $limit: 10
+      { 
+        $limit: 10 
       }
     ];
 
@@ -151,6 +162,7 @@ const dashboard = async (req, res) => {
       },0)
       return acc
     },0)
+
 
 
     const pushData = {

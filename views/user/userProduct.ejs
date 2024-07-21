@@ -824,19 +824,22 @@
                   const checkedColor = document.querySelector('input[name="Color"]:checked').value;
                   const checkedSize = event.target.value;
                   const productId = document.getElementById('productId').value
-
+                  const stockMessage = document.getElementById('stockMessage');
+                  stockMessage.innerHTML = ``
                   fetch(`/product/size?colorId=${checkedColor}&sizeId=${checkedSize}&productId=${productId}`,{
                     method:'GET'
                   }).then(response=>response.json())
                   .then(data=>{
                     quantity = data.quantity;
-                    const stockMessage = document.getElementById('stockMessage');
                     
                     if(quantity<=10 && quantity>0){
                       stockMessage.innerHTML = `HURRY, Only ${quantity} left`
                       document.getElementById('qty-control').classList.remove('disabled-tr')
                     }else if(quantity<=0){
+                      document.getElementById('qty-control').classList.add('disabled-tr')
                       stockMessage.innerHTML = `Out of stock`
+                    }else{
+                      document.getElementById('qty-control').classList.remove('disabled-tr')
                     }
                     
                   })

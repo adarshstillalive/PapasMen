@@ -13,7 +13,9 @@
 
     <a href="/cart" class="header-tools__item header-tools__cart">
       <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_cart" /></svg>
-      <span class="cart-amount d-block position-absolute js-cart-items-count">3</span>
+      <%if(userData){%>
+        <span class="cart-amount d-block position-absolute js-cart-items-count"><%= userData.Cart.length %></span>
+          <%}%>
     </a>
   </div><!-- /.container -->
 
@@ -55,28 +57,9 @@
     <div class="border-top mt-auto pb-2">
       <div class="customer-links container mt-4 mb-2 pb-1">
         <svg class="d-inline-block align-middle" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_user" /></svg>
-        <span class="d-inline-block ms-2 text-uppercase align-middle fw-medium">My Account</span>
+        <a href="/profile" class="d-inline-block ms-2 text-uppercase align-middle fw-medium">My Account</a>
       </div>
 
-      <div class="container d-flex align-items-center">
-        <label for="footerSettingsLanguage_mobile" class="me-2 text-secondary">Language</label>
-        <select id="footerSettingsLanguage_mobile" class="form-select form-select-sm bg-transparent border-0" aria-label="Default select example" name="store-language">
-          <option class="footer-select__option" selected>United Kingdom | English</option>
-          <option class="footer-select__option" value="1">United States | English</option>
-          <option class="footer-select__option" value="2">German</option>
-          <option class="footer-select__option" value="3">French</option>
-          <option class="footer-select__option" value="4">Swedish</option>
-        </select>
-      </div>
-
-      <div class="container d-flex align-items-center">
-        <label for="footerSettingsCurrency_mobile" class="me-2 text-secondary">Currency</label>
-        <select id="footerSettingsCurrency_mobile" class="form-select form-select-sm bg-transparent border-0" aria-label="Default select example" name="store-language">
-          <option selected>$ USD</option>
-          <option value="1">£ GBP</option>
-          <option value="2">€ EURO</option>
-        </select>
-      </div>
 
       <ul class="container social-links list-unstyled d-flex flex-wrap mb-0">
         <li>

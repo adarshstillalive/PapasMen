@@ -13375,7 +13375,7 @@ textarea.form-control-lg {
   .header-mobile .logo {
     margin: 0 auto; }
   .header-mobile .logo__image {
-    max-height: 3rem; }
+    max-height: 9rem; }
   @media (min-width: 992px) {
     .header-mobile {
       display: none; } }

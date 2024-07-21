@@ -73,8 +73,8 @@ async function paypalCreateOrder(orderId) {
       }
     ],
     application_context: {
-      return_url: 'http://localhost:8080/paypal/orderComplete',
-      cancel_url: 'http://localhost:8080/profile/orders',
+      return_url: 'https://papasmen.wildsurf.net/paypal/orderComplete',
+      cancel_url: 'https://papasmen.wildsurf.net/profile/orders',
       shipping_preference: 'NO_SHIPPING',
       user_action: 'PAY_NOW',
       brand_name: 'PapasMen'

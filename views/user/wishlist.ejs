@@ -5,7 +5,8 @@
 
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="author" content="flexkit">
-
+  
+  <link rel="icon" sizes="96*96" href="/images/papasIcon.png">
   <link rel="preconnect" href="https://fonts.gstatic.com/">
 
   <!-- Fonts -->
@@ -271,7 +272,7 @@
                 <div class="page-content my-account__wishlist">
                   <div class="products-grid row row-cols-2 row-cols-lg-3" id="products-grid">
 
-                    <% if(wishlistData.Products && wishlistData.Products.length>0){%>
+                    <% if(wishlistData && wishlistData.Products && wishlistData.Products.length>0){%>
                       <%for(key=0;key<wishlistData.Products.length;key++){%>
                         <div class="product-card-wrapper">
                           <div class="product-card mb-3 mb-md-4 mb-xxl-5">

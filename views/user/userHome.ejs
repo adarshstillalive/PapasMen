@@ -369,7 +369,7 @@
           <div class="row">
             <div
               class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-              <h2>Summer Sale</h2>
+              <h2>Monsoon Sale</h2>
               <h2 class="fw-bold">Grab them before gone</h2>
 
               <div class="position-relative d-flex align-items-center text-center pt-xxl-4 js-countdown mb-3"
@@ -395,7 +395,7 @@
                 </div>
               </div>
 
-              <a href="shop1.html" class="btn-link default-underline text-uppercase fw-medium mt-3">View All</a>
+              <!-- <a href="shop1.html" class="btn-link default-underline text-uppercase fw-medium mt-3">View All</a> -->
             </div>
             <div class="col-md-6 col-lg-8 col-xl-80per">
               <div class="position-relative">
@@ -433,7 +433,7 @@
                   }
                 }'>
                   <div class="swiper-wrapper">
-                    <% for(key=productObj.length-1;key>=0;key--) { %>
+                    <% for(key=productObj.length-1;key>=productObj.length-6;key--) { %>
                       <div class="swiper-slide product-card product-card_style3">
                         <div class="pc__img-wrapper bg-light">
                           <a href="/product?id=<%= productObj[key]._id %>">
@@ -491,8 +491,8 @@
         <section class="products-grid container">
           <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">Featured Products</h2>
 
-          <div class="row">
-            <% for(key=0;key<8;key++) { %>
+          <div id="loadProductsDiv" class="row">
+            <% for(key=0;key<productObj.length;key++) { %>
               <div class="col-6 col-md-4 col-lg-3">
                 <div class="product-card product-card_style3 mb-3 mb-md-4 mb-xxl-5">
                   <div class="pc__img-wrapper bg-light">
@@ -536,7 +536,7 @@
           </div><!-- /.row -->
 
           <div class="text-center mt-2">
-            <a class="btn-link btn-link_lg default-underline text-uppercase fw-medium" href="#">Load More</a>
+            <button id="loadMore" class="btn-link btn-link_lg default-underline text-uppercase fw-medium">Load More</button>
           </div>
         </section>
         </div>
@@ -611,6 +611,68 @@
               <!-- Page Overlay -->
               <div class="page-overlay"></div><!-- /.page-overlay -->
 
+              <!-- internal JS -->
+               <script>
+                let productCount = 8;
+                const loadMore = document.getElementById('loadMore');
+                loadMore.addEventListener('click',()=>{
+                  fetch(`/product/loadHomeProduct?productCount=${productCount}`,{
+                    method:'GET'
+                  }).then(response=>response.json())
+                  .then(data=>{
+                    const productObj = data.productObj
+                    if(productObj.length<8){
+                      loadMore.classList.add('disabled-tr')
+                      renderProducts(productObj)
+                      productCount+=8
+                    }else{
+                      renderProducts(productObj)
+                      productCount+=8
+                    }
+                    
+                  })
+                })
+
+                function renderProducts(products){
+                  const loadProductsDiv = document.getElementById('loadProductsDiv');
+
+                  products.forEach(product=>{
+                    const productCard = `<div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card product-card_style3 mb-3 mb-md-4 mb-xxl-5">
+                  <div class="pc__img-wrapper bg-light">
+                    <a href="/product?id=${product._id}">
+                      <img loading="lazy" src="/${ product.Image[0] }" width="330" height="400"
+                        alt="Product Image" class="pc__img">
+                    </a>
+                  </div>
+
+                  <div class="pc__info position-relative">
+                    <h6 class="pc__title"><a href="/product?id=${ product._id }">
+                        ${ product.Name }/${product.Brand.Name}
+                      </a></h6>
+                      <div class="product-card__price d-flex align-items-center">
+                        ${product.Price === product.MRP ? `
+                              <span class="money price">₹${product.Price}</span>
+                              ` : `
+                              <span class="money price"><s>₹${product.MRP.toFixed(2)}</s> &nbsp; ₹${product.Price.toFixed(2)} (-${Math.ceil(((product.MRP - product.Price) * 100) / product.MRP)
+                    }%)</span>
+                            `}
+                      </div>
+
+
+                          <div
+                            class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+                            <a class="btn-link btn-link_lg me-4 text-uppercase fw-medium "
+                              href="/product?id=${ product._id }" title="Add To Cart">Add To Cart</a>
+                          </div>
+                  </div>
+                </div>
+              </div>`
+              loadProductsDiv.insertAdjacentHTML('beforeend',productCard)
+                  })
+                }
+               </script>
+
 
               <!-- External JavaScripts -->
               <script src="/js/plugins/jquery.min.js"></script>
@@ -626,3 +688,11 @@
 </body>
 
 </html>
+
+<style>
+  .disabled-tr {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+    user-select: none !important;
+  }
+</style>

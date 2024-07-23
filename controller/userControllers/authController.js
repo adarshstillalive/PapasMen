@@ -27,7 +27,7 @@ function generateReferralCode(length) {
 const getHome = async (req, res) => {
   try {
     const productObj = await Product.find({ "isActive": true }).populate('Brand').populate('Category')
-      .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] })
+      .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] }).limit(8)
     let userData;
     if (req.session.userData) {
       userData = await User.findById({ "_id": req.session.userData._id })

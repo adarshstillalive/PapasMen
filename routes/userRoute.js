@@ -72,6 +72,7 @@ userRoute.get('/auth/google/failure', authController.getAuthFailure);
 userRoute.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 userRoute.get('/product', OfferCheck.updateOffer, productController.getProduct);
+userRoute.get('/product/loadHomeProduct', OfferCheck.updateOffer, productController.getLoadHomeProduct);
 userRoute.post('/product/review',Auth.isUser, productController.postProductReview)
 userRoute.get('/product/color',productController.getColorWithSize);
 userRoute.get('/product/size',productController.getSizeWithQuantity);
@@ -87,7 +88,9 @@ userRoute.get('/profile/deleteAddress',Auth.isUser,profileController.getDeleteAd
 userRoute.get('/profile/wallet',Auth.isUser,profileController.getWallet)
 
 userRoute.get('/category', OfferCheck.updateOffer, productController.getCategory)
-userRoute.get('/sort', OfferCheck.updateOffer, sortingController.getSortCategory)
+userRoute.get('/allProducts', OfferCheck.updateOffer, productController.getAllProducts)
+userRoute.get('/sortCategory', OfferCheck.updateOffer, sortingController.getSortCategory)
+userRoute.get('/sortProducts', OfferCheck.updateOffer, sortingController.getSortProducts)
 
 userRoute.get('/cart',Auth.isUser, OfferCheck.updateOffer, cartController.getCart)
 userRoute.post('/cart',Auth.isUser,cartController.postCart)

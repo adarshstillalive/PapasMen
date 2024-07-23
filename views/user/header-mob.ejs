@@ -13,9 +13,6 @@
 
     <a href="/cart" class="header-tools__item header-tools__cart">
       <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_cart" /></svg>
-      <%if(userData){%>
-        <span class="cart-amount d-block position-absolute js-cart-items-count"><%= userData.Cart.length %></span>
-          <%}%>
     </a>
   </div><!-- /.container -->
 
@@ -41,7 +38,7 @@
         <ul class="navigation__list list-unstyled position-relative">
 
           <li class="navigation__item">
-            <a href="#" class="navigation__link js-nav-right d-flex align-items-center">NEW</a>
+            <a href="/allProducts" class="navigation__link js-nav-right d-flex align-items-center">NEW</a>
           </li>
 
           <% for(key=0;key<categoryData.length;key++){%>

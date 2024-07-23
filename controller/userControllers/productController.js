@@ -43,6 +43,20 @@ const getProduct = async (req, res) => {
   }
 }
 
+const getLoadHomeProduct = async(req,res)=>{
+  try {
+    const {productCount} = req.query;
+
+    const productObj = await Product.find({ "isActive": true }).populate('Brand').populate('Category')
+      .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] }).skip(productCount).limit(8);
+
+      res.json({productObj})
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const postProductReview = async(req,res)=>{
   try {
     const {review, rating, productId} = req.body;
@@ -102,6 +116,29 @@ const getCategory = async (req, res) => {
 }
 
 
+const getAllProducts = async (req, res) => {
+  try {
+    const productObj = await Product.find().populate('Brand').populate('Category')
+      .populate({ path: 'Versions', populate: [{ path: 'Color', ref: 'Color' }, { path: 'Size', ref: 'Size' }] });
+
+    const { sizeData, colorData, categoryData, brandData } = await fetchData()
+    let userData = {}
+    if (req.session.userData) {
+      userData = await User.findById({ "_id": req.session.userData._id });
+    }
+
+    const pushData = {
+      productObj, sizeData, colorData, categoryData, brandData, userData
+    }
+
+    res.render('user/allProducts', pushData)
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 const getColorWithSize = async(req,res)=>{
   try {
     const {colorId, productId} = req.query;
@@ -153,7 +190,7 @@ const getSearchProduct = async (req, res) => {
       productObj, sizeData, colorData, categoryData, brandData, userData, keyword
     }
 
-    res.render('user/category',pushData)
+    res.render('user/allProducts',pushData)
 
 
   } catch (error) {
@@ -166,8 +203,10 @@ const getSearchProduct = async (req, res) => {
 module.exports = {
 
   getProduct,
+  getLoadHomeProduct,
   postProductReview,
   getCategory,
+  getAllProducts,
   getColorWithSize,
   getSizeWithQuantity,
   getSearchProduct,

@@ -63,7 +63,6 @@ const getOrders = async (req,res)=>{
     const limit = 6
     if(req.query.page){
       page = req.query.page;
-      console.log(page);
     }
     const totalCount = await Order.find().countDocuments();
     const totalPage = Math.ceil(totalCount/limit)

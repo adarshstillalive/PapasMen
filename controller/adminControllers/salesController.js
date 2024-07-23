@@ -187,7 +187,7 @@ const getExcelDownload = async(req,res)=>{
       $and: [
         { "createdAt": { $gte: startDate } },
         { "createdAt": { $lte: endDate } },
-        { "Orderstatus": { $ne: "Cancelled" } }
+        { "Orderstatus":  "Delivered"  }
       ]
     })
       .populate('UserId')

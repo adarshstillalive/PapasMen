@@ -5,7 +5,6 @@
 
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="author" content="flexkit">
-
   <link rel="icon" sizes="96*96" href="/images/papasIcon.png">
   <link rel="preconnect" href="https://fonts.gstatic.com/">
 
@@ -17,8 +16,8 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/plugins/swiper.min.css" type="text/css">
-  <link rel="stylesheet" href="/css/plugins/jquery.fancybox.css" type="text/css">
   <link rel="stylesheet" href="/css/style.css" type="text/css">
+
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--[if lt IE 9]>
@@ -26,9 +25,10 @@
   <![endif]-->
 
   <!-- Document Title -->
-  <title>Orders | PapasMen</title>
+  <title>Products List | PapasMen</title>
 
 </head>
+
 
 <body>
   <svg class="d-none">
@@ -253,94 +253,305 @@
         d="M14.7692 11.0769V12.72C14.7693 13.2579 14.8869 13.7893 15.1138 14.2769L15.1384 14.3262L9.66767 8.85541L8.86151 9.66156L14.3323 15.1323H14.283C13.7949 14.8982 13.2613 14.7742 12.72 14.7693H11.0769V16H16V11.0769H14.7692Z"
         fill="currentColor" />
     </symbol>
+    <symbol id="icon_filter" viewBox="0 0 14 10">
+      <path
+        d="M5.44444 9.66664H8.55556V8.11109H5.44444V9.66664ZM0 0.333313V1.88887H14V0.333313H0ZM2.33333 5.77776H11.6667V4.2222H2.33333V5.77776Z"
+        fill="currentColor" />
+    </symbol>
   </svg>
   <!-- Mobile Header -->
-  <%-include('header-mob')%>
+  <%- include('header-mob') %>
     <!-- /.header-mobile -->
 
     <!-- Header Type 1 -->
-    <%-include('header')%>
+    <%- include('header') %>
       <!-- End Header Type 1 -->
 
       <main>
-        <div class="mb-4 pb-4"></div>
-        <section class="my-account container">
-          <div class="row">
-            <div class="col-lg-3">
-              <h2 class="page-title">Wallet</h2>
-            </div>
-            <div class="col-lg-9">
-              <div class="row justify-content-center">
-                
 
-                <div class="col-sm-4 g-mb-30 p-5 border">
-                  <div class="g-bg-lightred text-center rounded g-px-20 g-py-30">
-                    <% if(walletData){%>
-                    <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹<%= walletData.Balance.toFixed(2) %></h3>
-                    <%}else{%>
-                      <h3 class="d-block g-color-white g-font-weight-600 g-font-size-25 mb-1">₹0.00</h3>
-                      <%}%>
-                    <h4 class="d-block g-color-white-opacity-0_8 ">Balance</h4>
+
+        <div class="mb-4 pb-lg-3"></div>
+
+        <section class="shop-main container d-flex">
+          <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
+            <div class="aside-header d-flex d-lg-none align-items-center">
+              <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
+              <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
+            </div><!-- /.aside-header -->
+
+            <div class="pt-4 pt-lg-0"></div>
+
+            <div class="accordion" id="brand-filters">
+              <div class="accordion-item mb-4 pb-3">
+                <h5 class="accordion-header" id="accordion-heading-brand">
+                  <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#accordion-filter-brand" aria-expanded="true"
+                    aria-controls="accordion-filter-brand">
+                    Category
+                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                      <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                        <path
+                          d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                      </g>
+                    </svg>
+                  </button>
+                </h5>
+                <div id="accordion-filter-brand" class="accordion-collapse collapse show border-0"
+                  aria-labelledby="accordion-heading-brand" data-bs-parent="#brand-filters">
+                  <div class="search-field multi-select accordion-body px-0 pb-0">
+                    <select class="d-none" multiple name="total-numbers-list">
+                      <% categoryData.forEach(category=>{ %>
+                        <option value="1">
+                          <%= category.Name %>
+                        </option>
+                        <%})%>
+                    </select>
+                    <ul class="multi-select__list list-unstyled">
+                      <% categoryData.forEach(category=>{ %>
+                        <li data-categorie-id="<%= category._id %>"
+                          class="search-suggestion__item categorySelectClass multi-select__item text-primary js-search-select js-multi-select">
+                          <span class="me-auto">
+                            <%= category.Name %>
+                          </span>
+                        </li>
+                        <%})%>
+                    </ul>
+                  </div>
+                </div>
+              </div><!-- /.accordion-item -->
+            </div>
+
+            <!-- /.accordion-item -->
+
+
+            <div class="accordion" id="color-filters">
+              <div class="accordion-item mb-4 pb-3">
+                <h5 class="accordion-header" id="accordion-heading-1">
+                  <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#accordion-filter-2" aria-expanded="true"
+                    aria-controls="accordion-filter-2">
+                    Color
+                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                      <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                        <path
+                          d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                      </g>
+                    </svg>
+                  </button>
+                </h5>
+                <div id="accordion-filter-2" class="accordion-collapse collapse show border-0 bg-light"
+                  aria-labelledby="accordion-heading-1" data-bs-parent="#color-filters">
+                  <div class="accordion-body px-0 pb-0">
+                    <div class="d-flex flex-wrap">
+                      <% colorData.forEach((color)=>{ %>
+                        <a class="swatch-color js-filter" style="color:<%= color.Name %>"
+                          data-color-id="<%= color._id %>"></a>
+                        <%})%>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- /.accordion-item -->
+            </div><!-- /.accordion -->
+
+
+            <div class="accordion" id="size-filters">
+              <div class="accordion-item mb-4 pb-3">
+                <h5 class="accordion-header" id="accordion-heading-size">
+                  <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#accordion-filter-size" aria-expanded="true"
+                    aria-controls="accordion-filter-size">
+                    Sizes
+                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                      <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                        <path
+                          d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                      </g>
+                    </svg>
+                  </button>
+                </h5>
+                <div id="accordion-filter-size" class="accordion-collapse collapse show border-0"
+                  aria-labelledby="accordion-heading-size" data-bs-parent="#size-filters">
+                  <div class="accordion-body px-0 pb-0">
+                    <div class="d-flex flex-wrap">
+                      <% sizeData.forEach(size=>{ %>
+                        <a class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter"
+                          data-size-id="<%= size._id %>">
+                          <%= size.Name %>
+                        </a>
+                        <%})%>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- /.accordion-item -->
+            </div><!-- /.accordion -->
+
+
+            <div class="accordion" id="brand-filters">
+              <div class="accordion-item mb-4 pb-3">
+                <h5 class="accordion-header" id="accordion-heading-brand">
+                  <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#accordion-filter-brand" aria-expanded="true"
+                    aria-controls="accordion-filter-brand">
+                    Brands
+                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                      <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                        <path
+                          d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                      </g>
+                    </svg>
+                  </button>
+                </h5>
+                <div id="accordion-filter-brand" class="accordion-collapse collapse show border-0"
+                  aria-labelledby="accordion-heading-brand" data-bs-parent="#brand-filters">
+                  <div class="search-field multi-select accordion-body px-0 pb-0">
+                    <select class="d-none" multiple name="total-numbers-list">
+                      <% brandData.forEach(brand=>{ %>
+                        <option value="1">
+                          <%= brand.Name %>
+                        </option>
+                        <%})%>
+                    </select>
+                    <div class="search-field__input-wrapper mb-3">
+                      <input type="text" name="search_text"
+                        class="search-field__input form-control form-control-sm border-light border-2"
+                        placeholder="SEARCH">
+                    </div>
+                    <ul class="multi-select__list list-unstyled">
+                      <% brandData.forEach(brand=>{ %>
+                        <li data-brand-id="<%= brand._id %>"
+                          class="search-suggestion__item brandSelectClass multi-select__item text-primary js-search-select js-multi-select">
+                          <span class="me-auto">
+                            <%= brand.Name %>
+                          </span>
+                        </li>
+                        <%})%>
+                    </ul>
+                  </div>
+                </div>
+              </div><!-- /.accordion-item -->
+            </div><!-- /.accordion -->
+
+
+            <!-- <div class="accordion" id="price-filters">
+              <div class="accordion-item mb-4">
+                <h5 class="accordion-header mb-2" id="accordion-heading-price">
+                  <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#accordion-filter-price" aria-expanded="true"
+                    aria-controls="accordion-filter-price">
+                    Price
+                    <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                      <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                        <path
+                          d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                      </g>
+                    </svg>
+                  </button>
+                </h5>
+                <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
+                  aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
+                  <input class="price-range-slider" type="text" name="price_range" value="" data-slider-min="10"
+                    data-slider-max="1000" data-slider-step="5" data-slider-value="[250,450]" data-currency="$">
+                  <div class="price-range__info d-flex align-items-center mt-2">
+                    <div class="me-auto">
+                      <span class="text-secondary">Min Price: </span>
+                      <span class="price-range__min">$250</span>
+                    </div>
+                    <div>
+                      <span class="text-secondary">Max Price: </span>
+                      <span class="price-range__max">$450</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
+          </div><!-- /.shop-sidebar -->
+
+          <div class="shop-list flex-grow-1">
+            <div class="d-flex justify-content-between mb-4 pb-md-2">
+              <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
+                <a href="/" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+                <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+                <a class="menu-link text-uppercase text-muted fw-medium">Products</a>
+              </div><!-- /.breadcrumb -->
+
+              <div
+                class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
+                <select id="sort-select"
+                  class="shop-acs__select form-select w-auto border-3 py-0 order-1 order-md-0 p-3"
+                  aria-label="Sort Items" name="total-number">
+                  <option value="default" selected>Default Sorting</option>
+                  <option value="1">Popularity</option>
+                  <option value="2">Price : Low to high</option>
+                  <option value="3">Price : High to low</option>
+                  <option value="4">Average ratings</option>
+                  <option value="5">Featured</option>
+                  <option value="6">New arrivals</option>
+                  <option value="7">aA - zZ</option>
+                  <option value="8">zZ - aA</option>
+                </select>
+
+                <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
+
+                <div class="col-size align-items-center order-1 d-none d-lg-flex">
+                  <span class="text-uppercase fw-medium me-2">View</span>
+                  <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                    data-cols="2">2</button>
+                  <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid"
+                    data-cols="3">3</button>
+                  <button class="btn-link fw-medium js-cols-size" data-target="products-grid" data-cols="4">4</button>
+                </div><!-- /.col-size -->
+
+                <div class="shop-filter d-flex align-items-center order-0 order-md-3 d-lg-none">
+                  <button class="btn-link btn-link_f d-flex align-items-center ps-0 js-open-aside"
+                    data-aside="shopFilter">
+                    <svg class="d-inline-block align-middle me-2" width="14" height="10" viewBox="0 0 14 10" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <use href="#icon_filter" />
+                    </svg>
+                    <span class="text-uppercase fw-medium d-inline-block align-middle">Filter</span>
+                  </button>
+                </div><!-- /.col-size d-flex align-items-center ms-auto ms-md-3 -->
+              </div><!-- /.shop-acs -->
+            </div><!-- /.d-flex justify-content-between -->
+
+            <div class="products-grid row row-cols-2 row-cols-md-3 border p-3" id="products-grid">
+
+
+            </div><!-- /.products-grid row -->
+
+            <nav class="shop-pages d-flex justify-content-between mt-3" aria-label="Page navigation">
+              <a href="#" id="previousPage" class="btn-link d-inline-flex align-items-center">
+                <svg class="me-1" width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
+                  <use href="#icon_prev_sm" />
+                </svg>
+                <span class="fw-medium">PREV</span>
+              </a>
+              <ul class="pagination mb-0">
+
+              </ul>
+              <a href="#" id="nextPage" class="btn-link d-inline-flex align-items-center">
+                <span class="fw-medium me-1">NEXT</span>
+                <svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
+                  <use href="#icon_next_sm" />
+                </svg>
+              </a>
+            </nav>
           </div>
-
-          <div class="row justify-content-between">
-
-            <div class="row">
-              <%-include('userProfileSide')%>
-                <div class="col-lg-9">
-                  <% if(walletData && walletData.Transaction.length>0){ %>
-                  <div class="page-content my-account__orders-list">
-                    <table class="orders-table">
-                      <thead>
-                        <tr>
-                          <th>Type</th>
-                          <th>Date</th>
-                          <th>Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <%if(walletData){%>
-                        <% for(key=walletData.Transaction.length-1;key>=0;key--){ %>
-                          <tr>
-                            <%if(walletData.Transaction[key].Type === 'Debit'){%>
-                            <td style="color:red"><%= walletData.Transaction[key].Type %></td>
-                            <%}else{%>
-                              <td style="color:green"><%= walletData.Transaction[key].Type %></td>
-                              <%}%>
-
-                            <% const timestamp= walletData.Transaction[key].Date;
-                             const date=new Date(timestamp); const formattedDate=date.toISOString().split('T')[0]; %>
-                            <td><%= formattedDate %></td>
-                            <%if(walletData.Transaction[key].Type === 'Debit'){%>
-                              <td style="color:red">-<%= walletData.Transaction[key].Amount.toFixed(2) %></td>
-                              <%}else{%>
-                                <td style="color:green">+<%= walletData.Transaction[key].Amount.toFixed(2) %></td>
-                                <%}%>
-                          </tr>
-                          <%}}%>
-                      </tbody>
-                    </table>
-                  </div>
-                  <% }else{ %>
-                    <h2>Transactions : NIL</h2>
-                    <%}%>
-                </div>
-            </div>
-        </section>
+        </section><!-- /.shop-main container -->
       </main>
 
       <div class="mb-5 pb-xl-5"></div>
 
+
       <!-- Footer Type 1 -->
-      <%-include('footer')%><!-- /.footer footer_type_1 -->
+      <%- include('footer') %>
+        <!-- /.footer footer_type_1 -->
         <!-- End Footer Type 1 -->
 
         <!-- Mobile Fixed Footer -->
-        <%-include('footer-mob')%><!-- /.footer-mobile container position-fixed d-md-none bottom-0 -->
+        <%- include('footer-mob') %>
+          <!-- /.footer-mobile container position-fixed d-md-none bottom-0 -->
+
 
 
 
@@ -350,6 +561,185 @@
           <!-- Page Overlay -->
           <div class="page-overlay"></div><!-- /.page-overlay -->
 
+          <!-- Internal JS -->
+          <!-- Embedding the JSON safely -->
+          <script id="product-data" type="application/json">
+            <%- JSON.stringify({ productObj, keyword: typeof keyword !== 'undefined' ? keyword : null }) %>
+          </script>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              const productDataScript = document.getElementById('product-data').textContent;
+              let serverData;
+          
+              try {
+                serverData = JSON.parse(productDataScript);
+              } catch (error) {
+                console.error('Error parsing product data:', error);
+                return;
+              }
+          
+              let productObj = serverData.productObj;
+              let keyword = serverData.keyword;
+              let queryString = '';
+              let currentPage = 1;
+              const itemsPerPage = 6;
+              const totalItems = productObj.length;
+              let sortOption = 'default';
+              const filterState = {
+                categories: [],
+                brands: [],
+                colors: [],
+                sizes: []
+              };
+          
+              if (keyword !== null) {
+                filterState.keyword = keyword;
+              }
+          
+              document.getElementById('sort-select').addEventListener('change', async function (event) {
+                sortOption = event.target.value;
+                currentPage = 1; // Reset to first page on sorting
+                await fetchAndRenderProducts();
+              });
+          
+              document.querySelector('.shop-pages').addEventListener('click', async function (event) {
+                event.preventDefault();
+                const clickedElement = event.target.closest('a');
+                if (!clickedElement) return;
+                const action = clickedElement.textContent.trim();
+                switch (action) {
+                  case 'PREV':
+                    currentPage--;
+                    break;
+                  case 'NEXT':
+                    currentPage++;
+                    break;
+                  default:
+                    const pageNumber = parseInt(action);
+                    if (!isNaN(pageNumber)) currentPage = pageNumber;
+                }
+                await fetchAndRenderProducts();
+              });
+          
+              async function fetchAndRenderProducts() {
+                queryString = buildQueryString();
+                try {
+                  const response = await fetch(`/sortProducts?id=${sortOption}&${queryString}&conditionValue=${filterState.keyword}&page=${currentPage}&limit=${itemsPerPage}`);
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  const data = await response.json();
+                  renderProducts(data.products);
+                  updatePagination(data.total);
+                } catch (error) {
+                  console.error('Error fetching products:', error);
+                }
+              }
+          
+              function renderProducts(products) {
+                const productGrid = document.getElementById('products-grid');
+                productGrid.innerHTML = ''; // Clear existing products
+                products.forEach(product => {
+                  const starCount = Math.floor(product.Reviews.reduce((acc, curr) => acc + curr.Rating, 0) / product.Reviews.length);
+                  let starsHTML = '';
+                  for (let i = 0; i < starCount; i++) {
+                    starsHTML += `<svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg"><use href="#icon_star" /></svg>`;
+                  }
+                  const productCard = `
+                    <div class="product-card-wrapper">
+                      <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+                        <div class="pc__img-wrapper bg-light">
+                          <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
+                            <div class="swiper-wrapper">
+                              <div class="swiper-slide">
+                                <a href="/product?id=${product._id}"><img loading="lazy" src="${product.Image[0]}" width="330" height="400" alt="${product.Name}" class="pc__img"></a>
+                              </div>
+                            </div>
+                          </div>
+                          <a href="/product?id=${product._id}" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium" title="Add To Cart">Add To Cart</a>
+                        </div>
+                        <div class="pc__info position-relative">
+                          <p class="pc__category">${product.Category.Name}</p>
+                          <h6 class="pc__title"><a href="/product?id=${product._id}">${product.Name}/${product.Brand.Name}</a></h6>
+                          <div class="product-card__price d-flex">
+                            ${product.Price === product.MRP ? `
+                              <span class="money price">₹${product.Price}</span>
+                              ` : `
+                              <span class="money price"><s>₹${product.MRP.toFixed(2)}</s> &nbsp; ₹${product.Price.toFixed(2)} (-${Math.ceil(((product.MRP - product.Price) * 100) / product.MRP)}%)</span>
+                            `}
+                          </div>
+                          <div class="product-card__review d-flex align-items-center">
+                            <div class="reviews-group d-flex">
+                              ${starsHTML}
+                            </div>
+                            <span class="reviews-note text-lowercase text-secondary ms-1">${product.Reviews.length} review</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  productGrid.insertAdjacentHTML('beforeend', productCard);
+                });
+              }
+          
+              function updatePagination(totalItems) {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                const paginationList = document.querySelector('.pagination');
+                paginationList.innerHTML = '';
+                if (totalPages === 1) {
+                  document.getElementById('previousPage').classList.add('disabled-tr');
+                  document.getElementById('nextPage').classList.add('disabled-tr');
+                } else if (currentPage <= 1) {
+                  document.getElementById('nextPage').classList.remove('disabled-tr');
+                  document.getElementById('previousPage').classList.add('disabled-tr');
+                } else if (currentPage >= totalPages) {
+                  document.getElementById('previousPage').classList.remove('disabled-tr');
+                  document.getElementById('nextPage').classList.add('disabled-tr');
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                  const pageItem = `
+                    <a class="btn-link px-1 mx-2 ${i === currentPage ? 'btn-link_active' : ''}" href="#">${i}</a>
+                  `;
+                  paginationList.insertAdjacentHTML('beforeend', pageItem);
+                }
+              }
+          
+              function buildQueryString() {
+                const params = new URLSearchParams();
+                if (filterState.categories.length > 0) params.append('categories', filterState.categories.join(','));
+                if (filterState.brands.length > 0) params.append('brands', filterState.brands.join(','));
+                if (filterState.colors.length > 0) params.append('colors', filterState.colors.join(','));
+                if (filterState.sizes.length > 0) params.append('sizes', filterState.sizes.join(','));
+                
+                return params.toString();
+              }
+          
+              document.querySelectorAll('.swatch-color, .swatch-size, .brandSelectClass, .categorySelectClass').forEach(item => {
+                item.addEventListener('click', async event => {
+                  event.target.classList.toggle('swatch-active'); // Toggle the swatch-active class
+                  const filterType = event.target.classList.contains('categorySelectClass') ? 'categories' :
+                    event.target.classList.contains('brandSelectClass') ? 'brands' :
+                      event.target.classList.contains('swatch-color') ? 'colors' : 'sizes';
+                  
+                  const filterId = event.target.getAttribute(`data-${filterType.slice(0, -1)}-id`);
+                  if (event.target.classList.contains('swatch-active')) {
+                    filterState[filterType].push(filterId);
+                  } else {
+                    filterState[filterType] = filterState[filterType].filter(id => id !== filterId);
+                  }
+                  queryString = buildQueryString();
+                  await fetchAndRenderProducts();
+                });
+              });
+          
+              // Initial render
+              fetchAndRenderProducts();
+            });
+          </script>
+          
+
+
           <!-- External JavaScripts -->
           <script src="/js/plugins/jquery.min.js"></script>
           <script src="/js/plugins/bootstrap.bundle.min.js"></script>
@@ -357,7 +747,6 @@
 
           <script src="/js/plugins/swiper.min.js"></script>
           <script src="/js/plugins/countdown.js"></script>
-          <script src="/js/plugins/jquery.fancybox.js"></script>
 
           <!-- Footer Scripts -->
           <script src="/js/theme.js"></script>
@@ -365,3 +754,11 @@
 </body>
 
 </html>
+
+<style>
+  .disabled-tr {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+    user-select: none !important;
+  }
+</style>

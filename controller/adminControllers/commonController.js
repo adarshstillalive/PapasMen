@@ -204,15 +204,6 @@ const getDashboardChart = async(req,res)=>{
 
     const chartData = await Order.aggregate(condition);
 
-    // Calculate cumulative sales
-    // let cumulativeSales = 0;
-    // const cumulativeChartData = chartData.map(item => {
-    //   cumulativeSales += item.saleCount;
-    //   return {
-    //     ...item,
-    //     cumulativeSaleCount: cumulativeSales
-    //   };
-    // });
 
     // Function to get the start date of the ISO week
     const getISOWeekStartDate = (year, week) => {

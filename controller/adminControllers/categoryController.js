@@ -94,7 +94,7 @@ const getAddCategory = async (req, res) => {
       adminName: req.session.adminData.Name,
       addCategoryMsg: req.flash('msg')
     }
-    res.render('admin/addcategory', pushData)
+    res.render('admin/addCategory', pushData)
   } catch (error) {
     console.log(error)
   }

@@ -228,10 +228,9 @@ const postAddProduct = async (req, res) => {
         }
       }
     });
-    console.log(versions);
     // Image uploads
     const imageObjects = req.files.map(async (file) => {
-      console.log(file);
+      
       const imagePath = `uploads/${file.filename}`;
       return imagePath
 

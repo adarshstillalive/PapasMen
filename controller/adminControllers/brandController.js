@@ -115,7 +115,6 @@ const postAddBrand = async (req, res) => {
         res.redirect('/admin/brands/addBrand')
       }
     }
-    console.log(Name, isActive)
   } catch (error) {
     console.log(error)
   }

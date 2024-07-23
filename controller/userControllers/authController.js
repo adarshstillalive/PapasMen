@@ -151,11 +151,10 @@ const postSignup = async (req, res) => {
 
 const postSendOtp = async (req, res) => {
   try {
-    console.log(req.body.Email)
+
     if (!req.session.Email) {
       req.session.Email = req.body.Email
     }
-    console.log(req.session.Email);
     const checkEmail = await User.findOne({ "Email": req.session.Email });
     if (checkEmail) {
       req.flash('msg', 'Email already exists')
@@ -164,7 +163,7 @@ const postSendOtp = async (req, res) => {
       return;
     } else {
       const randomOtp = Math.floor(1000 + Math.random() * 9000)
-      console.log(randomOtp)
+      
       req.session.otp = randomOtp;
       req.session.save()
 
@@ -262,7 +261,7 @@ const getForgotPassword = async (req, res) => {
 
 const putForgotPassword = async (req, res) => {
   try {
-    console.log(req.body.Email, req.body.Password)
+
     const { Email, Password } = req.body;
     const hashedPassword = await bcrypt.hash(Password, 10);
     const updateData = await User.updateOne({ "Email": Email }, { $set: { "Password": hashedPassword } });
@@ -279,15 +278,15 @@ const putForgotPassword = async (req, res) => {
 
 const postForgotSendOtp = async (req, res) => {
   try {
-    console.log(req.body.Email)
+
     if (!req.session.Email) {
       req.session.Email = req.body.Email
     }
-    console.log(req.session.Email);
+
     const checkEmail = await User.findOne({ "Email": req.session.Email });
 
     const randomOtp = Math.floor(1000 + Math.random() * 9000)
-    console.log(randomOtp)
+    
     req.session.otp = randomOtp;
     req.session.save()
 

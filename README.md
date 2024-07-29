@@ -1,1 +1,1 @@
-[Try PapasMen?](www.papasmen.wildsurf.net)
+www.papasmen.wildsurf.net

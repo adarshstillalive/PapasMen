@@ -12,7 +12,6 @@ const userSchema = mongoose.Schema({
   },
   Contact: {
     type: Number,
-    required: true
   },
   Referral: {
     type: String,
@@ -46,7 +45,6 @@ const userSchema = mongoose.Schema({
   }],
   Password: {
     type: String,
-    required: true
   },
   isAdmin:{
     type:Number,
@@ -78,6 +76,20 @@ const userSchema = mongoose.Schema({
     Quantity:{
       type:Number,
       required:true
+    }
+  }],
+  Wishlist:[{
+    WProduct:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'Product'
+    },
+    WVersion:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'Product.Versions'
+    },
+    WQuantity:{
+      type:Number,
+      default:1
     }
   }],
 }, {

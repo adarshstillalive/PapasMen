@@ -12,7 +12,8 @@ passport.deserializeUser((user,done)=>{
 passport.use(new GoogleStrategy({
   clientID:process.env.OAUTH_CLIENT_ID,
   clientSecret:process.env.OAUTH_CLIENT_SECRET,
-  callbackURL:"https://papasmen.wildsurf.net/auth/google/callback",
+  callbackURL:"http://localhost:8080/auth/google/callback",
+  // callbackURL:"https://papasmen.wildsurf.net/auth/google/callback",
   passReqToCallback:true,
 },
 function(request,accessToken,refreshToken,profile,done){

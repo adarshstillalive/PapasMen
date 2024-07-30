@@ -1,5 +1,4 @@
 const User = require('../../model/userModel')
-const UserAuth = require('../../model/userAuthModel')
 
 const fs = require('fs');
 const path = require('path');

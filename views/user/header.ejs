@@ -54,13 +54,17 @@
         <a href="/cart" class="header-tools__item header-tools__cart" >
           <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_cart" /></svg>
           <%if(userData.Cart){%>
-          <span class="cart-amount d-block position-absolute js-cart-items-count"><%= userData.Cart.length %></span>
+          <span id="cartLength" class="cart-amount d-block position-absolute js-cart-items-count"><%= userData.Cart.length %></span>
             <%}%>
         </a>
 
-        <a class="header-tools__item" href="/wishlist">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_heart" /></svg>
+        <a href="/wishlist" class="header-tools__item header-tools__cart" >
+          <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><use href="#icon_heart" /></svg>
+          <%if(userData.Wishlist){%>
+          <span id="wishlistLength" class="cart-amount d-block position-absolute js-cart-items-count"><%= userData.Wishlist.length %></span>
+            <%}%>
         </a>
+
       </div><!-- /.header__tools -->
     </div><!-- /.header-desk header-desk_type_1 -->
   </div><!-- /.container -->

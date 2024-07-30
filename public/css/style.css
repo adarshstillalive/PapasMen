@@ -13644,8 +13644,8 @@ textarea.form-control-lg {
     font-size: 1.125rem; }
   .footer-mobile .cart-amount,
   .footer-mobile .wishlist-amount {
-    top: -5px;
-    left: calc(100% - 5px);
+    top: 0px;
+    left: calc(100% - 50%);
     width: 1rem;
     height: 1rem;
     border-radius: 100%;
@@ -14741,7 +14741,7 @@ textarea.form-control-lg {
     .product-single__addtolinks > a .flaticon, .product-single__addtolinks > .share-button > button .flaticon {
       font-size: 1rem; }
   .product-single__addtolinks > .add-to-wishlist.active svg {
-    color: #C32929; }
+    color: red; }
 .product-single__meta-info {
   font-size: 0.8125rem;
   line-height: 1.5rem;

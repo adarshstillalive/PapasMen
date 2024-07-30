@@ -7,7 +7,6 @@ const Size = require('../../model/sizeModel');
 const Coupon = require('../../model/couponModel')
 const Wallet = require('../../model/walletModel')
 const Order = require('../../model/orderModel')
-const UserAuth = require('../../model/userAuthModel');
 
 // FUNCTIONS
 async function fetchData() {
@@ -89,11 +88,19 @@ const postCart = async (req, res) => {
 const postAddToCart = async (req, res) => {
   try {
     if (!req.session.userData) {
+      req.session.redirectUrl = `/product?id=${req.body.ProductId}`
       return res.status(302).redirect('/signin');
     }
 
     const { Size, Color, Quantity, ProductId } = req.body;
 
+    if(!Color){
+      res.json({ success: false, message: 'Select a color' });
+    }else if(!Size){
+      res.json({ success: false, message: 'Select a size' });
+    }else{
+
+      
     // Fetch user data and populate the cart products
     const user = await User.findOne({ _id: req.session.userData._id })
 
@@ -142,12 +149,16 @@ const postAddToCart = async (req, res) => {
         }
       }
     }
+    console.log(user);
 
     if (flag) {
-      res.json({ success: true });
+      res.json({ success: true ,count:user.Cart.length});
     } else {
       res.json({ success: false, message: 'Adding to cart failed, try again' });
     }
+
+    }
+
   } catch (error) {
     console.error('Error adding to cart:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

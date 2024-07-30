@@ -14,6 +14,7 @@ const isUser = async (req,res,next)=>{
       }
 
     }else{
+      req.session.redirectUrl = req.originalUrl;
       res.redirect('/signin')
     }
   } catch (error) {

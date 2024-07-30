@@ -403,11 +403,13 @@
               <div class="product-single__addtolinks" id="wishlistForm">
 
                 <input type="hidden" name="productId" value="<%= productData._id %>">
-                <a href="#" id="addToWishlist" class="menu-link menu-link_us-s add-to-wishlist"><svg width="16"
-                    height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_heart" />
-                  </svg><span>Add to Wishlist</span></a>
-
+                <% let isInWishlist = userData && Array.isArray(userData.Wishlist) && userData.Wishlist.some(item => item.WProduct.toString() === productData._id.toString());  %>
+                <a href="#" id="addToWishlist" class="menu-link menu-link_us-s add-to-wishlist <%= isInWishlist ? 'active' : '' %>">
+                  <svg width="30" height="30" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <use href="#icon_heart"/>
+                  </svg>
+                  <span></span>
+                </a>
               </div>
               <div class="product-single__meta-info">
                 <div class="meta-item">
@@ -420,10 +422,7 @@
                     <%= productData.Category.Name %>
                   </span>
                 </div>
-                <!-- <div class="meta-item">
-                  <label>Tags:</label>
-                  <span>biker, black, bomber, leather</span>
-                </div> -->
+                
               </div>
             </div>
           </div>
@@ -662,30 +661,7 @@
 
           <!-- Internal JS -->
           <script>
-            document.addEventListener('DOMContentLoaded', function () {
-              const showAlert = localStorage.getItem('showAlert');
-              const wishlistAlert = localStorage.getItem('wishlistAlert');
-
-              if (showAlert === 'true') {
-                Swal.fire({
-                  title: "Success",
-                  text: "Product added to cart",
-                  icon: "success",
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-                localStorage.removeItem('showAlert');
-              } else if (wishlistAlert === 'true') {
-                Swal.fire({
-                  title: "Success",
-                  text: "Added to wishlist",
-                  icon: "success",
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-                localStorage.removeItem('wishlistAlert');
-              }
-            });
+           
             const addToCartForm = document.getElementById('addToCartForm');
 
             addToCartForm.addEventListener('submit', function (event) {
@@ -703,8 +679,7 @@
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formObj),
-              })
-                .then(response => {
+              }).then(response => {
                   if (response.redirected) {
                     window.location.href = response.url;
                     return;
@@ -715,15 +690,21 @@
                   switch (data.success) {
 
                     case true:
-                      localStorage.setItem('showAlert', 'true')
-                      window.location.reload();
+                      document.getElementById('cartLength').innerText = data.count
+                      Swal.fire({
+                      title: "Success",
+                      text: "Product added to cart",
+                      icon: "success",
+                      showConfirmButton: false,
+                      timer: 1500
+                      });
                       break;
 
                     case false:
 
                       Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
+                        icon: "info",
+                        title: "info",
                         text: data.message,
                       });
                       console.error("Error adding item to cart", data.error);
@@ -735,41 +716,88 @@
                   // Network error handling here
                 });
             });
-
+            
 
             document.getElementById('addToWishlist').addEventListener('click', (event) => {
               const button = event.target.closest('#addToWishlist');
               if (button.classList.contains('active')) {
                 console.log('Button is active');
                 // Perform actions when the button is already active
-              } else {
+                const productId = document.getElementById('productId').value;
 
-                const productId = document.querySelector('input[name="productId"]').value
+                fetch(`/wishlist/removeFromWishlist?id=${productId}`,{
+                  method:'GET'
+                }).then(response=>response.json())
+                .then(data=>{
+                  if(data.success){
+                    document.getElementById('wishlistLength').innerText = data.count
+                      Swal.fire({
+                      title: "Success",
+                      text: "Product removed from Wishlist",
+                      icon: "success",
+                      showConfirmButton: false,
+                      timer: 1500
+                      });
+                      button.classList.remove('active')
+                      button.style.color = 'black'
+                  }else{
+                    Swal.fire({
+                      title: "Error",
+                      text: "Oh.. error ocurred",
+                      icon: "error",
+                      showConfirmButton: false,
+                      timer: 1500
+                      });
+                  }
+                })
+              } else {
+              const addToCartForm = document.getElementById('addToCartForm');
+              const formData = new FormData(addToCartForm);
+              const formObj = {};
+
+              formData.forEach((value, key) => {
+                formObj[key] = value;
+              });
 
                 fetch('/wishlist/addToWishlist', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
                   },
-                  body: JSON.stringify({ productId })
-                }).then(response => response.json())
+                  body: JSON.stringify({ formObj })
+                }).then(response => {
+                  if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                  }
+                  return response.json();
+                })
                   .then((data) => {
                     if (data.success) {
-                      localStorage.setItem('wishlistAlert', 'true')
-                      window.location.reload();
+                      document.getElementById('wishlistLength').innerText = data.count
+                      Swal.fire({
+                      title: "Success",
+                      text: "Product added to Wishlist",
+                      icon: "success",
+                      showConfirmButton: false,
+                      timer: 1500
+                      });
+                      button.classList.add('active')
+                      button.style.color = 'red'
 
                     } else {
                       Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
+                        icon: "info",
+                        title: "info",
                         text: data.message,
                       });
-                      console.error("Error adding item to cart", data.error);
+                      console.error("Error adding item to wishlist", data.error);
                     }
                   })
+
                 console.log('Button is not active');
                 // Perform actions when the button is not active
-              }
+                }
             });
 
 
@@ -975,4 +1003,6 @@
     opacity: 0.5 !important;
     user-select: none !important;
   }
+
+
 </style>

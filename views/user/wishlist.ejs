@@ -272,8 +272,8 @@
                 <div class="page-content my-account__wishlist">
                   <div class="products-grid row row-cols-2 row-cols-lg-3" id="products-grid">
 
-                    <% if(wishlistData && wishlistData.Products && wishlistData.Products.length>0){%>
-                      <%for(key=0;key<wishlistData.Products.length;key++){%>
+                    <% if(userData && userData.Wishlist && userData.Wishlist.length>0){%>
+                      <%for(key=0;key<userData.Wishlist.length;key++){%>
                         <div class="product-card-wrapper">
                           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
                             <div class="pc__img-wrapper bg-light">
@@ -281,13 +281,13 @@
                                 data-settings='{"resizeObserver": true}'>
                                 <div class="swiper-wrapper">
                                   <div class="swiper-slide">
-                                    <a href="/product?id=<%= wishlistData.Products[key].Product._id %>"><img
-                                        loading="lazy" src="<%= wishlistData.Products[key].Product.Image[0] %>"
+                                    <a href="/product?id=<%= userData.Wishlist[key].WProduct._id %>"><img
+                                        loading="lazy" src="<%= userData.Wishlist[key].WProduct.Image[0] %>"
                                         width="330" height="400" alt="Product image" class="pc__img"></a>
                                   </div>
                                   <div class="swiper-slide">
-                                    <a href="/product?id=<%= wishlistData.Products[key].Product._id %>"><img
-                                        loading="lazy" src="<%= wishlistData.Products[key].Product.Image[1] %>"
+                                    <a href="/product?id=<%= userData.Wishlist[key].WProduct._id %>"><img
+                                        loading="lazy" src="<%= userData.Wishlist[key].WProduct.Image[1] %>"
                                         width="330" height="400" alt="Product image" class="pc__img"></a>
                                   </div>
                                 </div>
@@ -301,37 +301,37 @@
                                   </svg></span>
                               </div>
                               <button class="btn-remove-from-wishlist"
-                                data-bs-target="#remove<%= wishlistData.Products[key].Product._id %>"
+                                data-bs-target="#remove<%= userData.Wishlist[key].WProduct._id %>"
                                 data-bs-toggle="modal">
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
                                   xmlns="http://www.w3.org/2000/svg">
                                   <use href="#icon_close" />
                                 </svg>
                               </button>
-                              <a href="/product?id=<%= wishlistData.Products[key].Product._id %>"
+                              <a href="/product?id=<%= userData.Wishlist[key].WProduct._id %>"
                                 class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium"
                                 title="Add To Cart">Add To Cart</a>
                             </div>
                             <div class="pc__info position-relative">
                               <p class="pc__category">
-                                <%= wishlistData.Products[key].Product.Category.Name %>
+                                <%= userData.Wishlist[key].WProduct.Category.Name %>
                               </p>
-                              <h6 class="pc__title"><a href="/product?id=<%= wishlistData.Products[key].Product._id %>">
-                                  <%= wishlistData.Products[key].Product.Name %>/<%=
-                                      wishlistData.Products[key].Product.Brand.Name %>
+                              <h6 class="pc__title"><a href="/product?id=<%= userData.Wishlist[key].WProduct._id %>">
+                                  <%= userData.Wishlist[key].WProduct.Name %>/<%=
+                                      userData.Wishlist[key].WProduct.Brand.Name %>
                                 </a></h6>
                               <div class="product-card__price d-flex">
-                                <span class="money price">₹<%= wishlistData.Products[key].Product.Price%></span>
+                                <span class="money price">₹<%= userData.Wishlist[key].WProduct.Price%></span>
                               </div>
                               <div class="product-card__review d-flex align-items-center">
                                 <div class="reviews-group d-flex">
-                                  <% for(i=0;i<Math.ceil(wishlistData.Products[key].Product.Reviews.reduce((acc,curr)=>acc+=curr.Rating,0)/wishlistData.Products[key].Product.Reviews.length);i++){ %>
+                                  <% for(i=0;i<Math.ceil(userData.Wishlist[key].WProduct.Reviews.reduce((acc,curr)=>acc+=curr.Rating,0)/userData.Wishlist[key].WProduct.Reviews.length);i++){ %>
                                     <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
                                       <use href="#icon_star" />
                                     </svg>
                                     <%}%>
                                 </div>
-                                <span class="reviews-note text-lowercase text-secondary ms-1"><%= wishlistData.Products[key].Product.Reviews.length %> Review</span>
+                                <span class="reviews-note text-lowercase text-secondary ms-1"><%= userData.Wishlist[key].WProduct.Reviews.length %> Review</span>
                               </div>
                             </div>
                           </div>
@@ -347,9 +347,9 @@
           </div>
         </section>
 
-        <% if(wishlistData){%>
-          <% for(let key=0; key < wishlistData.Products.length; key++) { %>
-            <div class="modal fade" id="remove<%= wishlistData.Products[key].Product._id %>" tabindex="-1"
+        <% if(userData.Wishlist){%>
+          <% for(let key=0; key < userData.Wishlist.length; key++) { %>
+            <div class="modal fade" id="remove<%= userData.Wishlist[key].WProduct._id %>" tabindex="-1"
               aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -367,7 +367,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="/wishlist/removeProduct?id=<%= wishlistData.Products[key].Product._id %>"
+                    <a href="/wishlist/removeProduct?id=<%= userData.Wishlist[key].WProduct._id %>"
                       class="btn btn-primary remove-cart">Remove</a>
                   </div>
                 </div>

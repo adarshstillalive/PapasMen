@@ -7,7 +7,6 @@ const Size = require('../../model/sizeModel');
 const Order = require('../../model/orderModel')
 const Wallet = require('../../model/walletModel')
 const Coupon = require('../../model/couponModel')
-const UserAuth = require('../../model/userAuthModel')
 const Paypal = require('../../others/paypal')
 
 const PDFDocument = require('pdfkit')

@@ -6,7 +6,6 @@ const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Order = require('../../model/orderModel')
 const Wallet = require('../../model/walletModel')
-const UserAuth = require('../../model/userAuthModel')
 
 // Function
 

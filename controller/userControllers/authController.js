@@ -6,7 +6,6 @@ const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
 const Referral = require('../../model/referralModel')
 const Wallet = require('../../model/walletModel')
-const UserAuth = require('../../model/userAuthModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 require('dotenv').config()
@@ -68,7 +67,14 @@ const postSignin = async (req, res) => {
       if (passwordMatch && searchUser.isActive) {
         req.session.userData = searchUser;
         req.session.save()
-        res.redirect('/')
+        if(req.session.redirectUrl){
+          res.redirect(req.session.redirectUrl)
+          req.session.redirectUrl = '';
+          
+        }else{
+          res.redirect('/')
+        }
+        
       } else if (passwordMatch && !searchUser.isActive) {
         req.flash('msg', 'User blocked by the Admin')
         res.redirect('/signin')
@@ -141,7 +147,13 @@ const postSignup = async (req, res) => {
 
       if (userData) {
         req.session.userData = userData
-        res.status(200).redirect('/')
+        if(req.session.redirectUrl){
+          res.status(200).redirect(req.session.redirectUrl)
+          req.session.redirectUrl = '';
+          
+        }else{
+          res.status(200).redirect('/')
+        }
       }
     }
   } catch (err) {
@@ -325,14 +337,16 @@ const postForgotSendOtp = async (req, res) => {
 
 const getAuthSuccess = async (req, res) => {
   try {
-
     const userData = await User.findOne({ 'Email': req.user.email });
 
     if (userData) {
       req.session.userData = userData;
       res.redirect('/')
     } else {
-      const userAuthData = await UserAuth.updateOne({ "Name": req.user.displayName }, { $set: { "Email": req.user.email } }, { upsert: true });
+      const docCount = await User.find().countDocuments();
+      const referralPart1 = generateReferralCode(5);
+      const referralCode = String(`${referralPart1}${docCount + 1}`);
+      const userAuthData = await User.create({ "Name": req.user.displayName ,"Email": req.user.email, "Referral": referralCode});
 
       if (userAuthData) {
         req.session.userData = userAuthData;

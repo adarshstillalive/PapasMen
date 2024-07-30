@@ -94,7 +94,7 @@ userRoute.get('/sortProducts', OfferCheck.updateOffer, sortingController.getSort
 
 userRoute.get('/cart',Auth.isUser, OfferCheck.updateOffer, cartController.getCart)
 userRoute.post('/cart',Auth.isUser,cartController.postCart)
-userRoute.post('/cart/addToCart',Auth.isUser,cartController.postAddToCart)
+userRoute.post('/cart/addToCart',cartController.postAddToCart)
 userRoute.get('/cart/removeProduct',Auth.isUser,cartController.getRemoveProduct)
 userRoute.get('/cart/checkout',Auth.isUser, Checkout.checkCart,cartController.getCheckout)
 userRoute.post('/cart/applyCoupon',Auth.isUser, upload.none(),cartController.postApplyCoupon)
@@ -111,7 +111,8 @@ userRoute.get('/paypal/orderComplete',Auth.isUser,orderController.paypalOrderCom
 
 userRoute.get('/wishlist', Auth.isUser, OfferCheck.updateOffer, wishlistController.getWishlist)
 userRoute.post('/wishlist/addToWishlist',upload.none(), wishlistController.postAddToWishlist)
-userRoute.get('/wishlist/removeProduct',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveFromWishlist)
+userRoute.get('/wishlist/removeProduct',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveProduct)
+userRoute.get('/wishlist/removeFromWishlist',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveFromWishlist)
 
 
 

@@ -4,8 +4,6 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
-const Wishlist = require('../../model/wishlistModel')
-const UserAuth = require('../../model/userAuthModel')
 
 // Functions
 async function fetchData() {
@@ -19,16 +17,50 @@ async function fetchData() {
 const getWishlist = async (req,res)=>{
   try {
     const { sizeData, colorData, categoryData, brandData } = await fetchData()
-    const wishlistData = await Wishlist.findOne({"UserId": req.session.userData._id}).populate('Products.Product')
-    .populate({ path: 'Products', populate: {path: 'Product', populate:[{path:'Brand',ref:'Brand'},{path:'Category',ref:'Category'}]}});
-    const userData = await User.findById(req.session.userData._id);
+    const userData = await User.findById(req.session.userData._id)
+      .populate({
+        path: 'Wishlist.WProduct',
+        model: 'Product',
+        populate: [
+          { path: 'Brand', model: 'Brand' },
+          { path: 'Category', model: 'Category' },
+          { path: 'Versions.Color', model: 'Color' },
+          { path: 'Versions.Size', model: 'Size' }
+        ]
+      });
+
+    // Map over the user's cart items and populate versions
+    const userWishlist = await Promise.all(userData.Wishlist.map(async (wishlistItem) => {
+      const product = wishlistItem.WProduct;
+      const versionId = wishlistItem.WVersion;
+
+      // Find the specific version in product's Versions array
+      const version = product.Versions.find(v => v._id.equals(versionId));
+
+      if (version) {
+        // Populate Color and Size in the found version
+        const populatedVersion = await Product.populate(version, [
+          { path: 'Color', model: 'Color' },
+          { path: 'Size', model: 'Size' }
+        ]);
+
+
+        // Return the cart item with populated version
+        return {
+          ...wishlistItem.toObject(),  // Convert Mongoose document to plain object
+          Version: populatedVersion
+        };
+      }
+
+      return wishlistItem.toObject();
+    }));
     const pushData = {
       sizeData,  
       colorData, 
       categoryData, 
-      brandData, 
-      wishlistData, 
+      brandData,
       userData,
+      userWishlist
     }
 
     res.render('user/wishlist',pushData)
@@ -40,35 +72,70 @@ const getWishlist = async (req,res)=>{
 
 const postAddToWishlist = async (req,res)=>{
   try {
-    const {productId} = req.body;
-    if(req.session.userData){
-      let wishlist = await Wishlist.findOne({"UserId":req.session.userData._id});
+    if (!req.session.userData) {
+      req.session.redirectUrl = `/product?id=${req.body.formObj.ProductId}`
+      return res.status(302).redirect('/signin');
+    }
+    const { Size, Color, ProductId } = req.body.formObj;
 
-    if(!wishlist){
-      wishlist = new Wishlist({
-        UserId:req.session.userData._id,
-        Products:[{Product:productId}]
-      })
+    if(!Color){
+      res.json({ success: false, message: 'Select a color' });
+    }else if(!Size){
+      res.json({ success: false, message: 'Select a size' });
     }else{
-      const productExists = wishlist.Products.some(product => product.Product.toString() === productId);
 
-      if (!productExists) {
-        // If the product is not in the wishlist, add it
-        wishlist.Products.push({ Product: productId });
-      } else {
-        return res.json({ success: false, message: 'Product already in wishlist' });
+      
+    // Fetch user data and populate the cart products
+    const user = await User.findOne({ _id: req.session.userData._id })
+
+    // Fetch the product data
+    const product = await Product.findOne({ _id: ProductId });
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    let flag = false;
+
+    // Check if the product and version already exist in the user's wishlist
+    if(user.Wishlist.length>0){
+    for (let i = 0; i < user.Wishlist.length; i++) {
+      if (user.Wishlist[i].WProduct.equals(ProductId)) {
+        for (let j = 0; j < product.Versions.length; j++) {
+          if (product.Versions[j].Size.equals(Size) && product.Versions[j].Color.equals(Color)) {
+            if (user.Wishlist[i].WVersion.equals(product.Versions[j]._id)) {
+              
+              flag = true;
+              break;
+            }
+          }
+        }
+      }
+      if (flag) break;
+    }
+  }
+
+    // If the product version is not in the cart, add it
+    if (!flag) {
+      for (let i = 0; i < product.Versions.length; i++) {
+        if (product.Versions[i].Size.equals(Size) && product.Versions[i].Color.equals(Color)) {
+          const updateWishlist = {
+            WProduct: product._id,
+            WVersion: product.Versions[i]._id,
+          };
+          user.Wishlist.push(updateWishlist);
+          await user.save();
+          flag = true;
+          break;
+        }
       }
     }
 
-    const saveData = await wishlist.save()
-
-    if(saveData){
-      res.json({success:true})
-    }else{
-      res.json({success:false, message:'Error ocurred, try again'})
+    if (flag) {
+      res.json({ success: true, count : user.Wishlist.length});
+    } else {
+      res.json({ success: false, message: 'Adding to wishlist failed, try again' });
     }
-    }else{
-      return res.json({success: false, message : 'Please login'})
+
     }
     
 
@@ -78,10 +145,10 @@ const postAddToWishlist = async (req,res)=>{
 }
 
 
-const getRemoveFromWishlist = async(req,res)=>{
+const getRemoveProduct = async(req,res)=>{
   try {
     const productId = req.query.id;
-    const removeProduct = await Wishlist.updateOne({"UserId":req.session.userData._id},{$pull:{"Products":{"Product":productId}}});
+    const removeProduct = await User.updateOne({ "_id": req.session.userData._id }, { $pull: { "Wishlist": { "WProduct": productId } } });
 
     if(removeProduct){
       res.redirect('/wishlist')
@@ -94,8 +161,26 @@ const getRemoveFromWishlist = async(req,res)=>{
 }
 
 
+const getRemoveFromWishlist = async(req,res)=>{
+  try {
+    const productId = req.query.id;
+    const removeProduct = await User.updateOne({ "_id": req.session.userData._id }, { $pull: { "Wishlist": { "WProduct": productId } } });
+    const userData = await User.findOne({"_id": req.session.userData._id })
+
+    if(removeProduct.modifiedCount>0){
+      res.json({success:true, count:userData.Wishlist.length})
+    }else{
+      res.json({success:false})
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 module.exports = {
   postAddToWishlist,
   getWishlist,
+  getRemoveProduct,
   getRemoveFromWishlist,
 }

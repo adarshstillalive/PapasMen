@@ -4,8 +4,6 @@ const Category = require('../../model/categoryModel');
 const Product = require('../../model/productModel');
 const Color = require('../../model/colorModel');
 const Size = require('../../model/sizeModel');
-const Wishlist = require('../../model/wishlistModel')
-const UserAuth = require('../../model/userAuthModel')
 
 // Functions
 async function fetchData() {
@@ -31,11 +29,10 @@ const getProduct = async (req, res) => {
     let wishlistData = {};
     if (req.session.userData) {
       userData = await User.findById({ "_id": req.session.userData._id });
-      wishlistData = await Wishlist.findOne({"UserId":req.session.userData._id })
     }
 
     const pushData = {
-      wishlistData, productData, productObj, sizeData, colorData, categoryData, userData, brandData, loginMessage: req.flash('msg')
+       productData, productObj, sizeData, colorData, categoryData, userData, brandData, loginMessage: req.flash('msg')
     }
     res.render('user/userProduct', pushData)
   } catch (error) {

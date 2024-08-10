@@ -177,10 +177,36 @@ const getRemoveFromWishlist = async(req,res)=>{
   }
 }
 
+const getaddToCartFromWishlist = async (req,res)=>{
+  try {
+    const {id} = req.query;
+    const userData = await User.findOne({"_id":req.session.userData._id});
+    let Product,Version,Quantity;
+    userData.Wishlist.forEach(set=>{
+      if(set._id.equals(id)){
+        Product = set.WProduct
+        Version = set.WVersion
+        Quantity = set.WQuantity
+      }
+    })
+    const updateCart = {Product, Version, Quantity};
+    userData.Cart.push(updateCart);
+    userData.Wishlist.pull({"_id":id});
+    
+    await userData.save();
+    res.redirect('/wishlist')
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 module.exports = {
   postAddToWishlist,
   getWishlist,
   getRemoveProduct,
   getRemoveFromWishlist,
+  getaddToCartFromWishlist,
 }

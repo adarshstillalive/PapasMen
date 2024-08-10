@@ -113,6 +113,7 @@ userRoute.get('/wishlist', Auth.isUser, OfferCheck.updateOffer, wishlistControll
 userRoute.post('/wishlist/addToWishlist',upload.none(), wishlistController.postAddToWishlist)
 userRoute.get('/wishlist/removeProduct',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveProduct)
 userRoute.get('/wishlist/removeFromWishlist',Auth.isUser, OfferCheck.updateOffer, wishlistController.getRemoveFromWishlist)
+userRoute.get('/wishlist/addToCartFromWishlist',Auth.isUser, OfferCheck.updateOffer, wishlistController.getaddToCartFromWishlist)
 
 
 

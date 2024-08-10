@@ -79,6 +79,7 @@ const getAddress = async (req, res) => {
 const putEditAddress = async (req, res) => {
   try {
     const {index,route,Fname,Lname,Housename,City,State,Pincode,Phone} = req.body;
+    console.log(route);
 
     const userData = await User.findOne({ "_id": req.session.userData._id });
 

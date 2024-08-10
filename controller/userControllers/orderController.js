@@ -95,6 +95,7 @@ const postCreateOrder = async (req, res) => {
         coupon = fetchCoupon.Name;
         await fetchCoupon.save();
       }
+      req.session.coupon = ''
     }
 
     // Fetch address
@@ -250,57 +251,66 @@ const postReturnOrder = async (req, res) => {
     let { orderId, returningReason, returnedProducts } = req.body;
     returnedProducts = Array.isArray(returnedProducts) ? returnedProducts : [returnedProducts];
     
-    const orderData = await Order.findOne({ "OrderId": orderId })
-    let returnProductAmount = 0;
-    for (const product of orderData.Products) {
+    const orderData = await Order.findOne({ "OrderId": orderId });
+    if (!orderData) {
+      return res.status(404).send("Order not found");
+    }
 
+    let returnProductAmount = 0;
+    const bulkOperations = [];
+
+    for (const product of orderData.Products) {
       for (const returnedProduct of returnedProducts) {
         if (product._id.equals(returnedProduct)) {
-          await Product.updateOne(
-            { "Versions._id": product.Version },
-            { $inc: { "Versions.$.Quantity": product.Quantity } }
-          );
+          bulkOperations.push({
+            updateOne: {
+              filter: { "Versions._id": product.Version },
+              update: { $inc: { "Versions.$.Quantity": product.Quantity } }
+            }
+          });
           returnProductAmount += (product.Price * product.Quantity);
           product.Returned = true;
         }
       }
-    }orderData.TotalAmount -=returnProductAmount;
-
-    if (orderData.Orderstatus === 'Delivered' || orderData.Orderstatus === 'Returned') {
-      const updateWallet = await Wallet.updateOne(
-        { "UserId": req.session.userData._id },
-        {
-          $inc: { "Balance": returnProductAmount }, // Increment the balance
-          $push: {
-            "Transaction": {
-              Type: 'Refund',
-              Amount: returnProductAmount,
-              Date: new Date() // Record the date of the transaction
-            }
-          }
-        },
-        { upsert: true }
-      );
-      if (updateWallet.modifiedCount>0) {
-        orderData.ReturningReason = returningReason;
-        orderData.Orderstatus = 'Returned';
-        orderData.ReturnedDate = Date.now()
-        await orderData.save();
-        res.redirect(`/orderDetails?id=${orderId}`)
-      }
-    }else {
-      orderData.ReturningReason = returningReason;
-      orderData.Orderstatus = 'Returned';
-      orderData.CancelledDate = Date.now()
-      await orderData.save();
-      res.redirect(`/orderDetails?id=${orderId}`)
     }
 
+    orderData.TotalAmount -= returnProductAmount;
+
+    if (bulkOperations.length > 0) {
+      await Product.bulkWrite(bulkOperations);
+    }
+
+    const updateWallet = await Wallet.updateOne(
+      { "UserId": req.session.userData._id },
+      {
+        $inc: { "Balance": returnProductAmount },
+        $push: {
+          "Transaction": {
+            Type: 'Refund',
+            Amount: returnProductAmount,
+            Date: new Date()
+          }
+        }
+      },
+      { upsert: true }
+    );
+
+    if (updateWallet.modifiedCount > 0) {
+      orderData.ReturningReason = returningReason;
+      orderData.Orderstatus = 'Returned';
+      orderData.ReturnedDate = Date.now();
+      await orderData.save();
+      res.redirect(`/orderDetails?id=${orderId}`);
+    } else {
+      res.status(500).send("Failed to update wallet");
+    }
 
   } catch (error) {
     console.log(error);
+    res.status(500).send("Internal server error");
   }
-}
+};
+
 
 const getOrderDetails = async (req, res) => {
   try {

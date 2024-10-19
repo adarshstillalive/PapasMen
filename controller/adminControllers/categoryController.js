@@ -1,4 +1,5 @@
 const Category = require('../../model/categoryModel')
+const Product = require('../../model/productModel')
 
 const fs = require('fs');
 const path = require('path');
@@ -30,6 +31,7 @@ const getCategories = async (req, res) => {
 const getDeleteCategory = async (req, res) => {
   try {
     const categoryId = req.query.id;
+    await Product.updateMany({ "Category": categoryId }, { $set: { "isActive": "false" } });
     const updateData = await Category.updateOne({ "_id": categoryId }, { $set: { "isActive": "false" } });
     if (updateData) {
       res.redirect('/admin/categories')
@@ -42,6 +44,7 @@ const getDeleteCategory = async (req, res) => {
 const getUnBlockCategory = async (req, res) => {
   try {
     const categoryId = req.query.id;
+    await Product.updateMany({ "Category": categoryId }, { $set: { "isActive": "true" } });
     const updateData = await Category.updateOne({ "_id": categoryId }, { $set: { "isActive": "true" } });
     if (updateData) {
       res.redirect('/admin/categories')

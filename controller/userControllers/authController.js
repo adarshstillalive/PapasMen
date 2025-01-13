@@ -179,20 +179,30 @@ const postSendOtp = async (req, res) => {
       req.session.otp = randomOtp;
       req.session.save()
 
+      // const transporter = nodemailer.createTransport({
+      //   service: 'gmail',
+      //   auth: {
+      //     type: 'OAuth2',
+      //     user: 'papasmenauth@gmail.com',
+      //     clientId: process.env.NODEMAILER_CLIENT_ID,
+      //     clientSecret: process.env.NODEMAILER_CLIENT_SECRET,
+      //     refreshToken: process.env.NODEMAILER_REFRESH_TOKEN
+      //   }
+      // });
+
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
         auth: {
-          type: 'OAuth2',
-          user: 'papasmenauth@gmail.com',
-          clientId: process.env.NODEMAILER_CLIENT_ID,
-          clientSecret: process.env.NODEMAILER_CLIENT_SECRET,
-          refreshToken: process.env.NODEMAILER_REFRESH_TOKEN
-        }
+          user: process.env.NODEMAILER_USER,
+          pass: process.env.NODEMAILER_APP_PASSWORD,
+        },
       });
 
 
       const mailOptions = {
-        from: 'papasmenauth@gmail.com',
+        from: process.env.NODEMAILER_USER,
         to: req.session.Email,
         subject: 'Hello, PapasMenAuth Mail',
         text: `Your verification OTP is ${randomOtp}`
